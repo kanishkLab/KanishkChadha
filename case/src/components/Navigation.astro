@@ -12,41 +12,43 @@ const isActive = (href: string) => {
 ---
 
 <!-- ── Desktop nav ─────────────────────────────────────────── -->
-<nav class="site-nav" aria-label="Main navigation">
+<header class="nav-bar">
+  <nav class="site-nav" aria-label="Main navigation">
 
-  <!-- KC Monogram / Wordmark -->
-  <a href="/" class="nav-brand" aria-label="Kanishk Chadha home">
-    <span class="monogram">K<span class="monogram-c">C</span></span>
-    <span class="wordmark">Kanishk Chadha</span>
-  </a>
+    <!-- KC Monogram / Wordmark -->
+    <a href="/" class="nav-brand" aria-label="Kanishk Chadha home">
+      <span class="monogram">K<span class="monogram-c">C</span></span>
+      <span class="wordmark">Kanishk Chadha</span>
+    </a>
 
-  <!-- Desktop links -->
-  <div class="nav-scroll">
-    <ul class="nav-list">
-      {navItems.map((item) => (
-        <li class="nav-item">
-          <a
-            href={item.href}
-            class:list={['nav-link', { 'nav-link--active': isActive(item.href) }]}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-          >
-            {item.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
+    <!-- Desktop links -->
+    <div class="nav-scroll">
+      <ul class="nav-list">
+        {navItems.map((item) => (
+          <li class="nav-item">
+            <a
+              href={item.href}
+              class:list={['nav-link', { 'nav-link--active': isActive(item.href) }]}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
 
-  <div class="nav-end">
-    <!-- Mobile hamburger -->
-    <button class="hamburger" id="nav-open" aria-label="Open menu" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </div>
+    <div class="nav-end">
+      <!-- Mobile hamburger -->
+      <button class="hamburger" id="nav-open" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
 
-</nav>
+  </nav>
+</header>
 
 <!-- ── Drawer overlay ─────────────────────────────────────── -->
 <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
@@ -140,25 +142,24 @@ const isActive = (href: string) => {
 </script>
 
 <style>
-  /* ── Nav shell — navy (Nautical brand) ────────────────────────────── */
+  /* ── Nav bar — full-width white strip ──────────────────────────────── */
+  .nav-bar {
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* ── Nav shell — content-aligned ─────────────────────────────────── */
   .site-nav {
     display: flex;
     align-items: center;
     gap: 0;
-    background: var(--color-navy);
-    padding: 0 40px;
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
     height: 64px;
-    border-bottom: none;
-    margin-bottom: 0;
   }
 
-  /* ── KC Monogram ─────────────────────────────────────────── */
-  /* ── KC lockup ───────────────────────────────────────────
-     Brand guidelines: an Inter 800 lettermark set at -0.08em so
-     the letters nest — K reversed to white on navy, C in Signal
-     Orange. Deliberately NOT a badge: the guide's Don't list
-     rules out a box or outline around the mark.
-  ────────────────────────────────────────────────────────── */
+  /* ── KC lockup ─────────────────────────────────────────── */
   .nav-brand {
     display: flex;
     align-items: center;
@@ -171,15 +172,15 @@ const isActive = (href: string) => {
   .monogram {
     font-family: var(--font-family);
     font-weight: 800;
-    font-size: 1.875rem;      /* 30px, per the site-header spec */
-    color: #ffffff;
+    font-size: 1.875rem;
+    color: var(--color-navy);
     letter-spacing: -0.08em;
     line-height: 1;
     display: inline-flex;
     transition: opacity 150ms ease;
   }
   .nav-brand:hover .monogram,
-  .nav-brand:hover .wordmark { opacity: 0.85; }
+  .nav-brand:hover .wordmark { opacity: 0.7; }
 
   .monogram--sm { font-size: 1.25rem; }
 
@@ -188,9 +189,9 @@ const isActive = (href: string) => {
   .wordmark {
     font-family: var(--font-family);
     font-weight: 700;
-    font-size: 1rem;          /* 16px */
+    font-size: 1rem;
     letter-spacing: -0.04em;
-    color: #ffffff;
+    color: var(--color-navy);
     line-height: 1;
     transition: opacity 150ms ease;
   }
@@ -225,16 +226,16 @@ const isActive = (href: string) => {
     height: 56px;
     padding: 0 1rem;
     font-family: var(--font-family);
-    font-size: 0.875rem;        /* 14px */
+    font-size: 0.875rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #ffffff;
+    color: var(--color-navy);
     text-decoration: none;
     transition: color 150ms ease;
     white-space: nowrap;
     border-bottom: 2px solid transparent;
-    margin-bottom: -2px; /* align border with nav bottom */
+    margin-bottom: -2px;
   }
   .nav-link:hover { color: var(--color-signal-orange); }
   .nav-link--active {
@@ -266,12 +267,12 @@ const isActive = (href: string) => {
     border-radius: var(--border-radius-sm);
     transition: background 150ms ease;
   }
-  .hamburger:hover { background: rgba(255,255,255,0.1); }
+  .hamburger:hover { background: rgba(0,0,0,0.05); }
   .hamburger span {
     display: block;
     height: 2px;
     width: 100%;
-    background: #ffffff;
+    background: var(--color-navy);
     border-radius: 2px;
   }
 
@@ -367,7 +368,7 @@ const isActive = (href: string) => {
     .nav-scroll { display: none; }
     .hamburger  { display: flex; }
 
-    .site-nav { padding: 0 1rem; }
+    .site-nav { padding: 0 var(--space-md); }
     .nav-brand { margin-right: auto; }
   }
 

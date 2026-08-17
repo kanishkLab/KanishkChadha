@@ -1,0 +1,137 @@
+---
+import { siteConfig } from '../config';
+
+const currentYear = new Date().getFullYear();
+
+const socialLinks = Object.entries(siteConfig.social)
+  .filter(([_, url]) => url)
+  .map(([platform, url]) => ({
+    platform: platform.charAt(0).toUpperCase() + platform.slice(1),
+    url
+  }));
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <span class="footer-monogram">K<span>C</span></span>
+      <span class="footer-name">{siteConfig.author.name}</span>
+    </div>
+
+    <span class="footer-tagline">Build smarter. Measure better. Automate with intention.</span>
+
+    <div class="footer-right">
+      {socialLinks.length > 0 && (
+        <div class="footer-social">
+          {socialLinks.map((link, index) => (
+            <>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">{link.platform}</a>
+              {index < socialLinks.length - 1 && <span class="sep">·</span>}
+            </>
+          ))}
+        </div>
+      )}
+      <span class="copyright">© {currentYear} {siteConfig.author.name}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-navy);
+    border-top: 3px solid var(--color-signal-orange);
+    padding: 2.5rem 1.5rem;
+    margin-top: auto;
+  }
+
+  .footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-monogram {
+    font-family: var(--font-family);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #ffffff;
+    letter-spacing: -0.08em;
+    line-height: 1;
+    display: inline-flex;
+  }
+
+  .footer-monogram span {
+    color: var(--color-signal-orange);
+  }
+
+  .footer-name {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: #ffffff;
+    letter-spacing: 0.01em;
+  }
+
+  .footer-tagline {
+    font-family: var(--font-family);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.01em;
+    flex: 1;
+    text-align: center;
+  }
+
+  .footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.375rem;
+  }
+
+  .footer-social {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .footer-social a {
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .footer-social a:hover { color: var(--color-signal-orange); }
+
+  .sep {
+    color: rgba(255, 255, 255, 0.25);
+    user-select: none;
+  }
+
+  .copyright {
+    font-family: var(--font-family);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  @media (max-width: 640px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .footer-tagline { text-align: left; }
+    .footer-right { align-items: flex-start; }
+  }
+</style>

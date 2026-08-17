@@ -1,0 +1,16 @@
+---
+title: "From IC to Tech Lead: Lessons Learned"
+type: talk
+description: "A candid conversation about the transition from individual contributor to technical leadership—the skills that transfer, the ones you need to develop, and common mistakes new tech leads make."
+event: "The Engineering Leadership Podcast"
+eventUrl: "https://engineeringleadership.com/podcast"
+publishDate: 2025-02-10
+location: "Remote"
+talkType: "podcast"
+video: "https://youtube.com/watch?v=example3"
+duration: "60 min"
+topics: ["leadership", "career", "management", "tech-lead"]
+tags:
+  - "speaking"
+featured: false
+---

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <script src="./doc-page.js"></script>
+  <style>
+    body{margin:0;background:#f9f9f9;font-family:'Inter',sans-serif;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased}
+    a{color:#004e72;text-decoration:none}
+    a:hover{color:#ff6e42}
+    doc-page:not(:defined){visibility:hidden}
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @media print {
+      * { animation-delay: -99s !important; animation-duration: .001s !important;
+          animation-iteration-count: 1 !important; animation-fill-mode: both !important;
+          animation-play-state: running !important; transition-duration: 0s !important; }
+    }
+  </style>
+</helmet>
+
+<doc-page margin="0">
+<div style="background:#f9f9f9;color:#092634;width:100%;margin:0 auto">
+
+  <!-- NAV -->
+  <nav style="display:flex;align-items:center;height:64px;background:#092634;padding:0 40px;gap:0">
+    <div style="display:flex;align-items:center;gap:12px;flex:1">
+      <div style="width:36px;height:36px;border-radius:9px;background:#ff6e42;color:#092634;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;letter-spacing:-0.02em">KC</div>
+      <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:#fff">Kanishk Chadha</span>
+    </div>
+    <div style="display:flex;gap:0">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <span style="font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:#fff;padding:0 13px">{{ item }}</span>
+      </sc-for>
+    </div>
+  </nav>
+
+  <!-- 1. HERO -->
+  <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;padding:80px 64px 60px">
+    <div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#ff6e42;letter-spacing:.14em;margin-bottom:24px">AI &nbsp;·&nbsp; ANALYTICS &nbsp;·&nbsp; AUTOMATION</div>
+      <h1 style="font-family:'Inter',sans-serif;font-weight:700;font-size:58px;line-height:1.08;letter-spacing:-0.04em;color:#092634;margin:0 0 24px;text-wrap:balance">I don't just run campaigns. I build AI-powered marketing systems that compound.</h1>
+      <p style="font-family:'Inter',sans-serif;font-size:18px;color:#004e72;max-width:520px;margin:0 0 34px;line-height:1.7;text-wrap:pretty">I'm Kanishk — a senior, AI-native marketer blending AI, analytics, and automation to build growth systems that keep working after launch.</p>
+      <div style="display:flex;gap:14px">
+        <a href="#cases" style="padding:14px 30px;background:#ff6e42;color:#fff;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;letter-spacing:.02em;border-radius:10px">See My Work</a>
+        <a href="#" style="padding:14px 30px;background:#092634;color:#fff;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;letter-spacing:.02em;border-radius:10px">Download Résumé ↓</a>
+      </div>
+    </div>
+    <div style="position:relative;aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:#eef1f2">
+      <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=70" alt="Portrait" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;left:16px;bottom:16px;background:rgba(9,38,52,.9);color:#fff;border-radius:10px;padding:8px 14px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;pointer-events:none">Kanishk Chadha · Senior Martech</div>
+    </div>
+  </div>
+
+  <!-- 2. TECH STACK -->
+  <div style="padding:34px 40px;border-top:1px solid #e6e6e2;border-bottom:1px solid #e6e6e2;background:#fff">
+    <div style="text-align:center;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#6b7c85;margin-bottom:22px">The Stack I Work In</div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:1000px;margin:0 auto">
+      <sc-for list="{{ tools }}" as="t" hint-placeholder-count="12">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 15px;background:#f9f9f9;border:1px solid #e6e6e2;border-radius:10px">
+          <span style="width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+            <sc-if value="{{ t.hasLogo }}" hint-placeholder-val="{{ false }}">
+              <img src="{{ t.logo }}" alt="{{ t.name }}" style="width:18px;height:18px;object-fit:contain;display:block">
+            </sc-if>
+            <sc-if value="{{ t.noLogo }}" hint-placeholder-val="{{ true }}">
+              <span style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;background:#092634;color:#fff;border-radius:4px;font-family:'Inter',sans-serif;font-size:10px;font-weight:700">{{ t.initial }}</span>
+            </sc-if>
+          </span>
+          <span style="font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#092634">{{ t.name }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 3. CREDIBILITY STRIP -->
+  <div style="background:#092634;padding:44px 64px;display:grid;grid-template-columns:1fr 1.3fr;gap:48px;align-items:center">
+    <div>
+      <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:12px">5+ Years Senior Martech</div>
+      <h3 style="font-family:'Inter',sans-serif;font-weight:700;font-size:24px;line-height:1.25;color:#fff;margin:0 0 12px">Senior enough to trust with the stack — and the outcomes.</h3>
+      <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.06em;text-transform:uppercase">Trusted by teams at B2B SaaS · DTC · Creator brands</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <sc-for list="{{ stats3 }}" as="s" hint-placeholder-count="3">
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:32px;letter-spacing:-0.04em;color:#fff">{{ s.value }}</div>
+          <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.6);margin-top:5px;line-height:1.4">{{ s.label }}</div>
+          <sc-if value="{{ showSample }}" hint-placeholder-val="{{ true }}">
+            <span style="display:inline-block;margin-top:8px;font-family:'Inter',sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#ff6e42;border:1px dashed rgba(255,110,66,.5);border-radius:20px;padding:2px 8px">Sample data</span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 4. CAPABILITIES / SKILLS -->
+  <div style="padding:72px 64px 0">
+    <div style="text-align:center;margin-bottom:38px;max-width:640px;margin-left:auto;margin-right:auto">
+      <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:10px">Capabilities</div>
+      <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:34px;letter-spacing:-0.03em;color:#092634;margin:0 0 12px">What I bring to a senior martech team</h2>
+      <p style="font-family:'Inter',sans-serif;font-size:15px;color:#3a4a52;margin:0;line-height:1.6">Four clusters, mapped to how martech and marketing-ops roles are scoped — so you can check it against the JD fast.</p>
+    </div>
+    <div style="border:1px solid #e6e6e2;border-radius:16px;overflow:hidden;background:#fff">
+      <sc-for list="{{ skills }}" as="k" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:36px;align-items:center;padding:26px 30px;border-bottom:{{ k.border }}">
+          <div style="display:flex;gap:18px;align-items:baseline">
+            <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:15px;color:#ff6e42;letter-spacing:.02em;flex-shrink:0">{{ k.num }}</span>
+            <div>
+              <h3 style="font-family:'Inter',sans-serif;font-weight:700;font-size:17px;color:#092634;margin:0 0 5px">{{ k.title }}</h3>
+              <p style="font-family:'Inter',sans-serif;font-size:13.5px;color:#3a4a52;margin:0;line-height:1.65">{{ k.desc }}</p>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:flex-end">
+            <sc-for list="{{ k.tags }}" as="tag" hint-placeholder-count="4">
+              <span style="font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:#092634;padding-bottom:3px;border-bottom:2px solid #ff6e42">{{ tag }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- FEATURED CASE STUDIES -->
+  <div id="cases" style="padding:72px 64px 0">
+    <div style="text-align:center;margin-bottom:34px">
+      <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:10px">Featured Work</div>
+      <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:34px;letter-spacing:-0.03em;color:#092634;margin:0">Outcomes, not project names</h2>
+    </div>
+    <div style="position:relative;border-radius:16px;overflow:hidden;height:380px;margin-bottom:14px">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=70" alt="Flagship case" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:34px;background:linear-gradient(to top, rgba(9,38,52,.92) 0%, rgba(9,38,52,.25) 55%, transparent 100%);pointer-events:none">
+        <span style="align-self:flex-start;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#092634;background:#ff6e42;padding:4px 10px;border-radius:20px;margin-bottom:12px">Flagship · Agentic System</span>
+        <h3 style="font-family:'Inter',sans-serif;font-weight:700;font-size:29px;color:#fff;margin:0 0 8px;max-width:660px;line-height:1.2">Cut campaign turnaround 70% with an autonomous, guard-railed content agent</h3>
+        <p style="font-family:'Inter',sans-serif;font-size:15px;color:rgba(255,255,255,.78);margin:0">Tool access, decision loops, and human escalation — running in production on n8n + HubSpot.</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <sc-for list="{{ caseStudies }}" as="c" hint-placeholder-count="3">
+        <div style="position:relative;border-radius:14px;overflow:hidden;height:210px">
+          <img src="{{ c.img }}" alt="{{ c.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;background:linear-gradient(to top, rgba(9,38,52,.9) 0%, transparent 62%);pointer-events:none">
+            <span style="font-family:'Inter',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:#ff6e42;margin-bottom:5px">{{ c.category }}</span>
+            <h3 style="font-family:'Inter',sans-serif;font-weight:700;font-size:15px;color:#fff;margin:0;line-height:1.3">{{ c.title }}</h3>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 5. EXPERIENCE -->
+  <div style="padding:72px 64px 0;max-width:820px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:10px">
+      <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:10px">Experience</div>
+      <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:30px;letter-spacing:-0.03em;color:#092634;margin:0">The path so far</h2>
+    </div>
+    <sc-if value="{{ showSample }}" hint-placeholder-val="{{ true }}">
+      <div style="text-align:center;margin-bottom:26px"><span style="display:inline-block;font-family:'Inter',sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9aa7ad;border:1px dashed #c4cdd1;border-radius:20px;padding:2px 8px">Sample data</span></div>
+    </sc-if>
+    <div style="margin-top:20px">
+      <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+        <div style="display:flex;gap:26px;padding:22px 0;border-bottom:1px solid #e6e6e2;align-items:baseline">
+          <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:13px;color:#ff6e42;width:150px;flex-shrink:0;letter-spacing:.01em">{{ t.period }}</span>
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:#092634">{{ t.role }} <span style="font-weight:400;color:#6b7c85">· {{ t.org }}</span></div>
+            <p style="font-family:'Inter',sans-serif;font-size:14px;color:#3a4a52;margin:5px 0 0;line-height:1.6">{{ t.desc }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 6. NEWSLETTER -->
+  <div id="newsletter" style="margin:72px 64px 0;background:#092634;border-radius:18px;padding:52px;text-align:center">
+    <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:14px">The Newsletter</div>
+    <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:30px;color:#fff;letter-spacing:-0.02em;margin-bottom:12px">Join 5,200+ marketers</div>
+    <div style="font-family:'Inter',sans-serif;font-size:16px;color:rgba(255,255,255,.7);line-height:1.6;max-width:440px;margin:0 auto 28px">Weekly frameworks, AI tools, and real campaign breakdowns — straight to your inbox.</div>
+    <div style="display:flex;gap:9px;justify-content:center">
+      <div style="width:260px;padding:13px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:rgba(255,255,255,.45);font-family:'Inter',sans-serif;font-size:14px;text-align:left">your@email.com</div>
+      <div style="padding:13px 26px;background:#ff6e42;color:#fff;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;border-radius:10px">Subscribe</div>
+    </div>
+  </div>
+
+  <!-- 7. LINKEDIN CARD -->
+  <div style="padding:36px 64px 0">
+    <div style="background:#fff;border:1px solid #e6e6e2;border-radius:16px;padding:30px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+      <div style="width:56px;height:56px;border-radius:12px;background:#004e72;color:#fff;font-family:'Inter',sans-serif;font-weight:700;font-size:26px;display:flex;align-items:center;justify-content:center">in</div>
+      <div style="flex:1;min-width:220px">
+        <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:17px;color:#092634">Let's connect on LinkedIn</div>
+        <div style="font-family:'Inter',sans-serif;font-size:14px;color:#3a4a52;margin-top:4px;line-height:1.6">I share campaign teardowns, AI marketing experiments, and behind-the-scenes builds a few times a week.</div>
+      </div>
+      <a href="#" style="padding:12px 24px;background:#004e72;color:#fff;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;border-radius:10px;white-space:nowrap">Follow →</a>
+    </div>
+  </div>
+
+  <!-- 8. BLOGS -->
+  <div id="blog" style="padding:72px 64px 0">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px">
+      <div>
+        <div style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#ff6e42;margin-bottom:10px">From the Blog</div>
+        <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:30px;letter-spacing:-0.03em;color:#092634;margin:0">Recent writing</h2>
+      </div>
+      <a href="#" style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#004e72">View all →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+      <sc-for list="{{ blogs }}" as="b" hint-placeholder-count="3">
+        <a href="#" style="display:block;background:#fff;border:1px solid #e6e6e2;border-radius:16px;overflow:hidden;color:inherit">
+          <div style="position:relative;height:160px">
+            <img src="{{ b.img }}" alt="{{ b.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="padding:20px">
+            <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:#ff6e42">{{ b.category }}</span>
+            <h3 style="font-family:'Inter',sans-serif;font-weight:700;font-size:16px;color:#092634;margin:8px 0 8px;line-height:1.3">{{ b.title }}</h3>
+            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#6b7c85">{{ b.meta }}</div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- 9. CONTACT -->
+  <div style="padding:80px 64px 64px;text-align:center">
+    <h2 style="font-family:'Inter',sans-serif;font-weight:700;font-size:40px;letter-spacing:-0.03em;color:#092634;margin:0 0 14px">Get in Contact</h2>
+    <p style="font-family:'Inter',sans-serif;font-size:16px;color:#3a4a52;max-width:490px;margin:0 auto 32px;line-height:1.7">Looking for a marketing partner, newsletter sponsor, or someone who builds AI-powered growth systems? Let's talk.</p>
+    <a href="mailto:hi@kanishkchadha.com" style="padding:14px 32px;background:#ff6e42;color:#fff;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;border-radius:10px">Start a Conversation</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="background:#092634;padding:40px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:32px;height:32px;border-radius:8px;background:#ff6e42;color:#092634;font-family:'Inter',sans-serif;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center">KC</div>
+      <div>
+        <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:14px;color:#fff">Kanishk Chadha</div>
+        <div style="font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.5)">© 2026 · AI · Analytics · Automation</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:22px">
+      <sc-for list="{{ footerLinks }}" as="f" hint-placeholder-count="4">
+        <a href="#" style="font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;color:rgba(255,255,255,.7)">{{ f }}</a>
+      </sc-for>
+    </div>
+  </footer>
+
+</div>
+</doc-page>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;showSampleTags&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  navItems = ['Skills','Experience','Blog','Newsletter','Contact'];
+  footerLinks = ['LinkedIn','Twitter/X','Blog','Newsletter'];
+
+  // To add a tool: append {name, slug}. `slug` is the brand's Simple Icons
+  // name (browse simpleicons.org). Logos render monochrome in brand navy.
+  tools = [
+    {name:'HubSpot', slug:'hubspot'},
+    {name:'Salesforce', slug:'salesforce'},
+    {name:'n8n', slug:'n8n'},
+    {name:'Segment', slug:'segment'},
+    {name:'Google Analytics', slug:'googleanalytics'},
+    {name:'Looker Studio', slug:'looker'},
+    {name:'Google Ads', slug:'googleads'},
+    {name:'Meta', slug:'meta'},
+    {name:'Zapier', slug:'zapier'},
+    {name:'Make', slug:'make'},
+    {name:'OpenAI', slug:'openai'},
+    {name:'Claude', slug:'anthropic'},
+    {name:'Notion', slug:'notion'},
+    {name:'Airtable', slug:'airtable'},
+    {name:'Slack', slug:'slack'},
+    {name:'Figma', slug:'figma'}
+  ];
+
+  stats = [
+    {value:'5,200+', label:'Newsletter subscribers'},
+    {value:'47', label:'AI marketing campaigns'},
+    {value:'38', label:'Newsletter issues sent'},
+    {value:'4 yrs', label:'In AI-powered marketing'}
+  ];
+
+  skills = [
+    {num:'01', title:'Automation & AI Systems', desc:'Agentic workflows with tool access, decision loops, and escalation logic — not one-off prompts. Systems that run and self-correct after launch.', tags:['n8n','HubSpot','Salesforce','GPT / Claude']},
+    {num:'02', title:'Analytics & Attribution', desc:'Full-funnel measurement and reporting so every spend and campaign decision is grounded in real, queryable data.', tags:['SQL','GA4','Looker Studio','Meta / Google Ads']},
+    {num:'03', title:'Customer Data / CDP', desc:'Unified customer profiles, event tracking, and audience activation across the stack for clean, real-time segmentation.', tags:['Segment','Salesforce Data Cloud','Event Tracking','Audiences']},
+    {num:'04', title:'AI Enablement & Governance', desc:'Rolling AI out across a marketing team with guardrails, review gates, and documented decision-making that scales safely.', tags:['Prompt Systems','Guardrails','Enablement','Governance']}
+  ];
+
+  timeline = [
+    {period:'2023 — Present', role:'Founder', org:'AI Marketing Newsletter', desc:'Writing and building automated growth systems for 5,200+ subscribers.'},
+    {period:'2021 — 2023', role:'Head of Lifecycle Marketing', org:'B2B SaaS Co.', desc:'Built the retention and email systems from zero to a core revenue channel.'},
+    {period:'2019 — 2021', role:'Marketing Lead', org:'DTC Brand', desc:'Owned paid acquisition and CRM across three markets.'},
+    {period:'2017 — 2019', role:'Freelance Marketer', org:'Independent', desc:'Ran campaigns for early-stage startups across content and paid.'}
+  ];
+
+  caseStudies = [
+    {category:'Analytics & Attribution', title:'Rebuilt attribution to reallocate 30% of paid spend', img:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=70'},
+    {category:'Customer Data / CDP', title:'Unified profiles across Segment → Data Cloud for real-time audiences', img:'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=70'},
+    {category:'Lifecycle & Retention', title:'22% lift in 30-day retention from an automated onboarding flow', img:'https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&w=800&q=70'}
+  ];
+
+  blogs = [
+    {category:'Newsletter', title:'The 3-loop system I use to grow a newsletter on autopilot', meta:'8 min read · Jan 2026', img:'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=70'},
+    {category:'AI Tools', title:'Building an AI content engine that ships 6× more', meta:'11 min read · Dec 2025', img:'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=70'},
+    {category:'Analytics', title:'Attribution without the guesswork: my GA4 setup', meta:'6 min read · Nov 2025', img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=70'}
+  ];
+
+  renderVals() {
+    // Brands removed from the simpleicons CDN — render a monogram tile instead.
+    const missing = ['salesforce','segment','openai','slack'];
+    const tools = this.tools.map(t => {
+      const hasLogo = !missing.includes(t.slug);
+      return { ...t, hasLogo, noLogo: !hasLogo, logo: `https://cdn.simpleicons.org/${t.slug}/092634`, initial: t.name[0] };
+    });
+    return {
+      navItems: this.navItems,
+      footerLinks: this.footerLinks,
+      tools,
+      stats: this.stats,
+      stats3: this.stats.slice(0, 3),
+      skills: this.skills.map((k, i) => ({ ...k, border: i < this.skills.length - 1 ? '1px solid #e6e6e2' : 'none' })),
+      timeline: this.timeline,
+      caseStudies: this.caseStudies,
+      blogs: this.blogs,
+      showSample: this.props.showSampleTags ?? true,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

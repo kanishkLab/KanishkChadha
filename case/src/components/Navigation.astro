@@ -1,0 +1,381 @@
+---
+import { siteConfig } from '../config';
+
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { label: 'Home', href: '/' },
+  ...siteConfig.nav,
+];
+
+const isActive = (href: string) => {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href);
+};
+---
+
+<!-- ── Desktop nav ─────────────────────────────────────────── -->
+<nav class="site-nav" aria-label="Main navigation">
+
+  <!-- KC Monogram / Wordmark -->
+  <a href="/" class="nav-brand" aria-label="Kanishk Chadha home">
+    <span class="monogram">K<span class="monogram-c">C</span></span>
+    <span class="wordmark">Kanishk Chadha</span>
+  </a>
+
+  <!-- Desktop links -->
+  <div class="nav-scroll">
+    <ul class="nav-list">
+      {navItems.filter(i => i.href !== '/').map((item) => (
+        <li class="nav-item">
+          <a
+            href={item.href}
+            class:list={['nav-link', { 'nav-link--active': isActive(item.href) }]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="nav-end">
+    <!-- Mobile hamburger -->
+    <button class="hamburger" id="nav-open" aria-label="Open menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+</nav>
+
+<!-- ── Drawer overlay ─────────────────────────────────────── -->
+<div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+
+<div class="drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div class="drawer-header">
+    <a href="/" class="drawer-brand">
+      <span class="monogram monogram--sm">K<span class="monogram-c">C</span></span>
+    </a>
+    <button class="drawer-close" id="nav-close" aria-label="Close menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <p class="drawer-label">Explore</p>
+
+  <ul class="drawer-list">
+    {navItems.map((item) => (
+      <li>
+        <a
+          href={item.href}
+          class:list={['drawer-link', { 'drawer-link--active': isActive(item.href) }]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          <span>{item.label}</span>
+          <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  function initDrawer() {
+    const openBtn  = document.getElementById('nav-open');
+    const closeBtn = document.getElementById('nav-close');
+    const drawer   = document.getElementById('nav-drawer');
+    const overlay  = document.getElementById('drawer-overlay');
+
+    // The header carries transition:persist, so these nodes survive
+    // navigation while astro:page-load fires again on every one.
+    // Without this guard each navigation stacks another set of
+    // listeners on the same buttons.
+    if (openBtn?.dataset.drawerBound === 'true') return;
+    if (openBtn) openBtn.dataset.drawerBound = 'true';
+
+    function open() {
+      drawer?.classList.add('drawer--open');
+      overlay?.classList.add('drawer-overlay--visible');
+      openBtn?.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      drawer?.classList.remove('drawer--open');
+      overlay?.classList.remove('drawer-overlay--visible');
+      openBtn?.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    openBtn?.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    overlay?.addEventListener('click', close);
+    drawer?.querySelectorAll('.drawer-link').forEach(l => l.addEventListener('click', close));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  }
+
+  function updateActiveNav() {
+    const path = window.location.pathname;
+    document.querySelectorAll('.nav-link').forEach(link => {
+      const href = link.getAttribute('href');
+      const active = href === '/' ? path === '/' : href ? path.startsWith(href) : false;
+      link.classList.toggle('nav-link--active', active);
+      active ? link.setAttribute('aria-current', 'page') : link.removeAttribute('aria-current');
+    });
+    document.querySelectorAll('.drawer-link').forEach(link => {
+      const href = link.getAttribute('href');
+      const active = href === '/' ? path === '/' : href ? path.startsWith(href) : false;
+      link.classList.toggle('drawer-link--active', active);
+      active ? link.setAttribute('aria-current', 'page') : link.removeAttribute('aria-current');
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initDrawer();
+    updateActiveNav();
+  });
+</script>
+
+<style>
+  /* ── Nav shell — navy (Nautical brand) ────────────────────────────── */
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--color-navy);
+    padding: 0 40px;
+    height: 64px;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  /* ── KC Monogram ─────────────────────────────────────────── */
+  /* ── KC lockup ───────────────────────────────────────────
+     Brand guidelines: an Inter 800 lettermark set at -0.08em so
+     the letters nest — K reversed to white on navy, C in Signal
+     Orange. Deliberately NOT a badge: the guide's Don't list
+     rules out a box or outline around the mark.
+  ────────────────────────────────────────────────────────── */
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-right: 2rem;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .monogram {
+    font-family: var(--font-family);
+    font-weight: 800;
+    font-size: 1.875rem;      /* 30px, per the site-header spec */
+    color: #ffffff;
+    letter-spacing: -0.08em;
+    line-height: 1;
+    display: inline-flex;
+    transition: opacity 150ms ease;
+  }
+  .nav-brand:hover .monogram,
+  .nav-brand:hover .wordmark { opacity: 0.85; }
+
+  .monogram--sm { font-size: 1.25rem; }
+
+  .monogram-c { color: var(--color-signal-orange); }
+
+  .wordmark {
+    font-family: var(--font-family);
+    font-weight: 700;
+    font-size: 1rem;          /* 16px */
+    letter-spacing: -0.04em;
+    color: #ffffff;
+    line-height: 1;
+    transition: opacity 150ms ease;
+  }
+
+  /* ── Desktop links ───────────────────────────────────────── */
+  .nav-scroll {
+    margin-left: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+
+  .nav-list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: max-content;
+    height: 56px;
+    align-items: center;
+  }
+
+  .nav-item { margin: 0; }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 1rem;
+    font-family: var(--font-family);
+    font-size: 0.875rem;        /* 14px */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 150ms ease;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px; /* align border with nav bottom */
+  }
+  .nav-link:hover { color: var(--color-signal-orange); }
+  .nav-link--active {
+    color: var(--color-signal-orange);
+    border-bottom-color: var(--color-signal-orange);
+  }
+
+  /* ── Nav end ─────────────────────────────────────────────── */
+  .nav-end {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-left: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Hamburger ───────────────────────────────────────────── */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--border-radius-sm);
+    transition: background 150ms ease;
+  }
+  .hamburger:hover { background: rgba(255,255,255,0.1); }
+  .hamburger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 2px;
+  }
+
+  /* ── Drawer overlay ──────────────────────────────────────── */
+  .drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 199;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .drawer-overlay--visible { display: block; opacity: 1; }
+
+  /* ── Drawer panel ────────────────────────────────────────── */
+  .drawer {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: min(280px, 80vw);
+    background: var(--color-navy);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .drawer--open { transform: translateX(0); }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .drawer-brand { text-decoration: none; }
+
+  .drawer-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.5);
+    padding: 4px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    transition: color 150ms ease;
+  }
+  .drawer-close:hover { color: #ffffff; }
+
+  .drawer-label {
+    font-family: var(--font-family);
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.3);
+    padding: 1rem 1.25rem 0.5rem;
+    margin: 0;
+  }
+
+  .drawer-list { list-style: none; margin: 0; padding: 0; }
+
+  .drawer-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    font-family: var(--font-family);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    transition: color 150ms ease, background 150ms ease;
+  }
+  .drawer-link:hover {
+    color: #ffffff;
+    background: rgba(255,255,255,0.05);
+  }
+  .drawer-link--active { color: var(--color-signal-orange); }
+  .drawer-link--active .chevron { opacity: 0.8; }
+
+  .chevron { flex-shrink: 0; opacity: 0.3; transition: opacity 150ms ease; }
+  .drawer-link:hover .chevron { opacity: 0.6; }
+
+  /* ── Responsive ──────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .nav-scroll { display: none; }
+    .hamburger  { display: flex; }
+
+    .site-nav { padding: 0 1rem; }
+    .nav-brand { margin-right: auto; }
+  }
+
+  /* Below ~360px the lockup drops to the mark only */
+  @media (max-width: 360px) {
+    .wordmark { display: none; }
+  }
+</style>

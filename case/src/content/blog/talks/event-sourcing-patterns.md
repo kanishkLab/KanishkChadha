@@ -1,0 +1,17 @@
+---
+title: "Event Sourcing in Practice: Patterns and Pitfalls"
+type: talk
+description: "After implementing event sourcing in three production systems over five years, I share what actually works, what doesn't, and when you should (and shouldn't) reach for this pattern."
+event: "QCon San Francisco"
+eventUrl: "https://qconsf.com"
+publishDate: 2025-11-15
+location: "San Francisco, CA"
+talkType: "conference"
+slides: "https://speakerdeck.com/example/event-sourcing-patterns"
+video: "https://youtube.com/watch?v=example2"
+duration: "50 min"
+topics: ["event-sourcing", "architecture", "distributed-systems", "CQRS"]
+tags:
+  - "speaking"
+featured: true
+---

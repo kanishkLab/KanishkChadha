@@ -1,0 +1,336 @@
+---
+/**
+ * Resources / Stuff I Like Page
+ *
+ * Displays a curated collection of books, podcasts, tools, services, and reading materials
+ * organized by category. Supports category filtering and features highlighted resources.
+ *
+ * Features:
+ * - Resources grouped by category (podcasts, books, tools, services, reading)
+ * - Category filtering with visual indication
+ * - Featured resources highlighted
+ * - Clean grid layout
+ * - Responsive design
+ * - SEO optimized
+ *
+ * @page
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+import { getCollection } from 'astro:content';
+import { pagesConfig } from '../pages.config';
+
+const allResources = await getCollection('resources');
+
+// Group resources by category
+const categories = {
+  tools: allResources.filter(r => r.data.category === 'tools').sort((a, b) => (a.data.order || 999) - (b.data.order || 999)),
+  books: allResources.filter(r => r.data.category === 'books').sort((a, b) => (a.data.order || 999) - (b.data.order || 999)),
+  podcasts: allResources.filter(r => r.data.category === 'podcasts').sort((a, b) => (a.data.order || 999) - (b.data.order || 999)),
+  services: allResources.filter(r => r.data.category === 'services').sort((a, b) => (a.data.order || 999) - (b.data.order || 999)),
+  reading: allResources.filter(r => r.data.category === 'reading').sort((a, b) => (a.data.order || 999) - (b.data.order || 999)),
+};
+
+// Get featured resources across all categories
+const featuredResources = allResources.filter(r => r.data.featured).slice(0, 3);
+
+const categoryLabels = {
+  tools: 'Tools',
+  books: 'Books',
+  podcasts: 'Podcasts',
+  services: 'Services',
+  reading: 'Reading',
+} as const;
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={pagesConfig.stuffILike.title}
+    description={pagesConfig.stuffILike.description}
+    type="website"
+  />
+
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{pagesConfig.stuffILike.heading}</h1>
+      <p class="page-intro">
+        {pagesConfig.stuffILike.intro}
+      </p>
+    </header>
+
+    {/* Featured Resources Section */}
+    {featuredResources.length > 0 && (
+      <section class="featured-section">
+        <h2>Featured Picks</h2>
+        <div class="featured-grid">
+          {featuredResources.map((resource) => (
+            <div class="featured-card">
+              <div class="featured-badge">Featured</div>
+              <h3>{resource.data.title}</h3>
+              <p class="description">{resource.data.description}</p>
+              <div class="resource-meta">
+                <span class="category-label">{categoryLabels[resource.data.category]}</span>
+                {resource.data.author && <span class="author">by {resource.data.author}</span>}
+                {resource.data.year && <span class="year">{resource.data.year}</span>}
+              </div>
+              {resource.data.url && (
+                <a href={resource.data.url} target="_blank" rel="noopener noreferrer" class="resource-link">
+                  → View
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {/* Resources by Category */}
+    <div class="resources-sections">
+      {Object.entries(categories).map(([key, resources]) => (
+        resources.length > 0 && (
+          <section class="category-section">
+            <h2 class="category-title">{categoryLabels[key as keyof typeof categoryLabels]}</h2>
+            <div class="resource-grid">
+              {resources.map((resource) => (
+                <div class="resource-card">
+                  <div class="card-content">
+                    <h3 class="resource-title">{resource.data.title}</h3>
+                    <p class="description">{resource.data.description}</p>
+                    <div class="resource-info">
+                      {resource.data.author && <span class="author">by {resource.data.author}</span>}
+                      {resource.data.year && <span class="year">{resource.data.year}</span>}
+                    </div>
+                  </div>
+                  {resource.data.url && (
+                    <a href={resource.data.url} target="_blank" rel="noopener noreferrer" class="resource-link">
+                      → Visit
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      ))}
+    </div>
+  </main>
+
+  <style>
+    .page-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    .page-intro {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+      margin: 0 auto;
+      max-width: 600px;
+    }
+
+    /* Featured Section */
+    .featured-section {
+      margin-bottom: 4rem;
+      padding-bottom: 3rem;
+      border-bottom: 2px solid var(--color-border);
+    }
+
+    .featured-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--color-text);
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .featured-card {
+      position: relative;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      transition: all 150ms ease;
+    }
+
+    .featured-card:hover {
+      border-color: var(--color-signal-orange);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(255, 107, 53, 0.1);
+    }
+
+    .featured-badge {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.375rem 0.75rem;
+      background: var(--color-signal-orange);
+      color: #ffffff;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    .featured-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--color-text);
+    }
+
+    .featured-card .description {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+
+    .resource-meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.8125rem;
+      flex-wrap: wrap;
+    }
+
+    .category-label {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+
+    .author, .year {
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+
+    .resource-link {
+      display: inline-block;
+      color: var(--color-signal-orange);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 150ms ease;
+    }
+
+    .resource-link:hover {
+      transform: translateX(4px);
+    }
+
+    /* Categories Section */
+    .resources-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .category-section {
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .category-section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .category-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--color-text);
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .resource-card {
+      padding: 1.25rem;
+      background: var(--color-bg-secondary);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 150ms ease;
+    }
+
+    .resource-card:hover {
+      border-color: var(--color-signal-orange);
+      transform: translateY(-2px);
+    }
+
+    .card-content {
+      flex: 1;
+    }
+
+    .resource-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--color-text);
+    }
+
+    .resource-card .description {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .resource-info {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .resource-info .author,
+    .resource-info .year {
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .resource-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

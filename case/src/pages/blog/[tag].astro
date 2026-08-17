@@ -1,0 +1,141 @@
+---
+/**
+ * Blog Tag Filter Page
+ *
+ * Dynamic route that displays all blog posts with a specific tag.
+ * Generates one page per unique tag found in the blog collection.
+ *
+ * Features:
+ * - Dynamic tag page generation
+ * - Filters posts by selected tag
+ * - Sorts by publish date (newest first)
+ * - Breadcrumb navigation (Blog > Tag)
+ * - Shows post type badge
+ * - Handles missing tags gracefully
+ *
+ * Routes:
+ * - /blog/decisions (all decision posts)
+ * - /blog/speaking (all talk posts)
+ * - /blog/architecture (all posts tagged "architecture")
+ * - etc.
+ *
+ * @page
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../../components/SEO.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import PageStats from '../../components/PageStats.astro';
+import BackLink from '../../components/BackLink.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allPosts = await getCollection('blog', ({ data }) => {
+    return data.draft === false;
+  });
+
+  // Collect all unique tags
+  const tagsSet = new Set<string>();
+  allPosts.forEach((post) => {
+    if (post.data.tags) {
+      post.data.tags.forEach((tag) => {
+        tagsSet.add(tag);
+      });
+    }
+  });
+
+  const tags = Array.from(tagsSet);
+
+  return tags.map((tag) => {
+    const taggedPosts = allPosts
+      .filter((post) => post.data.tags?.includes(tag))
+      .sort((a, b) => {
+        return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+      });
+
+    return {
+      params: { tag },
+      props: { posts: taggedPosts, tag },
+    };
+  });
+};
+
+interface Props {
+  posts: Awaited<ReturnType<typeof getCollection<'blog'>>>;
+  tag: string;
+}
+
+const { posts, tag } = Astro.props;
+
+const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1);
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={`${tagTitle} - Blog`}
+    description={`Blog posts tagged with ${tagTitle}`}
+    type="website"
+  />
+
+  <main class="page-container">
+    <BackLink href="/blog" text="All posts" />
+
+    <header class="page-header">
+      <h1 class="page-title">{tagTitle}</h1>
+      <PageStats text={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`} />
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="card-list">
+        {posts.map((post) => (
+          <ArticleCard
+            title={post.data.title}
+            slug={post.id}
+            description={post.data.description}
+            publishDate={post.data.publishDate}
+            tags={post.data.tags}
+            badge={post.data.type === 'decision' ? 'Decision' : post.data.type === 'talk' ? 'Talk' : 'Article'}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">No posts found for this tag.</p>
+    )}
+  </main>
+
+  <style>
+    .page-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .page-header {
+      margin: 2rem 0 3rem;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--color-text-secondary);
+      padding: 2rem;
+      font-size: 1rem;
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,166 @@
+---
+/**
+ * Blog Index Page with Pagination
+ *
+ * Lists all published blog posts (decisions, articles, talks) with pagination support.
+ * Displays post cards with type badge, title, description, publish date, and tags.
+ * Uses a rest parameter route to handle both the first page (/blog) and subsequent pages (/blog/2, etc.).
+ *
+ * Features:
+ * - Filters out draft posts (only shows published content)
+ * - Sorts by publish date (descending - newest first)
+ * - Pagination with 10 posts per page
+ * - Shows post type badge (Decision | Article | Talk)
+ * - Dynamic page statistics showing current range
+ * - SEO optimization per page
+ * - Empty state handling
+ *
+ * Routes:
+ * - /blog (page 1)
+ * - /blog/2 (page 2)
+ * - /blog/3 (page 3)
+ * - etc.
+ *
+ * @page
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../../components/SEO.astro';
+import Pagination from '../../components/Pagination.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import PageStats from '../../components/PageStats.astro';
+import { getCollection } from 'astro:content';
+import { pagesConfig } from '../../pages.config';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const postsPerPage = 10;
+
+  const allPosts = await getCollection('blog', ({ data }) => {
+    return data.draft === false;
+  });
+
+  // Sort by publishDate (descending - most recent first)
+  const sortedPosts = allPosts.sort((a, b) => {
+    return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+  });
+
+  const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+
+  return Array.from({ length: totalPages }, (_, i) => {
+    const page = i + 1;
+    const start = i * postsPerPage;
+    const end = start + postsPerPage;
+
+    return {
+      params: { page: page === 1 ? undefined : String(page) },
+      props: {
+        posts: sortedPosts.slice(start, end),
+        currentPage: page,
+        totalPages,
+        totalPosts: sortedPosts.length,
+      },
+    };
+  });
+};
+
+interface Props {
+  posts: Awaited<ReturnType<typeof getCollection<'blog'>>>;
+  currentPage: number;
+  totalPages: number;
+  totalPosts: number;
+}
+
+const { posts, currentPage, totalPages, totalPosts } = Astro.props;
+const postsPerPage = 10;
+
+const pageTitle = currentPage === 1
+  ? pagesConfig.blog.title
+  : `${pagesConfig.blog.title} - Page ${currentPage}`;
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={pageTitle}
+    description={pagesConfig.blog.description}
+    type="website"
+  />
+
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{pagesConfig.blog.heading}</h1>
+      <p class="page-intro">
+        {pagesConfig.blog.intro}
+      </p>
+      <PageStats text={totalPages > 1
+        ? `Showing ${(currentPage - 1) * postsPerPage + 1}–${Math.min(currentPage * postsPerPage, totalPosts)} of ${totalPosts} posts`
+        : `${totalPosts} posts`
+      } />
+    </header>
+
+    {posts.length > 0 ? (
+      <div class="card-list">
+        {posts.map((post) => (
+          <ArticleCard
+            title={post.data.title}
+            slug={post.id}
+            description={post.data.description}
+            publishDate={post.data.publishDate}
+            tags={post.data.tags}
+            badge={post.data.type === 'decision' ? 'Decision' : post.data.type === 'talk' ? 'Talk' : 'Article'}
+          />
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">No posts published yet.</p>
+    )}
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl="/blog"
+    />
+  </main>
+
+  <style>
+    .page-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--color-text);
+    }
+
+    .page-intro {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+      margin: 0 auto 1.5rem;
+      max-width: 600px;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--color-text-secondary);
+      padding: 2rem;
+      font-size: 1rem;
+    }
+  </style>
+</BaseLayout>

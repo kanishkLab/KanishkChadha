@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:#F9F9F9; -webkit-font-smoothing:antialiased; }
+  a { color:#FF6E42; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ::selection { background:#FF6E42; color:#fff; }
+</style>
+</helmet>
+
+<div style="display:flex; align-items:flex-start; font-family:'Manrope',sans-serif; color:#092634; background:#F9F9F9; min-height:100vh;">
+
+  <!-- SIDEBAR -->
+  <aside style="position:sticky; top:0; align-self:flex-start; width:264px; flex:none; height:100vh; box-sizing:border-box; background:#092634; color:#fff; padding:36px 26px; display:flex; flex-direction:column; gap:30px; overflow-y:auto;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:34px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#fff;">K</span><span style="color:#FF6E42;">C</span></span>
+      <span style="display:flex; flex-direction:column; line-height:1.2;">
+        <span style="font-family:'Inter',sans-serif; font-weight:700; font-size:15px; letter-spacing:-.02em;">Kanishk Chadha</span>
+        <span style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,255,255,.5);">Design System</span>
+      </span>
+    </div>
+
+    <div style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#FF6E42;">Foundations</div>
+    <nav style="display:flex; flex-direction:column; gap:2px; margin-top:-18px;">
+      <a href="#colour" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Colour</a>
+      <a href="#type" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Typography</a>
+      <a href="#space" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Spacing &amp; radius</a>
+      <a href="#logo" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Logo &amp; monogram</a>
+    </nav>
+
+    <div style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#FF6E42;">Components</div>
+    <nav style="display:flex; flex-direction:column; gap:2px; margin-top:-18px;">
+      <a href="#buttons" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Buttons</a>
+      <a href="#links" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Links &amp; labels</a>
+      <a href="#pills" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Stack pills</a>
+      <a href="#cards" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Cards &amp; surfaces</a>
+      <a href="#stats" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Stat band</a>
+      <a href="#rows" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Capability rows</a>
+      <a href="#forms" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Forms &amp; inputs</a>
+    </nav>
+
+    <div style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#FF6E42;">Patterns</div>
+    <nav style="display:flex; flex-direction:column; gap:2px; margin-top:-18px;">
+      <a href="#featured" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Featured work</a>
+      <a href="#newsletter" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Newsletter CTA</a>
+      <a href="#notes" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Note cards</a>
+      <a href="#chrome" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Nav &amp; footer</a>
+      <a href="#voice" style="color:rgba(255,255,255,.82); font-size:14px; font-weight:500; padding:7px 0;">Voice &amp; tone</a>
+    </nav>
+
+    <div style="margin-top:auto; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.4);">V1.0 · Nautical<br>Playfair + Manrope</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main style="flex:1; min-width:0; max-width:1080px; padding:0;">
+
+    <!-- HERO / COVER -->
+    <section style="background:#092634; color:#fff; padding:76px 64px 66px; position:relative; overflow:hidden;">
+      <div style="position:absolute; right:-120px; top:-120px; width:380px; height:380px; border-radius:50%; background:#004E72; opacity:.35;"></div>
+      <div style="position:absolute; right:80px; bottom:-40px; width:150px; height:150px; border-radius:50%; background:#FF6E42; opacity:.9;"></div>
+      <div style="position:relative;">
+        <div style="font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:#FF6E42;">Brand &amp; Product Design System</div>
+        <h1 style="font-family:'Playfair Display',Georgia,serif; font-size:58px; font-weight:600; line-height:1.02; letter-spacing:-.03em; margin:22px 0 18px; max-width:12ch;">The system behind the site.</h1>
+        <p style="font-size:18px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.85); max-width:56ch; margin:0;">Every token, type style, and component that builds kanishkchadha.com — a senior martech &amp; analytics presence. Deep navy for trust, oceanic blue for depth, one Signal Orange accent used with intent.</p>
+        <div style="display:flex; gap:12px; margin-top:30px; flex-wrap:wrap;">
+          <a href="#colour" style="background:#FF6E42; color:#fff; font-size:14px; font-weight:700; padding:13px 24px; border-radius:8px;">Explore foundations</a>
+          <a href="#buttons" style="background:rgba(255,255,255,.1); color:#fff; font-size:14px; font-weight:700; padding:13px 24px; border-radius:8px; border:1px solid rgba(255,255,255,.2);">Jump to components</a>
+        </div>
+      </div>
+    </section>
+
+    <div style="padding:56px 64px 90px; display:flex; flex-direction:column; gap:64px;">
+
+      <!-- COLOUR -->
+      <section id="colour" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">01</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Colour</h2>
+        </div>
+        <p style="font-size:15px; font-weight:500; line-height:1.6; color:#4a5a60; max-width:62ch; margin:0 0 28px;">A deep, trustworthy navy paired with an oceanic blue on clean white. Signal Orange is the single accent — CTAs, links, and moments of emphasis, never a background wash.</p>
+
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px;">
+          <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08); background:#fff;">
+            <div style="height:120px; background:#092634;"></div>
+            <div style="padding:14px 16px;">
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Deep Navy</div>
+              <div style="font-size:12px; color:#004E72; margin-top:4px;">#092634</div>
+              <div style="font-size:11.5px; line-height:1.5; color:#6a7a80; margin-top:9px;">Primary ink, headlines, dark surfaces.</div>
+            </div>
+          </div>
+          <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08); background:#fff;">
+            <div style="height:120px; background:#004E72;"></div>
+            <div style="padding:14px 16px;">
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Oceanic Blue</div>
+              <div style="font-size:12px; color:#004E72; margin-top:4px;">#004E72</div>
+              <div style="font-size:11.5px; line-height:1.5; color:#6a7a80; margin-top:9px;">Secondary text, supporting fills.</div>
+            </div>
+          </div>
+          <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08); background:#fff;">
+            <div style="height:120px; background:#FF6E42;"></div>
+            <div style="padding:14px 16px;">
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Signal Orange</div>
+              <div style="font-size:12px; color:#004E72; margin-top:4px;">#FF6E42</div>
+              <div style="font-size:11.5px; line-height:1.5; color:#6a7a80; margin-top:9px;">Accent only — CTAs, links, highlights.</div>
+            </div>
+          </div>
+          <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08); background:#fff;">
+            <div style="height:120px; background:#fff; box-shadow:inset 0 0 0 1px #e2e5e7;"></div>
+            <div style="padding:14px 16px;">
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">White</div>
+              <div style="font-size:12px; color:#004E72; margin-top:4px;">#FFFFFF</div>
+              <div style="font-size:11.5px; line-height:1.5; color:#6a7a80; margin-top:9px;">Page background, negative space.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:16px;">
+          <div style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #e6e9ea; border-radius:10px; padding:12px 14px;">
+            <span style="width:30px; height:30px; border-radius:7px; background:#F9F9F9; box-shadow:inset 0 0 0 1px #e6e9ea; flex:none;"></span>
+            <span><span style="display:block; font-size:12.5px; font-weight:600;">Off-White</span><span style="font-size:11px; color:#6a7a80;">#F9F9F9 · panels</span></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #e6e9ea; border-radius:10px; padding:12px 14px;">
+            <span style="width:30px; height:30px; border-radius:7px; background:#e6e9ea; flex:none;"></span>
+            <span><span style="display:block; font-size:12.5px; font-weight:600;">Hairline</span><span style="font-size:11px; color:#6a7a80;">#E6E9EA · borders</span></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #e6e9ea; border-radius:10px; padding:12px 14px;">
+            <span style="width:30px; height:30px; border-radius:7px; background:#4a5a60; flex:none;"></span>
+            <span><span style="display:block; font-size:12.5px; font-weight:600;">Body Slate</span><span style="font-size:11px; color:#6a7a80;">#4A5A60 · body text</span></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #e6e9ea; border-radius:10px; padding:12px 14px;">
+            <span style="width:30px; height:30px; border-radius:7px; background:#9aa6ab; flex:none;"></span>
+            <span><span style="display:block; font-size:12.5px; font-weight:600;">Muted</span><span style="font-size:11px; color:#6a7a80;">#9AA6AB · captions</span></span>
+          </div>
+        </div>
+
+        <div style="margin-top:24px; background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:20px 22px;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:12px;">Usage ratio</div>
+          <div style="display:flex; height:34px; border-radius:7px; overflow:hidden; font-weight:600;">
+            <div style="flex:60; background:#F9F9F9; box-shadow:inset 0 0 0 1px #dfe3e5; display:flex; align-items:center; justify-content:center; font-size:11px; color:#092634;">60% White</div>
+            <div style="flex:25; background:#092634; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;">25% Navy</div>
+            <div style="flex:10; background:#004E72; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;">10% Ocean</div>
+            <div style="flex:5; background:#FF6E42; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;">5%</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ showCode }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px; background:#092634; border-radius:12px; padding:20px 22px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.9; color:rgba(255,255,255,.9); overflow:auto;">
+            <sc-if value="{{ isCss }}" hint-placeholder-val="{{ true }}"><div><span style="color:#FF6E42;">--ink</span>: #092634;  <span style="color:#FF6E42;">--ocean</span>: #004E72;<br><span style="color:#FF6E42;">--accent</span>: #FF6E42;  <span style="color:#FF6E42;">--surface</span>: #F9F9F9;<br><span style="color:#FF6E42;">--line</span>: #E6E9EA;  <span style="color:#FF6E42;">--body</span>: #4A5A60;</div></sc-if>
+            <sc-if value="{{ isTw }}" hint-placeholder-val="{{ false }}"><div>colors: {<br>&nbsp;&nbsp;ink: <span style="color:#FF6E42;">'#092634'</span>, ocean: <span style="color:#FF6E42;">'#004E72'</span>,<br>&nbsp;&nbsp;accent: <span style="color:#FF6E42;">'#FF6E42'</span>, surface: <span style="color:#FF6E42;">'#F9F9F9'</span>,<br>&nbsp;&nbsp;line: <span style="color:#FF6E42;">'#E6E9EA'</span>, body: <span style="color:#FF6E42;">'#4A5A60'</span>,<br>}</div></sc-if>
+          </div>
+        </sc-if>
+      </section>
+
+      <!-- TYPOGRAPHY -->
+      <section id="type" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">02</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Typography</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-bottom:30px;">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:14px;">Headings — Playfair Display</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:64px; line-height:1; letter-spacing:-.03em;">Aa</div>
+            <div style="font-size:12px; font-weight:500; color:#004E72; margin-top:10px;">Serif · 500 · 600 · 700 · tracking −0.03em</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-size:28px; font-weight:600; margin-top:18px; letter-spacing:-.03em;">Build smarter.</div>
+          </div>
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:14px;">Body &amp; UI — Manrope</div>
+            <div style="font-family:'Manrope',sans-serif; font-weight:800; font-size:64px; line-height:1; letter-spacing:-.02em;">Aa</div>
+            <div style="font-size:12px; font-weight:500; color:#004E72; margin-top:10px;">Sans · 400 · 500 · 600 · 700 · 800</div>
+            <p style="font-size:15px; font-weight:500; line-height:1.6; color:#4a5a60; margin:18px 0 0;">Workflows that compound over time — measured, then automated with intention.</p>
+          </div>
+        </div>
+
+        <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:26px;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:18px;">Type scale</div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; align-items:baseline; gap:20px; border-bottom:1px solid #f0f2f3; padding-bottom:14px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">Display / Playfair 600 · 58</span><span style="font-family:'Playfair Display',Georgia,serif; font-size:44px; font-weight:600; letter-spacing:-.03em; line-height:1;">Build the data layer</span></div>
+            <div style="display:flex; align-items:baseline; gap:20px; border-bottom:1px solid #f0f2f3; padding-bottom:14px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">H1 / Playfair 600 · 34</span><span style="font-family:'Playfair Display',Georgia,serif; font-size:34px; font-weight:600; letter-spacing:-.03em;">Section headline</span></div>
+            <div style="display:flex; align-items:baseline; gap:20px; border-bottom:1px solid #f0f2f3; padding-bottom:14px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">H2 / Playfair 600 · 24</span><span style="font-family:'Playfair Display',Georgia,serif; font-size:24px; font-weight:600; letter-spacing:-.02em;">Subhead</span></div>
+            <div style="display:flex; align-items:baseline; gap:20px; border-bottom:1px solid #f0f2f3; padding-bottom:14px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">Body / Manrope 500 · 15</span><span style="font-size:15px; font-weight:500; color:#4a5a60;">Body copy set in Manrope for clarity and easy reading at length.</span></div>
+            <div style="display:flex; align-items:baseline; gap:20px; border-bottom:1px solid #f0f2f3; padding-bottom:14px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">Label / Manrope 600 · 12</span><span style="font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#004E72;">Overline Label</span></div>
+            <div style="display:flex; align-items:baseline; gap:20px;"><span style="font-size:11px; font-weight:600; color:#9aa6ab; width:150px; flex:none;">Logo / Inter 700 · 20</span><span style="font-family:'Inter',sans-serif; font-size:20px; font-weight:700; letter-spacing:-.04em;">Kanishk Chadha</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SPACING & RADIUS -->
+      <section id="space" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">03</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Spacing &amp; radius</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:22px;">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:16px;">Spacing scale · 4px base</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">4</span><span style="height:14px; width:4px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">8</span><span style="height:14px; width:8px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">12</span><span style="height:14px; width:12px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">16</span><span style="height:14px; width:16px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">24</span><span style="height:14px; width:24px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">32</span><span style="height:14px; width:32px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">48</span><span style="height:14px; width:48px; background:#FF6E42; border-radius:2px;"></span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:44px; font-size:12px; font-weight:600; color:#9aa6ab;">64</span><span style="height:14px; width:64px; background:#FF6E42; border-radius:2px;"></span></div>
+            </div>
+          </div>
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:16px;">Corner radius</div>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:56px; height:40px; background:#092634; border-radius:7px; flex:none;"></span><span style="font-size:13px; font-weight:500; color:#4a5a60;"><strong style="color:#092634;">7px</strong> — buttons, pills, inputs</span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:56px; height:40px; background:#092634; border-radius:12px; flex:none;"></span><span style="font-size:13px; font-weight:500; color:#4a5a60;"><strong style="color:#092634;">12px</strong> — cards, panels</span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:56px; height:40px; background:#092634; border-radius:14px; flex:none;"></span><span style="font-size:13px; font-weight:500; color:#4a5a60;"><strong style="color:#092634;">14px</strong> — feature blocks</span></div>
+              <div style="display:flex; align-items:center; gap:16px;"><span style="width:56px; height:40px; background:#092634; border-radius:999px; flex:none;"></span><span style="font-size:13px; font-weight:500; color:#4a5a60;"><strong style="color:#092634;">full</strong> — avatars, dots</span></div>
+            </div>
+            <div style="margin-top:20px; font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:10px;">Elevation</div>
+            <div style="display:flex; gap:14px;">
+              <div style="flex:1; height:44px; background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(9,38,52,.08); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#6a7a80;">soft</div>
+              <div style="flex:1; height:44px; background:#fff; border-radius:10px; box-shadow:0 4px 18px rgba(9,38,52,.12); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#6a7a80;">raised</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOGO -->
+      <section id="logo" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">04</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Logo &amp; monogram</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:18px;">
+          <div style="background:#F9F9F9; border:1px solid #e6e9ea; border-radius:12px; padding:40px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:76px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#092634;">K</span><span style="color:#FF6E42;">C</span></span>
+          </div>
+          <div style="background:#092634; border-radius:12px; padding:40px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:76px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#fff;">K</span><span style="color:#FF6E42;">C</span></span>
+          </div>
+        </div>
+        <div style="background:#092634; border-radius:12px; padding:22px 26px; display:flex; align-items:center; gap:18px; margin-bottom:18px;">
+          <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:44px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#fff;">K</span><span style="color:#FF6E42;">C</span></span>
+          <span style="font-family:'Inter',sans-serif; font-weight:700; font-size:22px; letter-spacing:-.04em; color:#fff;">Kanishk Chadha</span>
+        </div>
+        <sc-if value="{{ showGuidance }}" hint-placeholder-val="{{ true }}">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:22px 24px; display:grid; grid-template-columns:1fr 1fr; gap:20px; font-size:13px; font-weight:500; line-height:1.55; color:#4a5a60;">
+            <div><span style="color:#004E72; font-weight:700;">Do</span> — K in ink or white, C in orange. Set tight at −0.08em. Clear space equals the cap-height on all sides.</div>
+            <div><span style="color:#FF6E42; font-weight:700;">Don't</span> — swap the letter colours, box it, stretch it, or place it on busy photography.</div>
+          </div>
+        </sc-if>
+      </section>
+
+      <!-- BUTTONS -->
+      <section id="buttons" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">05</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Buttons</h2>
+        </div>
+        <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:28px;">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:16px;">
+            <button style="background:#FF6E42; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#f2603a;">Primary — See the work</button>
+            <button style="background:#092634; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#0d3547;">Secondary — Download Résumé ↓</button>
+            <button style="background:transparent; color:#092634; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:1px solid #cdd4d7; border-radius:8px; cursor:pointer;" style-hover="border-color:#092634;">Ghost — About</button>
+            <button style="background:transparent; color:#9aa6ab; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:1px solid #e6e9ea; border-radius:8px; cursor:not-allowed;">Disabled</button>
+          </div>
+          <div style="height:1px; background:#f0f2f3; margin:24px 0;"></div>
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:16px;">
+            <span style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#9aa6ab; margin-right:6px;">On navy</span>
+          </div>
+          <div style="background:#092634; border-radius:10px; padding:22px; margin-top:12px; display:flex; flex-wrap:wrap; gap:16px;">
+            <button style="background:#FF6E42; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#f2603a;">Read the newsletter</button>
+            <button style="background:rgba(255,255,255,.1); color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 24px; border:1px solid rgba(255,255,255,.2); border-radius:8px; cursor:pointer;" style-hover="background:rgba(255,255,255,.16);">Start a conversation</button>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:20px; margin-top:24px; font-size:12.5px; color:#6a7a80; line-height:1.6;">
+            <span><strong style="color:#092634;">Padding</strong> 13 × 24 · <strong style="color:#092634;">radius</strong> 8px · <strong style="color:#092634;">weight</strong> 700</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- LINKS & LABELS -->
+      <section id="links" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">06</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Links &amp; labels</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:14px;">Links &amp; emphasis</div>
+            <p style="font-size:15px; font-weight:500; line-height:1.7; color:#4a5a60; margin:0;">Inline links use <a href="#links">Signal Orange</a> and underline on hover. Reserve <strong style="color:#092634;">bold ink</strong> for key terms. Directional links carry an arrow — <a href="#links">Explore the case study →</a></p>
+          </div>
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:14px;">Overlines &amp; eyebrows</div>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <span style="font-size:12px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:#FF6E42;">AI · Analytics · Automation</span>
+              <span style="font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:#004E72;">The stack I work in</span>
+              <span style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#9aa6ab;">Field notes</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PILLS -->
+      <section id="pills" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">07</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Stack pills &amp; tags</h2>
+        </div>
+        <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:28px;">
+          <div style="text-align:center; font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:#9aa6ab; margin-bottom:18px;">The stack I work in</div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:640px; margin:0 auto;">
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">HubSpot</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">Salesforce</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">Segment</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">GA4</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">Google Data Studio</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">n8n</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">OpenAI</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">Claude</span>
+            <span style="background:#fff; border:1px solid #e6e9ea; border-radius:8px; padding:9px 16px; font-size:13px; font-weight:600; color:#092634; box-shadow:0 1px 3px rgba(9,38,52,.05);">Zapier</span>
+          </div>
+          <div style="height:1px; background:#f0f2f3; margin:26px 0;"></div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+            <span style="font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#9aa6ab; margin-right:6px;">Accent tags</span>
+            <span style="background:#FF6E42; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;">Flagship · Martech + AI</span>
+            <span style="background:rgba(255,110,66,.12); color:#c9512c; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;">New</span>
+            <span style="background:#eef1f2; color:#004E72; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;">Systems</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARDS -->
+      <section id="cards" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">08</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Cards &amp; surfaces</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px;">
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:8px;">White hairline card</div>
+            <p style="font-size:13px; font-weight:500; line-height:1.6; color:#6a7a80; margin:0 0 14px;">The default surface — white with a 1px hairline border. Links use Signal Orange.</p>
+            <a href="#cards" style="font-size:12.5px; font-weight:600;">Explore the case study →</a>
+          </div>
+          <div style="background:#004E72; border-radius:12px; padding:24px; color:#fff;">
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:8px;">Oceanic card</div>
+            <p style="font-size:13px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.85); margin:0;">A filled accent surface for pull quotes, voice notes, and secondary emphasis.</p>
+          </div>
+          <div style="background:#092634; border-radius:12px; padding:24px; color:#fff;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:10px;">Dark panel</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:8px;">Navy surface</div>
+            <p style="font-size:13px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.75); margin:0;">Deep navy for hero, stat, and CTA moments. Orange stays the accent.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAT BAND -->
+      <section id="stats" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">09</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Stat band</h2>
+        </div>
+        <div style="background:#092634; border-radius:14px; padding:34px 36px; color:#fff; display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:28px; align-items:center;">
+          <div>
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:10px;">9+ years in martech</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-size:22px; font-weight:600; line-height:1.2; letter-spacing:-.02em;">Senior enough to be trusted with the stack — and the outcomes.</div>
+          </div>
+          <div><div style="font-family:'Manrope',sans-serif; font-weight:800; font-size:38px; letter-spacing:-.02em;">9+ yrs</div><div style="font-size:12px; color:rgba(255,255,255,.6); margin-top:4px;">Owning martech, measurement &amp; reporting</div></div>
+          <div><div style="font-family:'Manrope',sans-serif; font-weight:800; font-size:38px; letter-spacing:-.02em; color:#FF6E42;">$250K+</div><div style="font-size:12px; color:rgba(255,255,255,.6); margin-top:4px;">Paid media managed at 3.6+ ROAS</div></div>
+          <div><div style="font-family:'Manrope',sans-serif; font-weight:800; font-size:38px; letter-spacing:-.02em;">10+</div><div style="font-size:12px; color:rgba(255,255,255,.6); margin-top:4px;">Locations instrumented end-to-end</div></div>
+        </div>
+      </section>
+
+      <!-- CAPABILITY ROWS -->
+      <section id="rows" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">10</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Capability rows</h2>
+        </div>
+        <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:8px 26px;">
+          <div style="display:grid; grid-template-columns:32px 1fr 240px; gap:18px; align-items:start; padding:22px 0; border-bottom:1px solid #f0f2f3;">
+            <span style="font-size:13px; font-weight:700; color:#FF6E42;">01</span>
+            <div><div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:6px;">Automation &amp; AI Systems</div><p style="font-size:13.5px; font-weight:500; line-height:1.6; color:#4a5a60; margin:0;">Agentic workflows with tool access, decision loops, and escalation logic — systems that self-correct after launch.</p></div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; font-weight:600; color:#004E72;"><span>n8n</span><span>HubSpot</span><span>Salesforce</span><span>GPT / Claude</span></div>
+          </div>
+          <div style="display:grid; grid-template-columns:32px 1fr 240px; gap:18px; align-items:start; padding:22px 0; border-bottom:1px solid #f0f2f3;">
+            <span style="font-size:13px; font-weight:700; color:#FF6E42;">02</span>
+            <div><div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:6px;">Analytics &amp; Attribution</div><p style="font-size:13.5px; font-weight:500; line-height:1.6; color:#4a5a60; margin:0;">Full-funnel measurement so every spend and campaign decision is grounded in real, queryable data.</p></div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; font-weight:600; color:#004E72;"><span>SQL</span><span>GA4</span><span>Looker Studio</span><span>Server-side GTM</span></div>
+          </div>
+          <div style="display:grid; grid-template-columns:32px 1fr 240px; gap:18px; align-items:start; padding:22px 0;">
+            <span style="font-size:13px; font-weight:700; color:#FF6E42;">03</span>
+            <div><div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:18px; letter-spacing:-.02em; margin-bottom:6px;">Customer Data / CDP</div><p style="font-size:13.5px; font-weight:500; line-height:1.6; color:#4a5a60; margin:0;">Unified profiles, event tracking, and audience activation across the stack for clean, real-time segmentation.</p></div>
+            <div style="display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; font-weight:600; color:#004E72;"><span>Segment</span><span>GTM</span><span>Consent Mode v2</span><span>Identity resolution</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORMS -->
+      <section id="forms" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">11</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Forms &amp; inputs</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42;">On white</div>
+            <label style="font-size:12px; font-weight:600; color:#092634; display:flex; flex-direction:column; gap:7px;">Email address<input type="email" placeholder="you@email.com" style="font-family:'Manrope',sans-serif; font-size:14px; font-weight:500; color:#092634; padding:12px 14px; border:1px solid #cdd4d7; border-radius:8px; outline:none;" style-focus="border-color:#FF6E42; box-shadow:0 0 0 3px rgba(255,110,66,.15);"></label>
+            <label style="font-size:12px; font-weight:600; color:#092634; display:flex; flex-direction:column; gap:7px;">Message<textarea rows="3" placeholder="What are you building?" style="font-family:'Manrope',sans-serif; font-size:14px; font-weight:500; color:#092634; padding:12px 14px; border:1px solid #cdd4d7; border-radius:8px; outline:none; resize:vertical;" style-focus="border-color:#FF6E42; box-shadow:0 0 0 3px rgba(255,110,66,.15);"></textarea></label>
+            <button style="align-self:flex-start; background:#FF6E42; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:12px 22px; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#f2603a;">Start a conversation</button>
+          </div>
+          <div style="background:#092634; border-radius:12px; padding:24px; display:flex; flex-direction:column; gap:16px;">
+            <div style="font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42;">On navy — newsletter</div>
+            <div style="display:flex; gap:10px;">
+              <input type="email" placeholder="you@email.com" style="flex:1; min-width:0; font-family:'Manrope',sans-serif; font-size:14px; font-weight:500; color:#092634; padding:12px 14px; border:none; border-radius:8px; outline:none;">
+              <button style="background:#FF6E42; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:12px 22px; border:none; border-radius:8px; cursor:pointer; white-space:nowrap;" style-hover="background:#f2603a;">Subscribe</button>
+            </div>
+            <p style="font-size:12px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.6); margin:0;">Inputs reverse to white fills on dark surfaces so the field stays the brightest element. Focus ring stays orange.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURED WORK -->
+      <section id="featured" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">12</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Featured work</h2>
+        </div>
+        <div style="border-radius:14px; overflow:hidden; box-shadow:0 4px 18px rgba(9,38,52,.12); background:#0c2b3b; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px); padding:34px 36px; color:#fff; margin-bottom:16px;">
+          <span style="display:inline-block; background:#FF6E42; color:#fff; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px;">Flagship · Martech + AI</span>
+          <h3 style="font-family:'Playfair Display',Georgia,serif; font-size:28px; font-weight:600; line-height:1.15; letter-spacing:-.02em; margin:0 0 12px; max-width:22ch;">The agent that qualifies our inbound leads — and how I know it's right.</h3>
+          <p style="font-size:14px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.78); margin:0; max-width:70ch;">Built on n8n + Make calling the Anthropic and OpenAI APIs: qualifies and scores inbound leads, pushes enriched records into the CRM so sales works the right buyers first.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+          <div style="border-radius:12px; background:#0c2b3b; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px); padding:24px; color:#fff; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end;">
+            <div style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:8px;">Measurement</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">The tracking plan that governs a CDP</div>
+          </div>
+          <div style="border-radius:12px; background:#0c2b3b; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px); padding:24px; color:#fff; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end;">
+            <div style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:8px;">Analytics / BI</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Five spreadsheets to one source of truth</div>
+          </div>
+          <div style="border-radius:12px; background:#0c2b3b; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px); padding:24px; color:#fff; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end;">
+            <div style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:8px;">Growth / CRO</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Owning a CRO program</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEWSLETTER CTA -->
+      <section id="newsletter" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">13</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Newsletter CTA</h2>
+        </div>
+        <div style="background:#092634; border-radius:14px; padding:44px; text-align:center; color:#fff;">
+          <div style="font-size:11px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:#FF6E42; margin-bottom:14px;">The newsletter</div>
+          <h3 style="font-family:'Playfair Display',Georgia,serif; font-size:34px; font-weight:600; letter-spacing:-.02em; margin:0 0 12px;">Automated Marketer</h3>
+          <p style="font-size:15px; font-weight:500; line-height:1.6; color:rgba(255,255,255,.8); max-width:46ch; margin:0 auto 26px;">A weekly note on using AI, analytics and automation in real campaigns. Build smarter, measure better, automate with intention.</p>
+          <div style="display:flex; gap:10px; max-width:420px; margin:0 auto;">
+            <input type="email" placeholder="you@email.com" style="flex:1; min-width:0; font-family:'Manrope',sans-serif; font-size:14px; font-weight:500; color:#092634; padding:13px 16px; border:none; border-radius:8px; outline:none;">
+            <button style="background:#FF6E42; color:#fff; font-family:'Manrope',sans-serif; font-size:14px; font-weight:700; padding:13px 26px; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#f2603a;">Subscribe</button>
+          </div>
+        </div>
+        <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:18px; margin-top:16px;">
+          <span style="width:42px; height:42px; border-radius:9px; background:#0a66c2; color:#fff; font-weight:800; font-size:20px; display:flex; align-items:center; justify-content:center; flex:none; font-family:'Inter',sans-serif;">in</span>
+          <div style="flex:1;">
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:16px; letter-spacing:-.02em;">Let's connect on LinkedIn</div>
+            <div style="font-size:12.5px; font-weight:500; color:#6a7a80; margin-top:2px;">Tracking teardowns, AI-agent experiments, and the occasional "here's what actually moved the number."</div>
+          </div>
+          <button style="background:#092634; color:#fff; font-family:'Manrope',sans-serif; font-size:13px; font-weight:700; padding:11px 20px; border:none; border-radius:8px; cursor:pointer; white-space:nowrap;" style-hover="background:#0d3547;">Follow →</button>
+        </div>
+      </section>
+
+      <!-- NOTE CARDS -->
+      <section id="notes" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">14</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Note cards</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <a href="#notes" style="text-decoration:none; color:inherit; display:block; background:#fff; border:1px solid #e6e9ea; border-radius:12px; overflow:hidden;" style-hover="box-shadow:0 4px 18px rgba(9,38,52,.12);">
+            <div style="height:150px; background:#eef1f2; background-image:repeating-linear-gradient(135deg, rgba(9,38,52,.04) 0 2px, transparent 2px 20px);"></div>
+            <div style="padding:22px 24px;">
+              <div style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:10px;">Privacy</div>
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:19px; letter-spacing:-.02em; line-height:1.3;">Consent Mode v2 default states, explained properly</div>
+              <div style="font-size:12px; font-weight:500; color:#9aa6ab; margin-top:10px;">6 min read · Aug 2026</div>
+            </div>
+          </a>
+          <a href="#notes" style="text-decoration:none; color:inherit; display:block; background:#fff; border:1px solid #e6e9ea; border-radius:12px; overflow:hidden;" style-hover="box-shadow:0 4px 18px rgba(9,38,52,.12);">
+            <div style="height:150px; background:#eef1f2; background-image:repeating-linear-gradient(135deg, rgba(9,38,52,.04) 0 2px, transparent 2px 20px);"></div>
+            <div style="padding:22px 24px;">
+              <div style="font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#FF6E42; margin-bottom:10px;">AI Systems</div>
+              <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:19px; letter-spacing:-.02em; line-height:1.3;">How I eval an AI agent before I trust it with leads</div>
+              <div style="font-size:12px; font-weight:500; color:#9aa6ab; margin-top:10px;">8 min read · Sep 2026</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- NAV & FOOTER -->
+      <section id="chrome" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">15</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Nav &amp; footer</h2>
+        </div>
+        <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08); margin-bottom:16px;">
+          <div style="background:#092634; padding:16px 26px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:24px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#fff;">K</span><span style="color:#FF6E42;">C</span></span>
+              <span style="font-family:'Inter',sans-serif; font-weight:700; font-size:15px; letter-spacing:-.03em; color:#fff;">Kanishk Chadha</span>
+            </div>
+            <div style="display:flex; gap:28px; font-size:12px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.7);">
+              <span>Work</span><span>Stack</span><span>Notes</span><span style="color:#FF6E42;">Contact</span>
+            </div>
+          </div>
+        </div>
+        <div style="border-radius:12px; overflow:hidden; box-shadow:0 2px 10px rgba(9,38,52,.08);">
+          <div style="height:4px; background:#FF6E42;"></div>
+          <div style="background:#092634; padding:26px; display:flex; align-items:center; justify-content:space-between; color:#fff;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-family:'Inter',sans-serif; font-weight:800; font-size:22px; letter-spacing:-.08em; line-height:1; display:inline-flex;"><span style="color:#fff;">K</span><span style="color:#FF6E42;">C</span></span>
+              <span style="font-family:'Inter',sans-serif; font-weight:700; font-size:14px; letter-spacing:-.03em;">Kanishk Chadha</span>
+            </div>
+            <div style="font-size:12px; font-weight:500; color:rgba(255,255,255,.65); text-align:center;">Build smarter. Measure better. Automate with intention.</div>
+            <div style="font-size:12px; font-weight:600; color:#FF6E42;">LinkedIn</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VOICE -->
+      <section id="voice" style="scroll-margin-top:24px;">
+        <div style="display:flex; align-items:baseline; gap:16px; border-bottom:2px solid #092634; padding-bottom:12px; margin-bottom:24px;">
+          <span style="font-weight:700; font-size:13px; color:#FF6E42; letter-spacing:.08em;">16</span>
+          <h2 style="font-family:'Playfair Display',Georgia,serif; font-size:30px; font-weight:600; letter-spacing:-.03em; margin:0;">Voice &amp; tone</h2>
+        </div>
+        <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:18px;">
+          <div style="background:#004E72; border-radius:12px; padding:28px; color:#fff;">
+            <div style="font-family:'Playfair Display',Georgia,serif; font-weight:600; font-size:20px; letter-spacing:-.02em; margin-bottom:10px;">The voice</div>
+            <p style="font-size:14.5px; font-weight:500; line-height:1.65; color:rgba(255,255,255,.88); margin:0;">Direct, practical, and confident. Short declaratives. Lead with the outcome, not the tool. Teach, don't sell — the reader should leave able to do something.</p>
+          </div>
+          <div style="background:#fff; border:1px solid #e6e9ea; border-radius:12px; padding:28px; display:flex; flex-direction:column; gap:14px;">
+            <div style="font-size:14px; font-weight:500; color:#4a5a60; line-height:1.5;"><span style="color:#004E72; font-weight:700;">Say</span> — "Outcomes, not project names." · "The eval that proves it's right."</div>
+            <div style="height:1px; background:#f0f2f3;"></div>
+            <div style="font-size:14px; font-weight:500; color:#4a5a60; line-height:1.5;"><span style="color:#FF6E42; font-weight:700;">Avoid</span> — hype adjectives, buzzword stacks, vague "synergy" claims, and exclamation marks.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;showCode&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Foundations&quot;},
+  &quot;codeSyntax&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;CSS&quot;, &quot;Tailwind&quot;], &quot;default&quot;: &quot;CSS&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Foundations&quot;},
+  &quot;showGuidance&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Content&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const syntax = p.codeSyntax ?? 'CSS';
+    return {
+      showCode: p.showCode ?? true,
+      showGuidance: p.showGuidance ?? true,
+      isCss: syntax === 'CSS',
+      isTw: syntax === 'Tailwind',
+    };
+  }
+}
+</script>
+</body>
+</html>

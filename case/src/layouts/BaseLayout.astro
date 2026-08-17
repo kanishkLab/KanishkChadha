@@ -1,0 +1,150 @@
+---
+/**
+ * BaseLayout
+ * 
+ * Foundation layout component that provides the core HTML structure,
+ * navigation, footer, and global styles for all pages. All other layouts extend
+ * this base layout to ensure consistent site-wide structure.
+ * 
+ * Features:
+ * - HTML document structure
+ * - Favicon and manifest configuration
+ * - Theme system with dark/light mode support
+ * - Prevents flash of wrong theme on page load
+ * - Astro View Transitions support with theme persistence
+ * - Sticky navigation header
+ * - Global CSS imports (global, typography, utilities)
+ * - Responsive layout structure
+ * 
+ * Note: SEO meta tags (title, description, OG, Twitter) should be handled
+ * by the SEO component in each page, not in this layout.
+ * 
+ * @component
+ * 
+ * @example
+ * ```astro
+ * ---
+ * import BaseLayout from '../layouts/BaseLayout.astro';
+ * import SEO from '../components/SEO.astro';
+ * ---
+ * 
+ * <BaseLayout>
+ *   <SEO 
+ *     slot="head"
+ *     title="About Me" 
+ *     description="Learn more about my background"
+ *   />
+ *   <div>Page content goes here</div>
+ * </BaseLayout>
+ * ```
+ */
+
+import { ClientRouter } from 'astro:transitions';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config';
+import '../styles/global.css';
+import '../styles/typography.css';
+import '../styles/utilities.css';
+---
+
+<!DOCTYPE html>
+<html lang={siteConfig.language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Inter — the only webfont. Loaded here rather than via a CSS
+         @import so the download starts with the HTML instead of
+         waiting on a second round-trip. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+    />
+
+    <!-- SEO tags injected via slot -->
+    <slot name="head" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#092634" />
+
+    <ClientRouter />
+
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      main {
+        flex: 1;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* ── Page transitions ──────────────────────────────────
+         Astro's default cross-fade morphs the whole document,
+         which reads as a slow wash on long pages. Instead the
+         outgoing page fades out fast and the incoming one fades
+         up over 8px — short enough to feel like a page load,
+         long enough not to flicker. The persisted header is
+         excluded so the nav stays visually anchored.
+      ────────────────────────────────────────────────────── */
+      @keyframes kc-fade-out {
+        to { opacity: 0; }
+      }
+      @keyframes kc-fade-up {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: none; }
+      }
+
+      ::view-transition-old(root) {
+        animation: kc-fade-out 90ms cubic-bezier(0.4, 0, 1, 1) both;
+      }
+      ::view-transition-new(root) {
+        animation: kc-fade-up 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      /* The sticky header is persisted across navigations; giving it
+         its own transition name keeps it out of the root snapshot so
+         it doesn't fade with the page body. */
+      .site-header {
+        view-transition-name: kc-header;
+      }
+      ::view-transition-old(kc-header),
+      ::view-transition-new(kc-header) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" transition:persist>
+      <Navigation />
+    </header>
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

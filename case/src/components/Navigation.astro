@@ -26,7 +26,7 @@ const isActive = (href: string) => {
   <!-- Desktop links -->
   <div class="nav-scroll">
     <ul class="nav-list">
-      {navItems.filter(i => i.href !== '/').map((item) => (
+      {navItems.map((item) => (
         <li class="nav-item">
           <a
             href={item.href}

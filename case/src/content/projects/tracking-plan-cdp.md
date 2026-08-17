@@ -30,6 +30,7 @@ impact:
 learnings:
   - "A tracking plan is a governance document, not a spreadsheet — it needs ownership, review cycles, and versioning"
   - "Identity resolution is the hardest part of CDP work and deserves dedicated architecture time"
+coverImage: "/cases/tracking-plan-cdp.jpg"
 featured: true
 status: ongoing
 order: 2

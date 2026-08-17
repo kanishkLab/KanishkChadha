@@ -33,6 +33,7 @@ impact:
 learnings:
   - "Metric definition alignment is the real project — the dashboard is just the output"
   - "Anomaly detection turns a reporting tool into an early warning system"
+coverImage: "/cases/bi-dashboard-source-of-truth.jpg"
 featured: true
 status: completed
 order: 3

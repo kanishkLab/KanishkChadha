@@ -1,104 +1,731 @@
 ---
-/**
- * Projects Index Page
- * 
- * Lists all projects as case studies with impact summaries. Projects are displayed
- * in a prioritized order: custom order (if specified) takes precedence, otherwise
- * sorted by year (most recent first). Featured projects are highlighted.
- * 
- * Features:
- * - Queries all projects from content collection
- * - Smart sorting: custom order → year (descending)
- * - Displays project and featured count statistics
- * - Uses ProjectCard component for consistent presentation
- * - SEO optimization
- * - Empty state handling
- * 
- * Route: /projects
- * 
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
-import PageStats from '../../components/PageStats.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
+import { siteConfig } from '../../config';
 
-/**
- * Queries all projects from the content collection
- */
 const allProjects = await getCollection('projects');
 
-/**
- * Sorts projects with intelligent prioritization
- * 
- * Sorting logic:
- * 1. If both projects have an 'order' field, sort by order (ascending)
- * 2. Projects with 'order' field are prioritized over those without
- * 3. Projects without 'order' are sorted by year (descending - newest first)
- * 
- * This allows manual curation of featured projects while maintaining
- * chronological order for others.
- */
 const sortedProjects = allProjects.sort((a, b) => {
-  // If both have order field, sort by order
   if (a.data.order !== undefined && b.data.order !== undefined) {
     return a.data.order - b.data.order;
   }
-  // If only one has order, prioritize it
   if (a.data.order !== undefined) return -1;
   if (b.data.order !== undefined) return 1;
-  // Otherwise sort by year (descending)
   return b.data.year - a.data.year;
 });
 
-/**
- * Total count of projects for statistics display
- */
-const totalProjects = sortedProjects.length;
+const spotlightProject = sortedProjects[0];
+const remainingProjects = sortedProjects.slice(1);
 
-/**
- * Count of featured projects for statistics display
- */
-const featuredCount = sortedProjects.filter(p => p.data.featured).length;
+const allRoles = [...new Set(sortedProjects.map(p => p.data.role))];
+
+const linkedin = siteConfig.social.linkedin;
 ---
 
 <BaseLayout>
-  <SEO 
+  <SEO
     slot="head"
     title={pagesConfig.projects.title}
     description={pagesConfig.projects.description}
     type="website"
   />
 
-  <main class="page-container">
-    <header class="page-header">
-      <h1 class="page-title">{pagesConfig.projects.heading}</h1>
-      <p class="page-intro">
-        {pagesConfig.projects.intro}
-      </p>
-      <PageStats text={`${totalProjects} projects · ${featuredCount} featured`} />
-    </header>
+  <div class="projects-page">
 
-    {sortedProjects.length > 0 ? (
-      <div class="card-list">
-        {sortedProjects.map((project) => (
-          <ProjectCard
-            title={project.data.title}
-            slug={project.id}
-            outcomeSummary={project.data.outcomeSummary}
-            role={project.data.role}
-            year={project.data.year}
-            techStack={project.data.techStack}
-            featured={project.data.featured}
-            status={project.data.status}
-          />
-        ))}
+    <!-- ── Hero / Spotlight ──────────────────────────────────── -->
+    <section class="spotlight">
+      <div class="spotlight-inner">
+        <div class="spotlight-text">
+          <span class="spotlight-overline">Featured Case Study</span>
+          <h1 class="spotlight-title">{spotlightProject.data.title}</h1>
+          <p class="spotlight-summary">{spotlightProject.data.outcomeSummary}</p>
+          <div class="spotlight-meta">
+            <span class="meta-item">{spotlightProject.data.role}</span>
+            <span class="meta-sep">&middot;</span>
+            <span class="meta-item">{spotlightProject.data.year}</span>
+            {spotlightProject.data.status !== 'completed' && (
+              <span class="meta-sep">&middot;</span>
+              <span class="meta-badge">Ongoing</span>
+            )}
+          </div>
+          <a href={`/projects/${spotlightProject.id}`} class="spotlight-cta">
+            Read case study
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+        <a href={`/projects/${spotlightProject.id}`} class="spotlight-image-link">
+          {spotlightProject.data.coverImage ? (
+            <img src={spotlightProject.data.coverImage} alt={spotlightProject.data.title} class="spotlight-image" />
+          ) : (
+            <div class="spotlight-image spotlight-image--placeholder" />
+          )}
+        </a>
       </div>
-    ) : (
-      <p class="empty-state">No projects available yet.</p>
+    </section>
+
+    <!-- ── Filter tabs + project cards ───────────────────────── -->
+    <section class="projects-section">
+      <div class="projects-inner">
+
+        <div class="section-header">
+          <h2 class="section-title">All Case Studies</h2>
+          <p class="section-subtitle">{pagesConfig.projects.intro}</p>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar" role="tablist" aria-label="Filter projects by role">
+          <button class="filter-tab filter-tab--active" data-filter="all" role="tab" aria-selected="true">
+            All
+          </button>
+          {allRoles.map((role) => (
+            <button class="filter-tab" data-filter={role} role="tab" aria-selected="false">
+              {role}
+            </button>
+          ))}
+        </div>
+
+        <!-- Project grid -->
+        <div class="project-grid" id="project-grid">
+          {sortedProjects.map((project) => (
+            <a href={`/projects/${project.id}`} class="project-card" data-role={project.data.role}>
+              <div class="card-image-wrap">
+                {project.data.coverImage ? (
+                  <img src={project.data.coverImage} alt={project.data.title} class="card-image" loading="lazy" />
+                ) : (
+                  <div class="card-image card-image--placeholder" />
+                )}
+                {project.data.status !== 'completed' && (
+                  <span class="card-status">Ongoing</span>
+                )}
+              </div>
+              <div class="card-body">
+                <span class="card-role">{project.data.role} &middot; {project.data.year}</span>
+                <h3 class="card-title">{project.data.title}</h3>
+                <p class="card-summary">{project.data.outcomeSummary}</p>
+                {project.data.techStack && project.data.techStack.length > 0 && (
+                  <div class="card-tags">
+                    {project.data.techStack.slice(0, 4).map((tech: string) => (
+                      <span class="card-tag">{tech}</span>
+                    ))}
+                    {project.data.techStack.length > 4 && (
+                      <span class="card-tag card-tag--more">+{project.data.techStack.length - 4}</span>
+                    )}
+                  </div>
+                )}
+                <span class="card-link-text">
+                  View case study
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── LinkedIn Recommendations ──────────────────────────── -->
+    {linkedin && (
+      <section class="linkedin-section">
+        <div class="linkedin-inner">
+          <div class="linkedin-card">
+            <div class="linkedin-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </div>
+            <div class="linkedin-content">
+              <h3 class="linkedin-title">What colleagues & clients say</h3>
+              <p class="linkedin-desc">Read recommendations from people I've worked with — on collaboration, delivery, and impact.</p>
+              <a href={`${linkedin}/details/recommendations/`} target="_blank" rel="noopener noreferrer" class="linkedin-link">
+                Read on LinkedIn
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     )}
-  </main>
+
+    <!-- ── Get in Touch CTA ──────────────────────────────────── -->
+    <section class="cta-section">
+      <div class="cta-inner">
+        <span class="cta-overline">Get in Touch</span>
+        <h2 class="cta-title">Let's Work Together</h2>
+        <p class="cta-desc">Have a marketing challenge that needs measurement, automation, or a fresh perspective? Let's talk.</p>
+        <a href="/contact" class="cta-button">Get in Touch</a>
+      </div>
+    </section>
+
+  </div>
 </BaseLayout>
+
+<script>
+  function initFilters() {
+    const tabs = document.querySelectorAll('.filter-tab');
+    const cards = document.querySelectorAll('.project-card');
+
+    if (tabs.length === 0) return;
+
+    if ((tabs[0] as HTMLElement)?.dataset.filterBound === 'true') return;
+    (tabs[0] as HTMLElement).dataset.filterBound = 'true';
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const filter = (tab as HTMLElement).dataset.filter;
+
+        tabs.forEach(t => {
+          t.classList.remove('filter-tab--active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('filter-tab--active');
+        tab.setAttribute('aria-selected', 'true');
+
+        cards.forEach(card => {
+          const el = card as HTMLElement;
+          if (filter === 'all' || el.dataset.role === filter) {
+            el.style.display = '';
+            el.classList.remove('card--hidden');
+          } else {
+            el.classList.add('card--hidden');
+            setTimeout(() => { el.style.display = 'none'; }, 200);
+          }
+        });
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initFilters);
+</script>
+
+<style>
+  /* ── Page shell ──────────────────────────────────────────── */
+  .projects-page {
+    width: 100%;
+  }
+
+  /* ── Spotlight hero ──────────────────────────────────────── */
+  .spotlight {
+    background: var(--color-white);
+    padding: var(--space-4xl) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .spotlight-inner {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3xl);
+    align-items: center;
+  }
+
+  .spotlight-overline {
+    display: inline-block;
+    font-family: var(--font-family);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-signal-orange);
+    margin-bottom: var(--space-md);
+  }
+
+  .spotlight-title {
+    font-family: var(--font-family);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-navy);
+    margin-bottom: var(--space-lg);
+  }
+
+  .spotlight-summary {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-slate-body);
+    margin-bottom: var(--space-lg);
+  }
+
+  .spotlight-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    color: var(--color-slate-muted);
+    margin-bottom: var(--space-xl);
+    flex-wrap: wrap;
+  }
+
+  .meta-sep {
+    color: var(--color-border);
+  }
+
+  .meta-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(255, 110, 66, 0.2);
+    color: var(--color-signal-orange);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .spotlight-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-white);
+    background: var(--color-navy);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+  .spotlight-cta:hover {
+    background: var(--color-oceanic-blue);
+    transform: translateY(-1px);
+  }
+
+  .spotlight-image-link {
+    display: block;
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+  }
+  .spotlight-image-link:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .spotlight-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+  }
+
+  .spotlight-image--placeholder {
+    background: linear-gradient(135deg, #e8ecf0, #d1d8de);
+    aspect-ratio: 16 / 10;
+  }
+
+  /* ── Projects section ────────────────────────────────────── */
+  .projects-section {
+    padding: var(--space-4xl) 0;
+  }
+
+  .projects-inner {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+
+  .section-header {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-title {
+    font-family: var(--font-family);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-navy);
+    margin-bottom: var(--space-sm);
+  }
+
+  .section-subtitle {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-slate-body);
+    max-width: 640px;
+  }
+
+  /* ── Filter bar ──────────────────────────────────────────── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .filter-tab {
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-slate-muted);
+    background: none;
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 1rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+  }
+  .filter-tab:hover {
+    color: var(--color-navy);
+    border-color: var(--color-navy);
+  }
+  .filter-tab--active {
+    color: var(--color-white);
+    background: var(--color-navy);
+    border-color: var(--color-navy);
+  }
+
+  /* ── Project grid ────────────────────────────────────────── */
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
+  }
+
+  /* ── Project card ────────────────────────────────────────── */
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--transition-base), box-shadow var(--transition-base), opacity 200ms ease;
+  }
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .project-card.card--hidden {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .card-image-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-image {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+  .project-card:hover .card-image {
+    transform: scale(1.03);
+  }
+
+  .card-image--placeholder {
+    background: linear-gradient(135deg, #e8ecf0, #d1d8de);
+    aspect-ratio: 16 / 10;
+  }
+
+  .card-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-family: var(--font-family);
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(255, 110, 66, 0.9);
+    color: white;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+  }
+
+  .card-body {
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-role {
+    font-family: var(--font-family);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-signal-orange);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-title {
+    font-family: var(--font-family);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-navy);
+    margin-bottom: 0.625rem;
+  }
+
+  .card-summary {
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-slate-body);
+    margin-bottom: var(--space-md);
+    flex: 1;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .card-tag {
+    font-family: var(--font-family);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--color-slate-muted);
+    background: var(--color-off-white);
+    border: 1px solid var(--color-border);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .card-tag--more {
+    color: var(--color-slate-muted);
+    background: transparent;
+    border: none;
+    padding: 0.25rem 0.25rem;
+  }
+
+  .card-link-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-signal-orange);
+    margin-top: auto;
+    transition: gap var(--transition-fast);
+  }
+  .project-card:hover .card-link-text {
+    gap: 0.625rem;
+  }
+
+  /* ── LinkedIn section ────────────────────────────────────── */
+  .linkedin-section {
+    padding: 0 0 var(--space-4xl);
+  }
+
+  .linkedin-inner {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+
+  .linkedin-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: var(--space-2xl);
+    transition: box-shadow var(--transition-base);
+  }
+  .linkedin-card:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  .linkedin-icon {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0077b5;
+    color: white;
+    border-radius: var(--border-radius-md);
+  }
+
+  .linkedin-content {
+    flex: 1;
+  }
+
+  .linkedin-title {
+    font-family: var(--font-family);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-heading);
+    color: var(--color-navy);
+    margin-bottom: 0.375rem;
+  }
+
+  .linkedin-desc {
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-slate-body);
+    margin-bottom: var(--space-sm);
+  }
+
+  .linkedin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #0077b5;
+    text-decoration: none;
+    transition: opacity var(--transition-fast);
+  }
+  .linkedin-link:hover {
+    opacity: 0.8;
+  }
+
+  /* ── CTA section ─────────────────────────────────────────── */
+  .cta-section {
+    background: var(--color-off-white);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4xl) 0;
+  }
+
+  .cta-inner {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    text-align: center;
+  }
+
+  .cta-overline {
+    display: inline-block;
+    font-family: var(--font-family);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-signal-orange);
+    margin-bottom: var(--space-md);
+  }
+
+  .cta-title {
+    font-family: var(--font-family);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: var(--tracking-display);
+    color: var(--color-navy);
+    margin-bottom: var(--space-md);
+  }
+
+  .cta-desc {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-slate-body);
+    max-width: 480px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-family);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-white);
+    background: var(--color-navy);
+    padding: 0.875rem 2rem;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+  .cta-button:hover {
+    background: var(--color-oceanic-blue);
+    transform: translateY(-1px);
+  }
+
+  /* ── Responsive ──────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .spotlight {
+      padding: var(--space-3xl) 0;
+    }
+    .spotlight-inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+    .spotlight-title {
+      font-size: 1.75rem;
+    }
+    .spotlight-image-link {
+      order: -1;
+    }
+
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-bar {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: var(--space-md);
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .linkedin-card {
+      flex-direction: column;
+      text-align: center;
+      padding: var(--space-xl);
+    }
+
+    .cta-title {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .spotlight {
+      padding: var(--space-2xl) 0;
+    }
+    .spotlight-title {
+      font-size: 1.5rem;
+    }
+    .spotlight-summary {
+      font-size: 0.875rem;
+    }
+
+    .section-title {
+      font-size: 1.375rem;
+    }
+
+    .card-body {
+      padding: var(--space-md);
+    }
+    .card-title {
+      font-size: 1rem;
+    }
+  }
+</style>

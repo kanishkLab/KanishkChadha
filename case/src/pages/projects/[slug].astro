@@ -1,55 +1,12 @@
 ---
-/**
- * Case Study Detail Page
- * 
- * Dynamic route that displays a comprehensive project case study following a structured
- * narrative format. Presents the complete story of a project from problem identification
- * through to measurable impact and learnings.
- * 
- * Narrative Structure (enforced order):
- * 1. Overview - High-level project summary
- * 2. Problem - Challenge being addressed
- * 3. Constraints - Limitations and boundaries
- * 4. Approach - Solution strategy
- * 5. Key Decisions - Technical choices with reasoning and alternatives
- * 6. Tech Stack - Technologies used
- * 7. Result & Impact - Quantitative metrics and qualitative outcomes
- * 8. Learnings - Insights and takeaways
- * 
- * Features:
- * - Static path generation for all project entries
- * - Structured case study presentation
- * - Impact metrics grid (when available)
- * - Reading time calculation
- * - Structured data for SEO
- * - Optional additional markdown content
- * - Scroll-to-top functionality
- * - Related content navigation
- * - Back navigation to projects list
- * 
- * Route: /projects/[slug]
- * 
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import StructuredData from '../../components/StructuredData.astro';
 import ScrollToTop from '../../components/ScrollToTop.astro';
-import BackLink from '../../components/BackLink.astro';
-import RelatedContent from '../../components/RelatedContent.astro';
 import ImpactMetrics from '../../components/ImpactMetrics.astro';
 import { getCollection, getEntry, render } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
 
-/**
- * Generates static paths for all project entries
- * 
- * Queries the projects content collection and creates a route for each entry
- * using the entry ID as the slug parameter.
- * 
- * @returns Array of path objects with params
- */
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project) => ({
@@ -58,19 +15,12 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-
-/**
- * Retrieves the specific project entry by slug
- * 
- * Redirects to 404 if the project is not found.
- */
 const project = await getEntry('projects', slug!);
 
 if (!project) {
   return Astro.redirect('/404');
 }
 
-// Render the content (v6-compatible method)
 const { Content } = await render(project);
 
 const {
@@ -90,10 +40,10 @@ const {
   learnings,
   relatedProjects,
   relatedDecisions,
+  coverImage,
   status,
 } = project.data;
 
-// Status display configuration
 const statusConfig = {
   completed: { label: 'Completed', class: 'status--completed' },
   ongoing: { label: 'Ongoing', class: 'status--ongoing' },
@@ -101,12 +51,6 @@ const statusConfig = {
 };
 const statusInfo = statusConfig[status || 'completed'];
 
-/**
- * Calculates reading time from all case study content
- * 
- * Combines all text sections including overview, problem, approach, decisions,
- * impact, learnings, and optional markdown body to estimate total reading time.
- */
 const allText = [
   overview,
   problem,
@@ -118,10 +62,19 @@ const allText = [
   project.body || '',
 ].join(' ');
 const readingTime = formatReadingTime(calculateReadingTime(allText));
+
+const toolsDisplay = techStack.slice(0, 4).join(', ');
+
+// Fetch related projects
+const allProjects = await getCollection('projects');
+const related = (relatedProjects || [])
+  .map(s => allProjects.find(p => p.id === s))
+  .filter((p): p is NonNullable<typeof p> => p !== undefined)
+  .slice(0, 3);
 ---
 
 <BaseLayout>
-  <SEO 
+  <SEO
     slot="head"
     title={`${title} - Case Study`}
     description={outcomeSummary}
@@ -140,356 +93,698 @@ const readingTime = formatReadingTime(calculateReadingTime(allText));
     }}
   />
 
-  <main class="case-study">
-    <!-- Case Study Header -->
-    <header class="case-study-header">
-      <div class="header-badges">
-        {status && status !== 'completed' && (
-          <span class:list={['status-badge', statusInfo.class]}>
-            {statusInfo.label}
-          </span>
-        )}
+  <main class="project-page">
+
+    <!-- ── Hero ─────────────────────────────────────────── -->
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="hero-overline">
+          <span class="hero-category">{role}</span>
+          {status && status !== 'completed' && (
+            <span class:list={['status-badge', statusInfo.class]}>
+              {statusInfo.label}
+            </span>
+          )}
+        </div>
+
+        <h1 class="hero-title">{title}</h1>
+
+        <p class="hero-description">{outcomeSummary}</p>
+
+        <div class="hero-meta">
+          <div class="meta-block">
+            <span class="meta-label">Year</span>
+            <span class="meta-value">{year}</span>
+          </div>
+          <div class="meta-block">
+            <span class="meta-label">Role</span>
+            <span class="meta-value">{role}</span>
+          </div>
+          <div class="meta-block">
+            <span class="meta-label">Tools</span>
+            <span class="meta-value">{toolsDisplay}</span>
+          </div>
+          {duration && (
+            <div class="meta-block">
+              <span class="meta-label">Duration</span>
+              <span class="meta-value">{duration}</span>
+            </div>
+          )}
+        </div>
       </div>
-      <h1>{title}</h1>
-      <div class="case-study-meta">
-        <span class="meta-item">{role}</span>
-        <span class="meta-separator">·</span>
-        <span class="meta-item">{year}</span>
-        {duration && (
-          <>
-            <span class="meta-separator">·</span>
-            <span class="meta-item">{duration}</span>
-          </>
-        )}
-        {teamSize && (
-          <>
-            <span class="meta-separator">·</span>
-            <span class="meta-item">{teamSize} {teamSize === 1 ? 'person' : 'people'}</span>
-          </>
-        )}
-        <span class="meta-separator">·</span>
-        <span class="meta-item">{readingTime}</span>
-      </div>
-      <p class="outcome-summary">{outcomeSummary}</p>
+
+      {coverImage && (
+        <div class="hero-image-wrap">
+          <img src={coverImage} alt={title} class="hero-image" loading="eager" />
+        </div>
+      )}
     </header>
 
-    <!-- Overview Section -->
-    <section class="case-study-section">
-      <h2>Overview</h2>
-      <p>{overview}</p>
-    </section>
+    <!-- ── Body ─────────────────────────────────────────── -->
+    <article class="project-body">
 
-    <!-- Problem Section -->
-    <section class="case-study-section">
-      <h2>Problem</h2>
-      <p>{problem}</p>
-    </section>
+      <section class="body-section">
+        <p class="lead-paragraph">{overview}</p>
+      </section>
 
-    <!-- Constraints Section -->
-    <section class="case-study-section">
-      <h2>Constraints</h2>
-      <ul class="constraints-list">
-        {constraints.map((constraint) => (
-          <li>{constraint}</li>
-        ))}
-      </ul>
-    </section>
+      <section class="body-section">
+        <h2>The Challenge</h2>
+        <p>{problem}</p>
+      </section>
 
-    <!-- Approach Section -->
-    <section class="case-study-section">
-      <h2>Approach</h2>
-      <p>{approach}</p>
-    </section>
-
-    <!-- Key Decisions Section -->
-    <section class="case-study-section">
-      <h2>Key Decisions</h2>
-      <div class="decisions-list">
-        {keyDecisions.map((decision) => (
-          <div class="decision-item">
-            <h3 class="decision-title">{decision.decision}</h3>
-            <div class="decision-reasoning">
-              <strong>Reasoning:</strong>
-              <p>{decision.reasoning}</p>
-            </div>
-            {decision.alternatives && decision.alternatives.length > 0 && (
-              <div class="decision-alternatives">
-                <strong>Alternatives considered:</strong>
-                <ul>
-                  {decision.alternatives.map((alt) => (
-                    <li>{alt}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Tech Stack Section -->
-    <section class="case-study-section">
-      <h2>Tech Stack</h2>
-      <ul class="tech-stack-list">
-        {techStack.map((tech) => (
-          <li>{tech}</li>
-        ))}
-      </ul>
-    </section>
-
-    <!-- Result/Impact Section -->
-    <section class="case-study-section">
-      <h2>Result & Impact</h2>
-      
-      {/* Display metrics with visualization */}
-      {impact.metrics && impact.metrics.length > 0 && (
-        <ImpactMetrics metrics={impact.metrics} />
+      {constraints.length > 0 && (
+        <section class="body-section">
+          <h2>Constraints</h2>
+          <ol class="numbered-list">
+            {constraints.map((c) => (
+              <li>{c}</li>
+            ))}
+          </ol>
+        </section>
       )}
-      
-      <p class="impact-qualitative">{impact.qualitative}</p>
+
+      <section class="body-section">
+        <h2>The Approach</h2>
+        <p>{approach}</p>
+      </section>
+
+      {keyDecisions.length > 0 && (
+        <section class="body-section">
+          <h2>Key Decisions</h2>
+          <div class="decisions-grid">
+            {keyDecisions.map((decision) => (
+              <div class="decision-card">
+                <h3>{decision.decision}</h3>
+                <p>{decision.reasoning}</p>
+                {decision.alternatives && decision.alternatives.length > 0 && (
+                  <div class="alternatives">
+                    <span class="alt-label">Alternatives considered</span>
+                    <ul>
+                      {decision.alternatives.map((alt) => (
+                        <li>{alt}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section class="body-section">
+        <h2>Tech Stack</h2>
+        <div class="tech-pills">
+          {techStack.map((tech) => (
+            <span class="tech-pill">{tech}</span>
+          ))}
+        </div>
+      </section>
+
+      <section class="body-section">
+        <h2>Result & Impact</h2>
+        {impact.metrics && impact.metrics.length > 0 && (
+          <ImpactMetrics metrics={impact.metrics} />
+        )}
+        <p>{impact.qualitative}</p>
+      </section>
+
+      {learnings.length > 0 && (
+        <section class="body-section">
+          <h2>Learnings</h2>
+          <ol class="numbered-list">
+            {learnings.map((l) => (
+              <li>{l}</li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {Content && (
+        <section class="body-section prose-content">
+          <Content />
+        </section>
+      )}
+
+      <!-- ── Author line ───────────────────────────────── -->
+      <div class="author-line">
+        <span>by <a href="/">Kanishk Chadha</a></span>
+        <span class="reading-time">{readingTime}</span>
+      </div>
+    </article>
+
+    <!-- ── CTA ──────────────────────────────────────────── -->
+    <section class="cta-section">
+      <p class="cta-overline">Get in Touch</p>
+      <h2 class="cta-heading">Let's Work Together</h2>
+      <p class="cta-body">Have a project in mind or just want to say hello? I'd love to hear from you.</p>
+      <a href="/contact" class="cta-button">Get in Touch</a>
     </section>
 
-    <!-- Learnings Section -->
-    <section class="case-study-section">
-      <h2>Learnings</h2>
-      <ul class="learnings-list">
-        {learnings.map((learning) => (
-          <li>{learning}</li>
-        ))}
-      </ul>
-    </section>
-
-    <!-- Additional MDX Content (if any) -->
-    {Content && (
-      <section class="case-study-content">
-        <Content />
+    <!-- ── Related Projects ─────────────────────────────── -->
+    {related.length > 0 && (
+      <section class="related-section">
+        <h2 class="related-heading">More Case Studies</h2>
+        <div class="related-grid">
+          {related.map((p) => (
+            <a href={`/projects/${p.id}`} class="related-card">
+              {p.data.coverImage && (
+                <img src={p.data.coverImage} alt={p.data.title} class="related-card-img" loading="lazy" />
+              )}
+              <div class="related-card-body">
+                <span class="related-card-meta">{p.data.role} · {p.data.year}</span>
+                <h3>{p.data.title}</h3>
+              </div>
+            </a>
+          ))}
+        </div>
       </section>
     )}
 
-    <!-- Related Content -->
-    <RelatedContent
-      relatedProjects={relatedProjects}
-      relatedPosts={relatedDecisions}
-    />
-
-    <BackLink href="/projects" text="All projects" />
+    <a href="/projects" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      All projects
+    </a>
   </main>
 
   <ScrollToTop />
-
-  <style>
-    .case-study {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-    }
-
-    .case-study-header {
-      margin-bottom: 3rem;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .header-badges {
-      margin-bottom: 0.75rem;
-    }
-
-    .header-badges:empty {
-      display: none;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 0.3rem 0.625rem;
-      border-radius: 4px;
-    }
-
-    .status--ongoing {
-      background: rgba(255, 110, 66, 0.14);
-      color: var(--color-signal-orange);
-    }
-
-    .status--archived {
-      background: rgba(107, 124, 133, 0.14);
-      color: var(--color-slate-muted);
-    }
-
-    .case-study-header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    .case-study-meta {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.9375rem;
-      color: var(--color-text-secondary);
-      margin-bottom: 1.5rem;
-    }
-
-    .meta-separator {
-      opacity: 0.5;
-    }
-
-    .outcome-summary {
-      font-size: 1.125rem;
-      line-height: 1.6;
-      color: var(--color-text-secondary);
-    }
-
-    .case-study-section {
-      margin-bottom: 3rem;
-    }
-
-    .case-study-section h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
-
-    .case-study-section p {
-      font-size: 1.125rem;
-      line-height: 1.7;
-      color: var(--color-text-secondary);
-    }
-
-    .constraints-list,
-    .tech-stack-list,
-    .learnings-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .constraints-list li,
-    .tech-stack-list li,
-    .learnings-list li {
-      font-size: 1.0625rem;
-      line-height: 1.7;
-      padding: 0.5rem 0;
-      padding-left: 1.5rem;
-      position: relative;
-      color: var(--color-text-secondary);
-    }
-
-    .constraints-list li::before,
-    .tech-stack-list li::before,
-    .learnings-list li::before {
-      content: "→";
-      position: absolute;
-      left: 0;
-      color: var(--color-accent);
-    }
-
-    .decisions-list {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .decision-item {
-      padding: 1.5rem;
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      background: var(--color-bg-secondary);
-    }
-
-    .decision-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--color-text);
-    }
-
-    .decision-reasoning,
-    .decision-alternatives {
-      margin-top: 1rem;
-    }
-
-    .decision-reasoning strong,
-    .decision-alternatives strong {
-      display: block;
-      font-size: 0.9375rem;
-      color: var(--color-text-muted);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .decision-reasoning p {
-      font-size: 1.0625rem;
-      margin-top: 0.5rem;
-      color: var(--color-text-secondary);
-    }
-
-    .decision-alternatives ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 0.5rem;
-    }
-
-    .decision-alternatives li {
-      font-size: 1.0625rem;
-      line-height: 1.6;
-      padding: 0.25rem 0;
-      padding-left: 1.25rem;
-      position: relative;
-      color: var(--color-text-secondary);
-    }
-
-    .decision-alternatives li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      color: var(--color-accent);
-    }
-
-    .impact-qualitative {
-      font-size: 1.125rem;
-      line-height: 1.7;
-      color: var(--color-text-secondary);
-    }
-
-    .case-study-content {
-      margin-top: 3rem;
-      font-size: 1.0625rem;
-      line-height: 1.7;
-      color: var(--color-text-secondary);
-    }
-
-    @media (max-width: 768px) {
-      .case-study {
-        padding: 1.5rem 1rem;
-      }
-
-      .case-study-header h1 {
-        font-size: 2rem;
-      }
-
-      .outcome-summary {
-        font-size: 1.125rem;
-      }
-
-      .case-study-section h2 {
-        font-size: 1.5rem;
-      }
-
-      .case-study-section p {
-        font-size: 1rem;
-      }
-
-      .decision-item {
-        padding: 1.25rem;
-      }
-    }
-  </style>
 </BaseLayout>
+
+<style>
+  /* ── Page shell ───────────────────────────────────────── */
+  .project-page {
+    padding-bottom: var(--space-4xl);
+  }
+
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero {
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+    padding: var(--space-3xl) var(--space-lg) 0;
+  }
+
+  .hero-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .hero-overline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .hero-category {
+    font-family: var(--font-family);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-signal-orange);
+  }
+
+  .status-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .status--ongoing {
+    background: rgba(255, 110, 66, 0.12);
+    color: var(--color-signal-orange);
+  }
+
+  .status--archived {
+    background: rgba(107, 124, 133, 0.12);
+    color: var(--color-slate-muted);
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 560px;
+    margin: 0 auto var(--space-2xl);
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .meta-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .meta-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .meta-value {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  /* ── Hero image ────────────────────────────────────────── */
+  .hero-image-wrap {
+    margin-top: var(--space-2xl);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+  }
+
+  /* ── Body ──────────────────────────────────────────────── */
+  .project-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-3xl) var(--space-lg) 0;
+  }
+
+  .body-section {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .body-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+  }
+
+  .body-section p {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+  }
+
+  .lead-paragraph {
+    font-size: 1.125rem !important;
+    line-height: 1.7 !important;
+    color: var(--color-text-secondary);
+  }
+
+  /* ── Numbered lists ────────────────────────────────────── */
+  .numbered-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: item;
+  }
+
+  .numbered-list li {
+    counter-increment: item;
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .numbered-list li:last-child {
+    border-bottom: none;
+  }
+
+  .numbered-list li::before {
+    content: counter(item) ".";
+    font-weight: 700;
+    color: var(--color-text);
+    flex-shrink: 0;
+    min-width: 1.5rem;
+  }
+
+  /* ── Decisions ─────────────────────────────────────────── */
+  .decisions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .decision-card {
+    padding: 1.5rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+  }
+
+  .decision-card h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  .decision-card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .alternatives {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .alt-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .alternatives ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .alternatives li {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    position: relative;
+  }
+
+  .alternatives li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--color-signal-orange);
+  }
+
+  /* ── Tech pills ────────────────────────────────────────── */
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tech-pill {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 0.5rem 1rem;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    color: var(--color-text);
+  }
+
+  /* ── Author line ───────────────────────────────────────── */
+  .author-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+  }
+
+  .author-line a {
+    color: var(--color-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .author-line a:hover {
+    color: var(--color-signal-orange);
+  }
+
+  .reading-time {
+    font-weight: 500;
+  }
+
+  /* ── Prose content (markdown body) ─────────────────────── */
+  .prose-content :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-md);
+    margin: var(--space-xl) 0 var(--space-sm);
+  }
+
+  .prose-content :global(p:has(img)) {
+    margin: var(--space-2xl) 0;
+  }
+
+  .prose-content :global(em:only-child) {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    font-style: normal;
+    text-align: center;
+    margin-top: -0.5rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  /* ── CTA section ───────────────────────────────────────── */
+  .cta-section {
+    max-width: 720px;
+    margin: var(--space-4xl) auto 0;
+    padding: var(--space-3xl) var(--space-lg);
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cta-overline {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .cta-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+  }
+
+  .cta-body {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 480px;
+    margin: 0 auto var(--space-xl);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 2rem;
+    background: var(--color-navy);
+    color: var(--color-white);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .cta-button:hover {
+    background: var(--color-oceanic-blue);
+    transform: translateY(-1px);
+  }
+
+  /* ── Related projects ──────────────────────────────────── */
+  .related-section {
+    max-width: var(--max-width-content);
+    margin: var(--space-4xl) auto 0;
+    padding: 0 var(--space-lg);
+  }
+
+  .related-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-xl);
+    color: var(--color-text);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-card {
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .related-card:hover {
+    border-color: var(--color-text-muted);
+    box-shadow: var(--shadow-md);
+  }
+
+  .related-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .related-card-body {
+    padding: 1.25rem;
+  }
+
+  .related-card-meta {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.375rem;
+  }
+
+  .related-card h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--color-text);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  /* ── Back link ─────────────────────────────────────────── */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: var(--max-width-content);
+    margin: var(--space-3xl) auto 0;
+    padding: 0 var(--space-lg);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--color-signal-orange);
+  }
+
+  /* ── Responsive ────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--space-2xl) var(--space-md) 0;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+    }
+
+    .hero-meta {
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+    }
+
+    .hero-image {
+      aspect-ratio: 16 / 9;
+    }
+
+    .project-body {
+      padding: var(--space-2xl) var(--space-md) 0;
+    }
+
+    .body-section h2 {
+      font-size: 1.5rem;
+    }
+
+    .cta-section {
+      padding: var(--space-2xl) var(--space-md);
+    }
+
+    .cta-heading {
+      font-size: 1.75rem;
+    }
+
+    .related-section {
+      padding: 0 var(--space-md);
+    }
+
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .back-link {
+      padding: 0 var(--space-md);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 1.875rem;
+    }
+
+    .hero-meta {
+      gap: var(--space-md);
+    }
+
+    .meta-block {
+      min-width: calc(50% - var(--space-md));
+    }
+  }
+</style>

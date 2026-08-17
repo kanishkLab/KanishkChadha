@@ -3,10 +3,7 @@ import { siteConfig } from '../config';
 
 const currentPath = Astro.url.pathname;
 
-const navItems = [
-  { label: 'Home', href: '/' },
-  ...siteConfig.nav,
-];
+const navItems = siteConfig.nav;
 
 const isActive = (href: string) => {
   if (href === '/') return currentPath === '/';

@@ -1,54 +1,22 @@
 ---
-/**
- * ProjectCard Component
- * 
- * Displays a project or case study entry in a card format with role, year, outcome summary,
- * and technology stack. Extends BaseCard component with project-specific features including
- * an optional featured badge, status indicator, and automatic tech stack truncation.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <ProjectCard
- *   title="E-commerce Platform Redesign"
- *   slug="ecommerce-redesign"
- *   outcomeSummary="Increased conversion rate by 45% and reduced cart abandonment"
- *   role="Lead Frontend Developer"
- *   year={2024}
- *   techStack={['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'Stripe']}
- *   featured={true}
- *   status="completed"
- * />
- * ```
- */
-
 import BaseCard from './BaseCard.astro';
 import ForwardLink from './ForwardLink.astro';
 
 interface Props {
-  /** Project title (displayed as card heading) */
   title: string;
   
-  /** URL slug for the project (used to generate /projects/{slug} link) */
   slug: string;
   
-  /** Brief summary of project outcomes or impact */
   outcomeSummary: string;
   
-  /** Your role in the project (e.g., "Lead Developer", "Technical Architect") */
   role: string;
   
-  /** Year the project was completed */
   year: number;
   
-  /** Optional array of technologies used (displays max 4, shows "+N" for remaining) */
   techStack?: string[];
   
-  /** Whether to display the featured badge (default: false) */
   featured?: boolean;
   
-  /** Project status (default: 'completed') */
   status?: 'completed' | 'ongoing' | 'archived';
 }
 

@@ -1,70 +1,27 @@
 ---
-/**
- * TalkCard Component
- * 
- * Displays a speaking engagement entry with comprehensive details including event information,
- * date, location, talk type, and optional links to slides and video recordings. Each talk type
- * has a distinct color-coded badge for easy visual identification.
- * 
- * Unlike other card components, TalkCard uses an article element instead of extending BaseCard
- * to accommodate the more complex layout requirements of speaking engagements.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <TalkCard
- *   title="Building Scalable Design Systems"
- *   description="A deep dive into creating maintainable design systems for large teams"
- *   event="React Summit 2024"
- *   eventUrl="https://reactsummit.com"
- *   date={new Date('2024-06-15')}
- *   location="Amsterdam, Netherlands"
- *   type="conference"
- *   slides="https://slides.example.com/design-systems"
- *   video="https://youtube.com/watch?v=example"
- *   duration="45 min"
- *   topics={['design-systems', 'react', 'component-libraries']}
- *   featured={true}
- * />
- * ```
- */
-
 interface Props {
-  /** Talk title (displayed as card heading) */
   title: string;
   
-  /** Brief description of the talk content */
   description: string;
   
-  /** Name of the event or venue */
   event: string;
   
-  /** Optional URL to the event website */
   eventUrl?: string;
   
-  /** Date of the speaking engagement (formatted as "Month Year") */
   date: Date;
   
-  /** Location of the event (city, country, or "Online") */
   location: string;
   
-  /** Type of speaking engagement (determines badge color) */
   type: 'conference' | 'meetup' | 'podcast' | 'workshop' | 'webinar';
   
-  /** Optional URL to presentation slides */
   slides?: string;
   
-  /** Optional URL to video recording */
   video?: string;
   
-  /** Optional duration of the talk (e.g., "45 min", "1 hour") */
   duration?: string;
   
-  /** Optional array of topics covered in the talk */
   topics?: string[];
   
-  /** Whether to display the featured badge (default: false) */
   featured?: boolean;
 }
 
@@ -82,23 +39,10 @@ const {
   topics = [],
   featured = false 
 } = Astro.props;
-
-/**
- * Formats the talk date to show month and year only
- * 
- * Uses US English locale with long month format.
- * Example output: "June 2024"
- */
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long'
 }).format(date);
-
-/**
- * Human-readable labels for talk types
- * 
- * Maps internal type values to display labels shown in the badge.
- */
 const typeLabels: Record<string, string> = {
   conference: 'Conference',
   meetup: 'Meetup',

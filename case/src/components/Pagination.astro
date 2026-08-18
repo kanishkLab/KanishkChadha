@@ -1,59 +1,13 @@
 ---
-/**
- * Pagination Component
- * 
- * Displays pagination controls for navigating through paginated content lists.
- * Intelligently shows page numbers with ellipsis for large page counts, keeping
- * the UI clean while providing quick access to first, last, and nearby pages.
- * 
- * Features:
- * - Smart page number display with ellipsis
- * - Previous/Next navigation buttons
- * - Active page highlighting
- * - Disabled state for unavailable navigation
- * - Responsive layout (stacks on mobile)
- * - Accessible with ARIA labels
- * 
- * @component
- * 
- * @example
- * ```astro
- * <Pagination 
- *   currentPage={3}
- *   totalPages={10}
- *   baseUrl="/writing"
- * />
- * ```
- */
-
 interface Props {
-  /** Current active page number (1-indexed) */
   currentPage: number;
   
-  /** Total number of pages available */
   totalPages: number;
   
-  /** Base URL for pagination links (e.g., "/writing") */
   baseUrl: string;
 }
 
 const { currentPage, totalPages, baseUrl } = Astro.props;
-
-/**
- * Generates an array of page numbers to display with ellipsis
- * 
- * Uses smart logic to show relevant pages while keeping the UI compact:
- * - Shows all pages if 7 or fewer total pages
- * - Shows first, last, current, and nearby pages with ellipsis for gaps
- * - Example outputs:
- *   - [1, 2, 3, 4, "...", 20] (when on page 2 of 20)
- *   - [1, "...", 9, 10, 11, "...", 20] (when on page 10 of 20)
- *   - [1, "...", 17, 18, 19, 20] (when on page 19 of 20)
- * 
- * @param current - Current page number
- * @param total - Total number of pages
- * @returns Array of page numbers and ellipsis strings
- */
 function getPageNumbers(current: number, total: number): (number | string)[] {
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
@@ -73,16 +27,6 @@ function getPageNumbers(current: number, total: number): (number | string)[] {
 }
 
 const pageNumbers = getPageNumbers(currentPage, totalPages);
-
-/**
- * Generates the URL for a specific page number
- * 
- * Page 1 uses the base URL without a page number suffix.
- * Other pages append the page number (e.g., "/writing/2").
- * 
- * @param page - Page number to generate URL for
- * @returns Full URL path for the page
- */
 function getPageUrl(page: number): string {
   return page === 1 ? baseUrl : `${baseUrl}/${page}`;
 }

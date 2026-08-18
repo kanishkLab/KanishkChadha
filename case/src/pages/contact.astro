@@ -1,39 +1,8 @@
 ---
-/**
- * Contact Page
- * 
- * Minimal, intentional contact page with clear visual hierarchy and zone-based layout.
- * Prioritizes email as the primary contact method while providing secondary social links.
- * 
- * Layout Structure:
- * - Zone 1 (Primary): Email address with context about response time
- * - Zone 2 (Secondary): Social media links (only shown if configured)
- * 
- * Features:
- * - Clean, distraction-free design
- * - Large, prominent email link
- * - Automatic filtering of configured social links
- * - Responsive layout
- * - Clear visual hierarchy
- * 
- * Route: /contact
- * 
- * @page
- */
-
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import { siteConfig } from '../config';
 import { pagesConfig } from '../pages.config';
-
-/**
- * Filters and formats social links from site configuration
- * 
- * Only includes platforms that have a URL configured (non-empty values).
- * Capitalizes platform names for display (e.g., "github" becomes "Github").
- * 
- * @returns Array of social link objects with platform name and URL
- */
 const socialLinks = Object.entries(siteConfig.social)
   .filter(([_, url]) => url)
   .map(([platform, url]) => ({

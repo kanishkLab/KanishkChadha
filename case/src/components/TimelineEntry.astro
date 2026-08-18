@@ -1,99 +1,28 @@
 ---
-/**
- * TimelineEntry Component
- * 
- * Displays a single entry in a journey/career timeline with visual indicators, metadata,
- * and optional expandable content. Features a vertical timeline design with color-coded
- * dots and type badges to distinguish between milestones, learning experiences, and transitions.
- * 
- * Each entry can include:
- * - Date and type indicator
- * - Title and description
- * - Skills/technologies list
- * - Expandable detailed content (via slot)
- * 
- * @component
- * 
- * @slot default - Optional detailed content shown when expanded (supports markdown/prose)
- * 
- * @example
- * ```astro
- * <!-- Simple timeline entry without expandable content -->
- * <TimelineEntry
- *   date={new Date('2024-01-15')}
- *   title="Launched New Product"
- *   type="milestone"
- *   description="Successfully launched the redesigned platform to 10k users"
- *   skills={['React', 'TypeScript', 'AWS']}
- * />
- * 
- * <!-- Timeline entry with expandable content -->
- * <TimelineEntry
- *   date={new Date('2023-06-01')}
- *   title="Joined Tech Company"
- *   type="transition"
- *   description="Started as Senior Frontend Developer"
- *   skills={['Vue.js', 'Node.js']}
- *   hasContent={true}
- * >
- *   <p>Detailed information about the role and achievements...</p>
- * </TimelineEntry>
- * ```
- */
-
 interface Props {
-  /** Date of the timeline event (formatted as "Month Year") */
   date: Date;
   
-  /** Title/heading of the timeline entry */
   title: string;
   
-  /** Type of entry (determines color coding and badge label) */
   type: 'milestone' | 'learning' | 'transition';
   
-  /** Brief description of the event or achievement */
   description: string;
   
-  /** Optional array of skills or technologies associated with this entry */
   skills?: string[];
   
-  /** Whether this entry has expandable content in the slot (default: false) */
   hasContent?: boolean;
 }
 
 const { date, title, type, description, skills, hasContent = false } = Astro.props;
-
-/**
- * Formats the date to show month and year only
- * 
- * Uses US English locale with long month format.
- * Example output: "January 2024"
- */
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long'
 }).format(date);
-
-/**
- * Human-readable labels for timeline entry types
- * 
- * Maps internal type values to display labels shown in the badge.
- * Each type has a distinct color in the UI:
- * - milestone: accent color (achievements, launches)
- * - learning: green (education, skill development)
- * - transition: orange (job changes, career moves)
- */
 const typeLabels = {
   milestone: 'Milestone',
   learning: 'Learning',
   transition: 'Transition'
 };
-
-/**
- * Generates a unique ID for ARIA accessibility
- * 
- * Uses timestamp to ensure uniqueness for expand/collapse functionality.
- */
 const entryId = `journey-${date.getTime()}`;
 ---
 

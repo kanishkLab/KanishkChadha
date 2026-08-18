@@ -1,62 +1,18 @@
 ---
-/**
- * TableOfContents Component
- * 
- * Generates a collapsible table of contents from article headings (h2 and h3 only).
- * Only renders when there are 3 or more qualifying headings to ensure the TOC adds value.
- * Starts in a collapsed state by default to save space.
- * 
- * Features:
- * - Automatic heading extraction and filtering
- * - Collapsible/expandable interface
- * - Smooth scroll to sections with header offset
- * - Visual hierarchy for h2 vs h3 headings
- * - Works with Astro View Transitions
- * 
- * @component
- * 
- * @example
- * ```astro
- * ---
- * const { headings } = Astro.props;
- * ---
- * 
- * <TableOfContents headings={headings} />
- * ```
- */
-
 interface Heading {
-  /** Heading level (2 for h2, 3 for h3) */
   depth: number;
   
-  /** Heading text content */
   text: string;
   
-  /** URL-safe slug for anchor linking */
   slug: string;
 }
 
 interface Props {
-  /** Array of heading objects from the article content */
   headings: Heading[];
 }
 
 const { headings } = Astro.props;
-
-/**
- * Filters headings to only include h2 and h3 levels
- * 
- * Excludes h1 (page title) and deeper levels (h4+) to keep the TOC
- * focused on main sections and subsections.
- */
 const filteredHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
-
-/**
- * Determines if the TOC should render
- * 
- * Only renders when there are 3 or more headings to ensure the TOC
- * provides meaningful navigation value.
- */
 const shouldRender = filteredHeadings.length >= 3;
 ---
 

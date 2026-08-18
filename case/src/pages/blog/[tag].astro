@@ -1,27 +1,4 @@
 ---
-/**
- * Blog Tag Filter Page
- *
- * Dynamic route that displays all blog posts with a specific tag.
- * Generates one page per unique tag found in the blog collection.
- *
- * Features:
- * - Dynamic tag page generation
- * - Filters posts by selected tag
- * - Sorts by publish date (newest first)
- * - Breadcrumb navigation (Blog > Tag)
- * - Shows post type badge
- * - Handles missing tags gracefully
- *
- * Routes:
- * - /blog/decisions (all decision posts)
- * - /blog/speaking (all talk posts)
- * - /blog/architecture (all posts tagged "architecture")
- * - etc.
- *
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import ArticleCard from '../../components/ArticleCard.astro';

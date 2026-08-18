@@ -1,31 +1,11 @@
 ---
-/**
- * RelatedContent Component
- * 
- * Displays related projects and decisions for cross-referencing content.
- * Fetches actual content data from slugs and renders compact cards.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <RelatedContent 
- *   relatedProjects={['project-slug-1', 'project-slug-2']}
- *   relatedDecisions={['decision-slug-1']}
- * />
- * ```
- */
-
 import { getCollection } from 'astro:content';
 
 interface Props {
-  /** Array of project slugs to display */
   relatedProjects?: string[];
 
-  /** Array of blog post slugs to display (decisions, articles, talks) */
   relatedPosts?: string[];
 
-  /** Section title (default: "Related") */
   title?: string;
 }
 
@@ -49,10 +29,6 @@ const posts = relatedPosts
   .filter((p): p is NonNullable<typeof p> => p !== undefined);
 
 const hasRelated = projects.length > 0 || posts.length > 0;
-
-/**
- * Formats a date to "Month Year" format
- */
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',

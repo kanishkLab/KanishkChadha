@@ -1,62 +1,9 @@
 ---
-/**
- * PageLayout
- * 
- * Standard layout for general content pages like Uses, Contact, Decisions list,
- * Journey, and other informational pages. Extends BaseLayout with a consistent
- * page header structure and content container.
- * 
- * Features:
- * - Optimized content width (800px max)
- * - Optional page header with title and intro text
- * - Consistent spacing and typography
- * - Responsive design for mobile devices
- * - Flexible content area via slot
- * 
- * The page header is only rendered if pageTitle or pageIntro is provided,
- * allowing for flexible usage across different page types.
- * 
- * Note: SEO meta tags should be handled by the SEO component in each page
- * using the "head" slot, not passed as props to this layout.
- * 
- * @component
- * 
- * @example
- * ```astro
- * ---
- * import PageLayout from '../layouts/PageLayout.astro';
- * import SEO from '../components/SEO.astro';
- * ---
- * 
- * <!-- With page header -->
- * <PageLayout 
- *   pageTitle="What I Use"
- *   pageIntro="A comprehensive list of the tools, software, and hardware I use for development and productivity."
- * >
- *   <SEO 
- *     slot="head"
- *     title="Uses" 
- *     description="Tools and software I use daily"
- *   />
- *   <div>Page content goes here</div>
- * </PageLayout>
- * 
- * <!-- Without page header (custom header in slot) -->
- * <PageLayout>
- *   <SEO slot="head" title="Custom Page" />
- *   <h1>Custom Header</h1>
- *   <p>Custom content...</p>
- * </PageLayout>
- * ```
- */
-
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
-  /** Optional page heading displayed in the header */
   pageTitle?: string;
   
-  /** Optional introductory text displayed below the page title */
   pageIntro?: string;
 }
 

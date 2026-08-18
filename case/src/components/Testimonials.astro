@@ -1,55 +1,15 @@
 ---
-/**
- * Testimonials Component
- * 
- * Displays a section of featured testimonials/endorsements from colleagues and clients.
- * Automatically queries the testimonials content collection and filters for featured items.
- * Supports LinkedIn profile links with icon integration.
- * 
- * Testimonials are sorted by date (newest first) and can be limited to a specific count.
- * Only renders if there are featured testimonials available.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <!-- Show all featured testimonials with default title -->
- * <Testimonials />
- * 
- * <!-- Limit to 2 testimonials -->
- * <Testimonials limit={2} />
- * 
- * <!-- Hide section title -->
- * <Testimonials showTitle={false} />
- * 
- * <!-- Custom title -->
- * <Testimonials title="Client Feedback" limit={5} />
- * ```
- */
-
 import { getCollection } from 'astro:content';
 
 interface Props {
-  /** Maximum number of testimonials to display (default: 3) */
   limit?: number;
   
-  /** Whether to show the section title (default: true) */
   showTitle?: boolean;
   
-  /** Custom section title (default: "What People Say") */
   title?: string;
 }
 
 const { limit = 3, showTitle = true, title = "What People Say" } = Astro.props;
-
-/**
- * Queries and filters featured testimonials from the content collection
- * 
- * Filters for testimonials marked as featured, sorts by date (newest first),
- * and limits to the specified count.
- * 
- * @returns Array of featured testimonial entries, sorted and limited
- */
 const allTestimonials = await getCollection('testimonials');
 const featuredTestimonials = allTestimonials
   .filter(testimonial => testimonial.data.featured === true)

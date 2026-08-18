@@ -1,43 +1,11 @@
 ---
-/**
- * ForwardLink Component
- * 
- * Displays a forward navigation link or text with a right-pointing arrow icon, commonly
- * used for CTAs and "Read more" actions. Can render as either a link (<a>) or span element
- * depending on whether an href is provided, making it flexible for use inside clickable cards.
- * 
- * Features a hover animation that moves the arrow right to indicate forward navigation.
- * Pairs with BackLink for consistent bidirectional navigation patterns.
- * 
- * @component
- * 
- * @example
- * ```astro
- * <!-- As a standalone link -->
- * <ForwardLink 
- *   text="View all projects" 
- *   href="/projects"
- *   variant="accent"
- * />
- * 
- * <!-- As text inside a clickable card (no href) -->
- * <a href="/article">
- *   <ForwardLink text="Read article" />
- * </a>
- * ```
- */
-
 interface Props {
-  /** Text displayed next to the arrow icon */
   text: string;
   
-  /** Optional URL - if provided, renders as <a>, otherwise renders as <span> */
   href?: string;
   
-  /** Color variant (default: 'accent') */
   variant?: 'accent' | 'muted';
   
-  /** Additional CSS classes to apply */
   class?: string;
 }
 

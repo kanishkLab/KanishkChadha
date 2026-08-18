@@ -1,57 +1,21 @@
 ---
-/**
- * SEO Component
- * 
- * Generates comprehensive meta tags for SEO, Open Graph, and Twitter Cards.
- * Should be placed in the "head" slot of BaseLayout.
- * 
- * Features:
- * - Page title with site name suffix
- * - Meta description
- * - Canonical URL
- * - Open Graph tags for social sharing
- * - Twitter Card tags
- * - Article-specific metadata (publish/update dates)
- * 
- * @component
- * 
- * @example
- * ```astro
- * <BaseLayout>
- *   <SEO 
- *     slot="head"
- *     title="About Me" 
- *     description="Learn more about my background"
- *   />
- *   <div>Content</div>
- * </BaseLayout>
- * ```
- */
 import { siteConfig } from '../config';
 
 interface Props {
-  /** Page title (will be suffixed with author name unless noSuffix is true) */
   title: string;
   
-  /** Page description for meta tags */
   description?: string;
   
-  /** Skip adding site name suffix to title (useful for homepage) */
   noSuffix?: boolean;
   
-  /** Page type for Open Graph */
   type?: 'website' | 'article' | 'profile';
   
-  /** Social sharing image URL */
   image?: string;
   
-  /** Article publish date (for articles) */
   publishDate?: Date;
   
-  /** Article updated date (for articles) */
   updatedDate?: Date;
   
-  /** Canonical URL override */
   canonicalURL?: string;
 }
 

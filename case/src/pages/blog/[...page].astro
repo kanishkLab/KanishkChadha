@@ -1,29 +1,4 @@
 ---
-/**
- * Blog Index Page with Pagination
- *
- * Lists all published blog posts (decisions, articles, talks) with pagination support.
- * Displays post cards with type badge, title, description, publish date, and tags.
- * Uses a rest parameter route to handle both the first page (/blog) and subsequent pages (/blog/2, etc.).
- *
- * Features:
- * - Filters out draft posts (only shows published content)
- * - Sorts by publish date (descending - newest first)
- * - Pagination with 10 posts per page
- * - Shows post type badge (Decision | Article | Talk)
- * - Dynamic page statistics showing current range
- * - SEO optimization per page
- * - Empty state handling
- *
- * Routes:
- * - /blog (page 1)
- * - /blog/2 (page 2)
- * - /blog/3 (page 3)
- * - etc.
- *
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import Pagination from '../../components/Pagination.astro';

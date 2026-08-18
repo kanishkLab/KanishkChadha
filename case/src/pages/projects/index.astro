@@ -17,8 +17,6 @@ const sortedProjects = allProjects.sort((a, b) => {
 });
 
 const spotlightProject = sortedProjects[0];
-const remainingProjects = sortedProjects.slice(1);
-
 const allRoles = [...new Set(sortedProjects.map(p => p.data.role))];
 
 const linkedin = siteConfig.social.linkedin;

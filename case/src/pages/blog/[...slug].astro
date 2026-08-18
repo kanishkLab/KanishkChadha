@@ -1,29 +1,4 @@
 ---
-/**
- * Blog Post Detail Page
- *
- * Dynamic route that displays a full blog post (decision, article, or talk) with MDX content support,
- * table of contents, metadata, and structured data for SEO. Provides an optimized reading experience
- * with clean typography and responsive design.
- *
- * Features:
- * - MDX content rendering with full markdown support
- * - Type-specific display (Decision | Article | Talk)
- * - Automatic table of contents generation (when 3+ sections)
- * - Reading time calculation
- * - Post metadata (publish date, updated date, tags, type)
- * - Structured data for search engines
- * - Scroll-to-top functionality
- * - Back navigation to blog list
- * - Decision-specific fields: context, decision, alternatives, reasoning
- * - Talk-specific fields: event, location, slides, video, topics
- * - Responsive typography
- *
- * Routes: /blog/[...slug] where slug is the full post ID (e.g., articles/api-versioning-strategies)
- *
- * @page
- */
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import StructuredData from '../../components/StructuredData.astro';

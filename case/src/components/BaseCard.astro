@@ -1,42 +1,7 @@
 ---
-/**
- * BaseCard Component
- * 
- * Foundation component providing consistent styling and structure for all card types.
- * This component should not be used directly - instead use specialized cards like
- * ArticleCard, ProjectCard, DecisionCard, or TalkCard for specific content types.
- * 
- * Features:
- * - Consistent hover effects and transitions
- * - Responsive padding and typography
- * - Flexible slot-based content structure
- * - Accessible link wrapper
- * 
- * @component
- * 
- * @slot badge - Optional badge/label at top (e.g., "Featured")
- * @slot meta - Metadata line (date, role, category, etc.)
- * @slot title - Card heading/title
- * @slot description - Card description or summary text
- * @slot tags - Container for tag list
- * @slot default - CTA links or additional content at bottom
- * 
- * @example
- * ```astro
- * <BaseCard href="/example" class="custom-card">
- *   <Fragment slot="meta">January 2024</Fragment>
- *   <Fragment slot="title">Card Title</Fragment>
- *   <Fragment slot="description">Card description text</Fragment>
- *   <ForwardLink text="Read more" />
- * </BaseCard>
- * ```
- */
-
 interface Props {
-  /** Target URL for the card link (required) */
   href: string;
   
-  /** Additional CSS classes to apply to the card */
   class?: string;
 }
 

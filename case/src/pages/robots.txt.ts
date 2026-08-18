@@ -25,21 +25,7 @@
 
 import type { APIRoute } from 'astro';
 import { siteConfig } from '../config';
-
-/**
- * GET handler for robots.txt
- * 
- * Generates the robots.txt content dynamically using the site URL from configuration.
- * Normalizes the URL by removing trailing slashes to ensure consistent sitemap URLs.
- * 
- * @returns Response with robots.txt content and text/plain content type
- */
 export const GET: APIRoute = () => {
-  /**
-   * Normalizes the site URL by removing trailing slash
-   * 
-   * Ensures the sitemap URL is consistently formatted without double slashes.
-   */
   const siteUrl = siteConfig.url.endsWith('/') 
     ? siteConfig.url.slice(0, -1) 
     : siteConfig.url;

@@ -135,9 +135,28 @@ const isActive = (href: string) => {
     });
   }
 
+  function initHashScroll() {
+    document.querySelectorAll('.nav-link, .drawer-link').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href || !href.includes('#')) return;
+
+      link.addEventListener('click', (e) => {
+        const [path, hash] = href.split('#');
+        const onTargetPage = !path || path === '/' ? window.location.pathname === '/' : window.location.pathname.startsWith(path);
+
+        if (onTargetPage) {
+          e.preventDefault();
+          const target = document.getElementById(hash);
+          target?.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
   document.addEventListener('astro:page-load', () => {
     initDrawer();
     updateActiveNav();
+    initHashScroll();
   });
 </script>
 

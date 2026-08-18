@@ -16,7 +16,6 @@ const sortedProjects = allProjects.sort((a, b) => {
   return b.data.year - a.data.year;
 });
 
-const spotlightProject = sortedProjects[0];
 const allRoles = [...new Set(sortedProjects.map(p => p.data.role))];
 
 const linkedin = siteConfig.social.linkedin;
@@ -31,39 +30,6 @@ const linkedin = siteConfig.social.linkedin;
   />
 
   <div class="projects-page">
-
-    <!-- ── Hero / Spotlight ──────────────────────────────────── -->
-    <section class="spotlight">
-      <div class="spotlight-inner">
-        <div class="spotlight-text">
-          <span class="spotlight-overline">Featured Case Study</span>
-          <h1 class="spotlight-title">{spotlightProject.data.title}</h1>
-          <p class="spotlight-summary">{spotlightProject.data.outcomeSummary}</p>
-          <div class="spotlight-meta">
-            <span class="meta-item">{spotlightProject.data.role}</span>
-            <span class="meta-sep">&middot;</span>
-            <span class="meta-item">{spotlightProject.data.year}</span>
-            {spotlightProject.data.status !== 'completed' && (
-              <span class="meta-sep">&middot;</span>
-              <span class="meta-badge">Ongoing</span>
-            )}
-          </div>
-          <a href={`/projects/${spotlightProject.id}`} class="spotlight-cta">
-            Read case study
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </a>
-        </div>
-        <a href={`/projects/${spotlightProject.id}`} class="spotlight-image-link">
-          {spotlightProject.data.coverImage ? (
-            <img src={spotlightProject.data.coverImage} alt={spotlightProject.data.title} class="spotlight-image" />
-          ) : (
-            <div class="spotlight-image spotlight-image--placeholder" />
-          )}
-        </a>
-      </div>
-    </section>
 
     <!-- ── Filter tabs + project cards ───────────────────────── -->
     <section class="projects-section">
@@ -154,12 +120,12 @@ const linkedin = siteConfig.social.linkedin;
     )}
 
     <!-- ── Get in Touch CTA ──────────────────────────────────── -->
-    <section class="cta-section">
+    <section id="contact" class="cta-section">
       <div class="cta-inner">
         <span class="cta-overline">Get in Touch</span>
         <h2 class="cta-title">Let's Work Together</h2>
         <p class="cta-desc">Have a marketing challenge that needs measurement, automation, or a fresh perspective? Let's talk.</p>
-        <a href="/contact" class="cta-button">Get in Touch</a>
+        <a href={`mailto:${siteConfig.author.email}`} class="cta-button">Get in Touch</a>
       </div>
     </section>
 
@@ -208,121 +174,6 @@ const linkedin = siteConfig.social.linkedin;
   /* ── Page shell ──────────────────────────────────────────── */
   .projects-page {
     width: 100%;
-  }
-
-  /* ── Spotlight hero ──────────────────────────────────────── */
-  .spotlight {
-    background: var(--color-white);
-    padding: var(--space-4xl) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .spotlight-inner {
-    max-width: var(--max-width-content);
-    margin: 0 auto;
-    padding: 0 var(--space-lg);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3xl);
-    align-items: center;
-  }
-
-  .spotlight-overline {
-    display: inline-block;
-    font-family: var(--font-family);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-signal-orange);
-    margin-bottom: var(--space-md);
-  }
-
-  .spotlight-title {
-    font-family: var(--font-family);
-    font-size: 2.25rem;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: var(--tracking-display);
-    color: var(--color-navy);
-    margin-bottom: var(--space-lg);
-  }
-
-  .spotlight-summary {
-    font-family: var(--font-family);
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--color-slate-body);
-    margin-bottom: var(--space-lg);
-  }
-
-  .spotlight-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-family);
-    font-size: 0.8125rem;
-    color: var(--color-slate-muted);
-    margin-bottom: var(--space-xl);
-    flex-wrap: wrap;
-  }
-
-  .meta-sep {
-    color: var(--color-border);
-  }
-
-  .meta-badge {
-    font-size: 0.625rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    background: rgba(255, 110, 66, 0.2);
-    color: var(--color-signal-orange);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-  }
-
-  .spotlight-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-family);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-white);
-    background: var(--color-navy);
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius-sm);
-    text-decoration: none;
-    transition: background var(--transition-fast), transform var(--transition-fast);
-  }
-  .spotlight-cta:hover {
-    background: var(--color-oceanic-blue);
-    transform: translateY(-1px);
-  }
-
-  .spotlight-image-link {
-    display: block;
-    text-decoration: none;
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    transition: transform var(--transition-base), box-shadow var(--transition-base);
-  }
-  .spotlight-image-link:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .spotlight-image {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    display: block;
-  }
-
-  .spotlight-image--placeholder {
-    background: linear-gradient(135deg, #e8ecf0, #d1d8de);
-    aspect-ratio: 16 / 10;
   }
 
   /* ── Projects section ────────────────────────────────────── */
@@ -666,20 +517,6 @@ const linkedin = siteConfig.social.linkedin;
 
   /* ── Responsive ──────────────────────────────────────────── */
   @media (max-width: 768px) {
-    .spotlight {
-      padding: var(--space-3xl) 0;
-    }
-    .spotlight-inner {
-      grid-template-columns: 1fr;
-      gap: var(--space-xl);
-    }
-    .spotlight-title {
-      font-size: 1.75rem;
-    }
-    .spotlight-image-link {
-      order: -1;
-    }
-
     .project-grid {
       grid-template-columns: 1fr;
     }
@@ -705,16 +542,6 @@ const linkedin = siteConfig.social.linkedin;
   }
 
   @media (max-width: 480px) {
-    .spotlight {
-      padding: var(--space-2xl) 0;
-    }
-    .spotlight-title {
-      font-size: 1.5rem;
-    }
-    .spotlight-summary {
-      font-size: 0.875rem;
-    }
-
     .section-title {
       font-size: 1.375rem;
     }

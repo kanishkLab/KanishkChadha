@@ -23,7 +23,7 @@
   --color-slate-muted:   #6b7c85;
 
   /* Semantic mapping — light mode */
-  --color-bg:             var(--color-off-white);
+  --color-bg:             var(--color-white);
   --color-bg-secondary:   var(--color-white);
   --color-bg-elevated:    var(--color-white);
   --color-surface:        var(--color-white);

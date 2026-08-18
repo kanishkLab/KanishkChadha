@@ -6,6 +6,7 @@ import ScrollToTop from '../../components/ScrollToTop.astro';
 import ImpactMetrics from '../../components/ImpactMetrics.astro';
 import { getCollection, getEntry, render } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
+import { siteConfig } from '../../config';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -232,11 +233,11 @@ const related = (relatedProjects || [])
     </article>
 
     <!-- ── CTA ──────────────────────────────────────────── -->
-    <section class="cta-section">
+    <section id="contact" class="cta-section">
       <p class="cta-overline">Get in Touch</p>
       <h2 class="cta-heading">Let's Work Together</h2>
       <p class="cta-body">Have a project in mind or just want to say hello? I'd love to hear from you.</p>
-      <a href="/contact" class="cta-button">Get in Touch</a>
+      <a href={`mailto:${siteConfig.author.email}`} class="cta-button">Get in Touch</a>
     </section>
 
     <!-- ── Related Projects ─────────────────────────────── -->
@@ -363,7 +364,7 @@ const related = (relatedProjects || [])
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--color-text-muted);
+    color: var(--color-signal-orange);
   }
 
   .meta-value {

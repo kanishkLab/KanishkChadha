@@ -340,19 +340,12 @@ const linkedin = siteConfig.social.linkedin;
         Looking for someone who can own your tracking, CDP, reporting and the
         AI agents on top of it? That's the job I do.
       </p>
-      <a class="btn btn-orange" href="/contact">Start a conversation</a>
+      <a class="btn btn-orange" href={`mailto:${siteConfig.author.email}`}>Start a conversation</a>
       <p class="availability">Currently open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary (and remote).</p>
     </section>
 
   </div>
 </BaseLayout>
-
-<style is:global>
-  /* This page's ground is White (usage ratio 60%). global.css paints
-     body off-white for the internal-page palette, so it is overridden
-     here — scoped to the homepage because only this page ships it. */
-  body:has(.home) { background-color: #ffffff; }
-</style>
 
 <style>
   /* ── Nautical brand v1.0 — Playfair + Manrope ─────────────

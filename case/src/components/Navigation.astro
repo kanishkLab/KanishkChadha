@@ -142,7 +142,7 @@ const isActive = (href: string) => {
 
       link.addEventListener('click', (e) => {
         const [path, hash] = href.split('#');
-        const onTargetPage = !path || path === '/' ? window.location.pathname === '/' : window.location.pathname.startsWith(path);
+        const onTargetPage = !path ? true : path === '/' ? window.location.pathname === '/' : window.location.pathname.startsWith(path);
 
         if (onTargetPage) {
           e.preventDefault();
@@ -263,13 +263,16 @@ const isActive = (href: string) => {
   }
 
   /* ── Nav end ─────────────────────────────────────────────── */
+  /* Desktop: nav-end holds only the hidden hamburger, so it must not
+     consume width — the last link's text has to flush with the content edge. */
   .nav-end {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    padding-left: 1rem;
     flex-shrink: 0;
   }
+
+  .nav-scroll { margin-right: -1rem; }
 
   /* ── Hamburger ───────────────────────────────────────────── */
   .hamburger {

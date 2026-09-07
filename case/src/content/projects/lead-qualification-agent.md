@@ -30,7 +30,8 @@ impact:
 learnings:
   - "The eval is the product — without documented test cases and failure modes, an AI agent is a demo, not a system"
   - "Stakeholder trust comes from showing the methodology, not just the results"
-coverImage: "/cases/lead-qualification-agent.jpg"
+outcomeHighlight: "Eval-gated — drift caught before a rep sees it"
+coverImage: "/cases/lead-qualification-agent.png"
 featured: true
 status: ongoing
 order: 1

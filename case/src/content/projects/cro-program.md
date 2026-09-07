@@ -35,7 +35,8 @@ impact:
 learnings:
   - "The testing loop matters more than any single test — process discipline compounds"
   - "Consent checks belong in the release process, not as an afterthought"
-coverImage: "/cases/cro-program.jpg"
+outcomeHighlight: "35% lift in inbound leads across 10+ builds"
+coverImage: "/cases/cro-program.png"
 featured: true
 status: completed
 order: 4

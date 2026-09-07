@@ -6,7 +6,7 @@ import ScrollToTop from '../../components/ScrollToTop.astro';
 import ImpactMetrics from '../../components/ImpactMetrics.astro';
 import { getCollection, getEntry, render } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime';
-import { siteConfig } from '../../config';
+import ContactForm from '../../components/ContactForm.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -234,10 +234,13 @@ const related = (relatedProjects || [])
 
     <!-- ── CTA ──────────────────────────────────────────── -->
     <section id="contact" class="cta-section">
-      <p class="cta-overline">Get in Touch</p>
-      <h2 class="cta-heading">Let's Work Together</h2>
-      <p class="cta-body">Have a project in mind or just want to say hello? I'd love to hear from you.</p>
-      <a href={`mailto:${siteConfig.author.email}`} class="cta-button">Get in Touch</a>
+      <h2 class="cta-heading">Get in touch</h2>
+      <p class="cta-body">
+        Looking for someone who can own your tracking, CDP, reporting and the
+        AI agents on top of it? That's the job I do.
+      </p>
+      <ContactForm />
+      <p class="cta-availability">Currently open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary (and remote).</p>
     </section>
 
     <!-- ── Related Projects ─────────────────────────────── -->
@@ -594,48 +597,28 @@ const related = (relatedProjects || [])
     border-top: 1px solid var(--color-border);
   }
 
-  .cta-overline {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-sm);
-  }
-
   .cta-heading {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 2.25rem;
+    font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--color-text);
+    color: var(--color-navy);
     margin-bottom: var(--space-md);
   }
 
   .cta-body {
     font-size: 1.0625rem;
+    font-weight: 500;
     line-height: 1.6;
     color: var(--color-text-secondary);
-    max-width: 480px;
+    max-width: 490px;
     margin: 0 auto var(--space-xl);
   }
 
-  .cta-button {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.875rem 2rem;
-    background: var(--color-navy);
-    color: var(--color-white);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    border-radius: var(--border-radius-sm);
-    text-decoration: none;
-    transition: background var(--transition-fast), transform var(--transition-fast);
-  }
-
-  .cta-button:hover {
-    background: var(--color-oceanic-blue);
-    transform: translateY(-1px);
+  .cta-availability {
+    margin-top: var(--space-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
   }
 
   /* ── Related projects ──────────────────────────────────── */

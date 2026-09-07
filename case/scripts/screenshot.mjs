@@ -11,9 +11,10 @@ const PAGES = [
   { name: 'projects', path: '/projects' },
   { name: 'case-study', path: '/projects/lead-qualification-agent' },
   { name: 'blog', path: '/blog' },
-  { name: 'journey', path: '/journey' },
-  { name: 'stuff-i-like', path: '/stuff-i-like' },
-  { name: 'contact', path: '/contact' },
+  { name: 'blog-post', path: '/blog/experiments/observability-beyond-logging' },
+  // /journey and /stuff-i-like are disabled (src/pages/_*.astro) and /contact
+  // is now a redirect to /#contact, so none of them are shootable routes.
+  // Re-add them here if those pages are ever restored.
 ];
 
 const VIEWPORTS = [

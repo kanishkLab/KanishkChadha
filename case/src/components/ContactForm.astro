@@ -92,6 +92,10 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     margin: 0 auto;
     padding: 2rem;
     text-align: left;
+    /* This form sits in a grid column on three different pages and is often
+       far narrower than the window, so its internal layout has to respond to
+       its own width rather than the viewport. See the @container rule below. */
+    container-type: inline-size;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: var(--card-radius);
@@ -200,14 +204,26 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     margin-top: 1rem;
   }
 
-  @media (max-width: 480px) {
+  /* Stack name/email on the FORM's width, not the viewport. A viewport query
+     can't see that the form is squeezed into a narrow grid column: at a 700px
+     window the homepage column left the form 312px wide and these two fields
+     were sharing it at 115px each, while `max-width: 480px` never matched.
+
+     The threshold is on the form's CONTENT box, which inline-size containment
+     measures — not its border box. 400px keeps each field at least ~190px
+     before they stack; the form's content box tops out at 476px (540 less the
+     2rem padding), so anything near 480 here would stack at every width. */
+  @container (max-width: 400px) {
     .form-row {
       grid-template-columns: 1fr;
     }
+  }
 
+  /* Padding stays a viewport query — an element can't be styled by the
+     container it establishes. */
+  @media (max-width: 480px) {
     .contact-form {
       padding: 1.5rem;
-      border-radius: 14px;
     }
   }
 

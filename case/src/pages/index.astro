@@ -1019,6 +1019,11 @@ const linkedin = siteConfig.social.linkedin;
 
     .case-grid { grid-template-columns: repeat(2, 1fr); }
 
+    /* Stack the image and form near where /projects and /blog stack their
+       contact section, rather than holding two columns down to 640px and
+       squeezing the form into a narrow column. */
+    .contact-layout { grid-template-columns: 1fr; gap: 20px; }
+
     .hero {
       grid-template-columns: 1fr;
       gap: 40px;
@@ -1079,7 +1084,6 @@ const linkedin = siteConfig.social.linkedin;
 
     .contact { padding-top: 56px; padding-bottom: 48px; }
     .contact-lede { font-size: 15px; }
-    .contact-layout { grid-template-columns: 1fr; gap: 20px; }
     .contact-visual { max-height: 220px; }
   }
 </style>

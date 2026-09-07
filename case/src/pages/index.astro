@@ -7,8 +7,8 @@ import { siteConfig } from '../config';
 import ContactForm from '../components/ContactForm.astro';
 
 /* ── Featured work ─────────────────────────────────────────
-   One flagship card + three thumbnails. Featured projects lead
-   (by manual order), then the newest remaining projects fill the grid. */
+   Four equal cards in a 2x2 grid. Featured projects lead (by manual
+   order), then the newest remaining projects fill the grid. */
 const allProjects = await getCollection('projects');
 const featured = allProjects
   .filter(p => p.data.featured)
@@ -16,7 +16,7 @@ const featured = allProjects
 const others = allProjects
   .filter(p => !p.data.featured)
   .sort((a, b) => b.data.year - a.data.year);
-const [flagship, ...thumbnails] = [...featured, ...others].slice(0, 4);
+const cases = [...featured, ...others].slice(0, 4);
 
 /* ── The Lab (upcoming — switch to collection query once posts publish) */
 const labPosts = [
@@ -222,23 +222,9 @@ const linkedin = siteConfig.social.linkedin;
         <h2 class="h2">Outcomes, not project names</h2>
       </div>
 
-      {/* TODO: metric pending — leads processed / hours saved per week (flagship card) */}
-      {flagship && (
-        <a class="case case-flagship" href={`/projects/${flagship.id}`}>
-          {flagship.data.coverImage
-            ? <img class="case-img" src={flagship.data.coverImage} alt="" loading="lazy" />
-            : <div class="case-img case-ph" aria-hidden="true"></div>}
-          <div class="case-overlay">
-            <span class="case-pill">Flagship · {flagship.data.role}</span>
-            <h3 class="case-flagship-title">{flagship.data.title}</h3>
-            <span class="case-flagship-sub">{flagship.data.outcomeSummary}</span>
-          </div>
-        </a>
-      )}
-
-      {thumbnails.length > 0 && (
+      {cases.length > 0 && (
         <div class="case-grid">
-          {thumbnails.map(project => (
+          {cases.map(project => (
             <a class="case case-thumb" href={`/projects/${project.id}`}>
               {project.data.coverImage
                 ? <img class="case-img" src={project.data.coverImage} alt="" loading="lazy" />
@@ -680,8 +666,9 @@ const linkedin = siteConfig.social.linkedin;
     text-decoration: none;
     background: var(--navy);
   }
-  .case-flagship { height: 380px; border-radius: 14px; margin-bottom: 14px; }
-  .case-thumb    { height: 210px; border-radius: 12px; }
+  /* Taller than the old 3-up thumbnails: at two columns each card is roughly
+     twice as wide, and 210px left the cover art in a letterbox slot. */
+  .case-thumb { height: 260px; border-radius: 12px; }
 
   .case-img {
     position: absolute;
@@ -710,37 +697,19 @@ const linkedin = siteConfig.social.linkedin;
     background: linear-gradient(to top, rgba(9,38,52,.92) 0%, rgba(9,38,52,.25) 55%, transparent 100%);
     pointer-events: none;
   }
+  /* Carries further up the card than a single stop would: these covers are busy
+     technical diagrams, and a two-line title otherwise runs off the scrim and
+     sits directly on the artwork. */
   .case-overlay--thumb {
     padding: 20px;
-    background: linear-gradient(to top, rgba(9,38,52,.9) 0%, transparent 62%);
-  }
-  .case-pill {
-    align-self: flex-start;
-    font-size: 11.5px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--navy);
-    background: var(--orange);
-    padding: 4px 10px;
-    border-radius: 20px;
-    margin-bottom: 12px;
-  }
-  .case-flagship-title {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 30px;
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    color: #fff;
-    margin: 0 0 8px;
-    max-width: 660px;
-  }
-  .case-flagship-sub {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
+    background: linear-gradient(
+      to top,
+      rgba(9,38,52,.96) 0%,
+      rgba(9,38,52,.88) 30%,
+      rgba(9,38,52,.55) 55%,
+      rgba(9,38,52,.15) 78%,
+      transparent 100%
+    );
   }
   .case-category {
     font-size: 11.5px;
@@ -761,7 +730,7 @@ const linkedin = siteConfig.social.linkedin;
   }
   .case-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
 
@@ -999,7 +968,6 @@ const linkedin = siteConfig.social.linkedin;
     .matrix-row { grid-template-columns: 1fr; gap: 16px; }
     .matrix-tags { justify-content: flex-start; }
 
-    .case-grid { grid-template-columns: repeat(2, 1fr); }
     .lab-row { gap: 16px; }
 
     .newsletter { padding: 40px 28px; }
@@ -1021,10 +989,7 @@ const linkedin = siteConfig.social.linkedin;
     .cred-statement { font-size: 21px; }
     .cred-stats { grid-template-columns: 1fr; gap: 20px; }
 
-    .case-flagship { height: 300px; }
     .case-overlay { padding: 22px; }
-    .case-flagship-title { font-size: 22px; }
-    .case-flagship-sub { font-size: 14px; }
     .case-grid { grid-template-columns: 1fr; }
 
     .timeline-row { flex-direction: column; gap: 6px; }

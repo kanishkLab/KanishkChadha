@@ -3,58 +3,73 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SEO from '../../components/SEO.astro';
 import { getCollection } from 'astro:content';
 import { pagesConfig } from '../../pages.config';
-import { siteConfig } from '../../config';
 import ContactForm from '../../components/ContactForm.astro';
 
-const allProjects = await getCollection('projects');
+const allPosts = await getCollection('blog', ({ data }) => data.draft === false);
 
-const sortedProjects = allProjects.sort((a, b) => {
-  if (a.data.order !== undefined && b.data.order !== undefined) {
-    return a.data.order - b.data.order;
-  }
-  if (a.data.order !== undefined) return -1;
-  if (b.data.order !== undefined) return 1;
-  return b.data.year - a.data.year;
-});
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
 
-const featuredProject = sortedProjects[0];
-const allCategories = ['All', ...new Set(sortedProjects.map(p => p.data.role))];
-const categoryCounts: Record<string, number> = { All: sortedProjects.length };
-for (const p of sortedProjects) {
-  categoryCounts[p.data.role] = (categoryCounts[p.data.role] || 0) + 1;
+const featuredPost = sortedPosts[0];
+
+const TYPE_LABELS: Record<string, string> = {
+  experiment: 'Experiment',
+  'tool-verdict': 'Tool Verdict',
+  decision: 'Decision',
+  talk: 'Talk',
+};
+
+/* Only offer a chip for a type that actually has posts — an empty filter is
+   a dead end, and tool-verdict currently has none. */
+const typesPresent = [...new Set(sortedPosts.map(p => p.data.type))];
+const allFilters = ['All', ...typesPresent];
+const filterCounts: Record<string, number> = { All: sortedPosts.length };
+for (const p of sortedPosts) {
+  filterCounts[p.data.type] = (filterCounts[p.data.type] || 0) + 1;
 }
 
-const ongoingCount = sortedProjects.filter(p => p.data.status === 'ongoing').length;
-const linkedin = siteConfig.social.linkedin;
+const years = sortedPosts.map(p => p.data.publishDate.getFullYear());
+const yearRange = years.length
+  ? (Math.min(...years) === Math.max(...years)
+      ? `${years[0]}`
+      : `${Math.min(...years)}–${Math.max(...years)}`)
+  : '';
+const experimentCount = filterCounts['experiment'] || 0;
+
+const fmtShort = (d: Date) =>
+  d.toLocaleDateString('en-CA', { month: 'short', year: 'numeric' });
+const fmtLong = (d: Date) =>
+  d.toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
 ---
 
 <BaseLayout>
   <SEO
     slot="head"
-    title={pagesConfig.projects.title}
-    description={pagesConfig.projects.description}
+    title={pagesConfig.blog.title}
+    description={pagesConfig.blog.description}
     type="website"
   />
 
-  {/* Playfair Display + Manrope for this page */}
+  {/* Playfair Display + Manrope, same as /projects */}
   <link
     slot="head"
     rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
   />
 
-  <div class="projects-page kc-page">
+  <div class="lab-page kc-page">
 
     <!-- Page header -->
     <header class="page-header">
       <div class="header-inner">
-        <p class="eyebrow">Selected work</p>
-        <h1 class="page-h1">All case studies.</h1>
-        <p class="page-lead">How I approach a marketing problem — diagnosing the constraint, choosing the channel mix, building the AI-powered system, and measuring what actually moved the needle.</p>
+        <p class="eyebrow">The Lab</p>
+        <h1 class="page-h1">Experiments, in the open.</h1>
+        <p class="page-lead">{pagesConfig.blog.intro}</p>
         <div class="meta-rule">
-          <span>{sortedProjects.length} systems, 2023–2024</span>
+          <span>{sortedPosts.length} posts{yearRange && `, ${yearRange}`}</span>
           <span class="meta-dot"></span>
-          <span>{ongoingCount} still running today</span>
+          <span>{experimentCount} run with real data</span>
         </div>
       </div>
     </header>
@@ -62,136 +77,110 @@ const linkedin = siteConfig.social.linkedin;
     <!-- Sticky filter bar -->
     <div class="filter-sticky" id="filter-bar">
       <div class="filter-inner">
-        <div class="filter-chips" role="tablist" aria-label="Filter projects by category">
-          {allCategories.map((cat, i) => (
+        <div class="filter-chips" role="tablist" aria-label="Filter posts by type">
+          {allFilters.map((f, i) => (
             <button
               class:list={['chip', { 'chip--active': i === 0 }]}
-              data-filter={cat}
+              data-filter={f}
               role="tab"
               aria-selected={i === 0 ? 'true' : 'false'}
             >
-              {cat}<span class="chip-count">{categoryCounts[cat]}</span>
+              {f === 'All' ? 'All' : TYPE_LABELS[f]}<span class="chip-count">{filterCounts[f]}</span>
             </button>
           ))}
         </div>
         <div class="result-count" aria-live="polite">
-          {sortedProjects.length} case studies
+          {sortedPosts.length} posts
         </div>
       </div>
     </div>
 
-    <!-- Case study band -->
+    <!-- Post band -->
     <section class="case-band">
       <div class="band-inner">
 
-        <!-- Featured panel (only on "All" filter) -->
-        <article class="featured" id="featured-panel" data-role={featuredProject.data.role}>
-          <div class="featured-diagram">
-            <div class="diagram-eyebrow">Lead qualification flow</div>
-            <div class="diagram-row-2">
-              <div class="diagram-node">Inbound form</div>
-              <div class="diagram-node">Enrichment</div>
-            </div>
-            <div class="diagram-arrows"><span>&#8595;</span><span>&#8595;</span></div>
-            <div class="diagram-agent">
-              <div class="agent-title">Qualify + score agent</div>
-              <div class="agent-sub">n8n &middot; Make &middot; Anthropic &middot; OpenAI</div>
-              <div class="agent-bar">
-                <div class="bar-track"><div class="bar-fill"></div></div>
-                <span class="bar-score">0.92</span>
+        {featuredPost && (
+          <article class="featured" id="featured-panel" data-type={featuredPost.data.type}>
+            <div class="featured-plate">
+              <div class="plate-eyebrow">Lab note</div>
+              <div class="plate-rows">
+                {featuredPost.data.tags.filter(t => t !== 'blog').slice(0, 5).map((t: string) => (
+                  <div class="plate-row">
+                    <span class="plate-dash"></span>
+                    <span>{t}</span>
+                  </div>
+                ))}
+              </div>
+              <div class="plate-footnote">
+                {TYPE_LABELS[featuredPost.data.type]} &middot; {fmtLong(featuredPost.data.publishDate)}
               </div>
             </div>
-            <div class="diagram-arrows"><span>&#8595;</span><span>&#8595;</span></div>
-            <div class="diagram-row-2">
-              <div class="diagram-node">CRM record</div>
-              <div class="diagram-node diagram-node--accent">Eval suite</div>
-            </div>
-            <div class="diagram-footnote">Every run scored before it reaches a rep.</div>
-          </div>
-          <div class="featured-text">
-            <div class="featured-meta">
-              {featuredProject.data.status === 'ongoing' && <span class="tag-ongoing">Ongoing</span>}
-              <span class="featured-eyebrow">Flagship &middot; {featuredProject.data.role} &middot; {featuredProject.data.year}</span>
-            </div>
-            <h2 class="featured-h2">{featuredProject.data.title}</h2>
-            <p class="featured-body">{featuredProject.data.outcomeSummary}</p>
-            {featuredProject.data.outcomeHighlight && (
-              <div class="outcome-line">
-                <span class="outcome-dot"></span>
-                <span class="outcome-text">{featuredProject.data.outcomeHighlight}</span>
+            <div class="featured-text">
+              <div class="featured-meta">
+                <span class="tag-latest">Latest</span>
+                <span class="featured-eyebrow">
+                  {TYPE_LABELS[featuredPost.data.type]} &middot; {fmtShort(featuredPost.data.publishDate)}
+                </span>
               </div>
-            )}
-            <div class="stack-pills">
-              {featuredProject.data.techStack.slice(0, 4).map((t: string) => (
-                <span class="pill">{t}</span>
-              ))}
-              {featuredProject.data.techStack.length > 4 && (
-                <span class="pill-more">+{featuredProject.data.techStack.length - 4}</span>
-              )}
+              <h2 class="featured-h2">{featuredPost.data.title}</h2>
+              <p class="featured-body">{featuredPost.data.description}</p>
+              <div class="stack-pills">
+                {featuredPost.data.tags.filter(t => t !== 'blog').slice(0, 4).map((t: string) => (
+                  <span class="pill">{t}</span>
+                ))}
+              </div>
+              <div class="featured-cta">
+                <a href={`/blog/${featuredPost.id}`} class="btn-primary">Read the post &rarr;</a>
+              </div>
             </div>
-            <div class="featured-cta">
-              <a href={`/projects/${featuredProject.id}`} class="btn-primary">Read the case study &rarr;</a>
-            </div>
-          </div>
-        </article>
+          </article>
+        )}
 
-        <!-- Card grid -->
+        <!-- Post grid -->
         <div class="card-grid" id="card-grid">
-          {sortedProjects.map((project, idx) => (
+          {sortedPosts.map((post, idx) => (
             <a
-              href={`/projects/${project.id}`}
+              href={`/blog/${post.id}`}
               class:list={['card', { 'card--featured-hidden': idx === 0 }]}
-              data-role={project.data.role}
+              data-type={post.data.type}
               data-idx={idx}
             >
-              <div class="card-media">
-                {project.data.coverImage ? (
-                  <img src={project.data.coverImage} alt={project.data.title} class="card-img" loading="lazy" />
-                ) : (
-                  <div class="card-img card-img--placeholder" />
-                )}
-                {project.data.status === 'ongoing' && (
-                  <span class="card-tag-ongoing">Ongoing</span>
-                )}
-              </div>
+              {post.data.coverImage && (
+                <div class="card-media">
+                  <img src={post.data.coverImage} alt={post.data.title} class="card-img" loading="lazy" />
+                </div>
+              )}
               <div class="card-body">
-                <p class="card-eyebrow">{project.data.role.toUpperCase()}</p>
-                <h3 class="card-h3">{project.data.title}</h3>
-                <p class="card-desc">{project.data.outcomeSummary}</p>
-                {project.data.outcomeHighlight && (
-                  <div class="card-outcome">
-                    <span class="outcome-dot"></span>
-                    <span>{project.data.outcomeHighlight}</span>
-                  </div>
-                )}
+                <p class="card-eyebrow">{TYPE_LABELS[post.data.type].toUpperCase()}</p>
+                <h3 class="card-h3">{post.data.title}</h3>
+                <p class="card-desc">{post.data.description}</p>
                 <div class="stack-pills stack-pills--card">
-                  {project.data.techStack.slice(0, 4).map((t: string) => (
+                  {post.data.tags.filter(t => t !== 'blog').slice(0, 3).map((t: string) => (
                     <span class="pill">{t}</span>
                   ))}
-                  {project.data.techStack.length > 4 && (
-                    <span class="pill-more">+{project.data.techStack.length - 4}</span>
-                  )}
                 </div>
               </div>
               <div class="card-footer">
-                <span class="card-cta-text">View case study &rarr;</span>
-                <span class="card-year">{project.data.year}</span>
+                <span class="card-cta-text">Read the post &rarr;</span>
+                <span class="card-year">{fmtShort(post.data.publishDate)}</span>
               </div>
             </a>
           ))}
         </div>
 
-        <!-- LinkedIn strip -->
-        {linkedin && (
-          <aside class="linkedin-strip">
-            <div class="li-tile">in</div>
-            <div class="li-content">
-              <h3 class="li-title">What colleagues & clients say</h3>
-              <p class="li-body">Recommendations from people I've worked with — on collaboration, delivery, and impact.</p>
-            </div>
-            <a href={`${linkedin}/details/recommendations/`} target="_blank" rel="noopener noreferrer" class="btn-ghost-dark">Read on LinkedIn &rarr;</a>
-          </aside>
+        {sortedPosts.length === 0 && (
+          <p class="empty-state">Nothing published yet — the first experiments are being written up.</p>
         )}
+
+        <!-- Newsletter strip -->
+        <aside class="lab-strip">
+          <div class="strip-tile">AM</div>
+          <div class="strip-content">
+            <h3 class="strip-title">Automated Marketer</h3>
+            <p class="strip-body">Every experiment here goes out first as a weekly note on using AI, analytics and automation in real campaigns.</p>
+          </div>
+          <a href="/#newsletter" class="btn-ghost-dark">Subscribe &rarr;</a>
+        </aside>
 
       </div>
     </section>
@@ -218,11 +207,11 @@ const linkedin = siteConfig.social.linkedin;
 </BaseLayout>
 
 <script>
-  function initProjectFilters() {
-    const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  function initLabFilters() {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.lab-page .chip');
     const featured = document.getElementById('featured-panel');
-    const cards = document.querySelectorAll<HTMLAnchorElement>('.card');
-    const resultCount = document.querySelector('.result-count');
+    const cards = document.querySelectorAll<HTMLAnchorElement>('.lab-page .card');
+    const resultCount = document.querySelector('.lab-page .result-count');
 
     if (chips.length === 0) return;
     if ((chips[0] as HTMLElement).dataset.filterBound === 'true') return;
@@ -241,21 +230,22 @@ const linkedin = siteConfig.social.linkedin;
 
         const isAll = filter === 'All';
 
+        // The featured post is also the first card; it only shows as a panel
+        // on "All", and rejoins the grid once a filter narrows the set.
         if (featured) {
           featured.style.display = isAll ? '' : 'none';
         }
 
         let count = 0;
         cards.forEach(card => {
-          const role = card.dataset.role;
+          const type = card.dataset.type;
           const idx = parseInt(card.dataset.idx || '0', 10);
-          const matches = isAll || role === filter;
+          const matches = isAll || type === filter;
           const hiddenAsFeatured = isAll && idx === 0;
 
-          // card--featured-hidden is a build-time class so the featured project
+          // card--featured-hidden is a build-time class so the featured post
           // isn't duplicated before JS runs. It has to be toggled here too --
-          // clearing the inline display alone leaves the class still hiding it,
-          // so the featured project never rejoined the grid under a filter.
+          // clearing the inline display alone leaves the class still hiding it.
           if (matches && !hiddenAsFeatured) {
             card.classList.remove('card--featured-hidden', 'card--hidden');
             card.style.display = '';
@@ -271,12 +261,12 @@ const linkedin = siteConfig.social.linkedin;
         });
 
         if (resultCount) {
-          resultCount.textContent = count + (count === 1 ? ' case study' : ' case studies');
+          resultCount.textContent = count + (count === 1 ? ' post' : ' posts');
         }
       });
     });
 
-    // Initial state: hide featured card from grid on "All"
+    // Initial state: the featured post is shown as the panel, not in the grid.
     cards.forEach(card => {
       if (parseInt(card.dataset.idx || '0', 10) === 0) {
         card.style.display = 'none';
@@ -285,12 +275,13 @@ const linkedin = siteConfig.social.linkedin;
     });
   }
 
-  document.addEventListener('astro:page-load', initProjectFilters);
+  document.addEventListener('astro:page-load', initLabFilters);
 </script>
 
 <style>
   /* Palette, type stack and nav alignment come from .kc-page in global.css,
-     shared with /blog. */
+     shared with /projects. Layout below mirrors that page so the two index
+     pages read as one system. */
 
   /* ── Eyebrow (reused) ──────────────────────────────────── */
   .eyebrow {
@@ -396,9 +387,7 @@ const linkedin = siteConfig.social.linkedin;
     white-space: nowrap;
   }
 
-  .chip:hover {
-    border-color: var(--kc-ink);
-  }
+  .chip:hover { border-color: var(--kc-ink); }
 
   .chip--active {
     background: var(--kc-ink);
@@ -420,7 +409,7 @@ const linkedin = siteConfig.social.linkedin;
     white-space: nowrap;
   }
 
-  /* ── Case-study band ───────────────────────────────────── */
+  /* ── Post band ─────────────────────────────────────────── */
   .case-band {
     background: var(--kc-surface);
     border-bottom: 1px solid var(--kc-line);
@@ -446,116 +435,61 @@ const linkedin = siteConfig.social.linkedin;
     background: var(--kc-white);
   }
 
-  /* Diagram side */
-  .featured-diagram {
+  /* Plate side — the counterpart to the diagram on /projects. Built from the
+     post's own tags rather than decoration, so it says something true. */
+  .featured-plate {
     background: var(--kc-ink-2);
     background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px);
     padding: 36px 32px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 18px;
     justify-content: center;
   }
 
-  .diagram-eyebrow {
+  .plate-eyebrow {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: .18em;
     text-transform: uppercase;
     color: var(--kc-accent);
-    margin-bottom: 4px;
   }
 
-  .diagram-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .plate-rows {
+    display: flex;
+    flex-direction: column;
     gap: 12px;
   }
 
-  .diagram-node {
-    border: 1px solid rgba(255,255,255,.2);
-    background: rgba(255,255,255,.1);
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: #fff;
-    text-align: center;
-  }
-
-  .diagram-node--accent {
-    border-color: rgba(255,110,66,.5);
-    background: transparent;
-    color: var(--kc-accent);
-  }
-
-  .diagram-arrows {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    color: rgba(255,255,255,.5);
-    font-size: 16px;
-    text-align: center;
-    line-height: 1;
-  }
-
-  .diagram-agent {
-    border: 1px solid rgba(255,110,66,.55);
-    background: rgba(255,110,66,.12);
-    border-radius: 12px;
-    padding: 18px;
-  }
-
-  .agent-title {
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: #fff;
-  }
-
-  .agent-sub {
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(255,255,255,.65);
-    margin-top: 6px;
-  }
-
-  .agent-bar {
+  .plate-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 14px;
-  }
-
-  .bar-track {
-    flex: 1;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.16);
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    width: 78%;
-    height: 100%;
-    background: var(--kc-accent);
-  }
-
-  .bar-score {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--kc-accent);
-  }
-
-  .diagram-footnote {
-    margin-top: 8px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(255,255,255,.2);
-    font-size: 12px;
+    gap: 12px;
+    font-size: 15px;
     font-weight: 600;
-    color: rgba(255,255,255,.65);
+    color: rgba(255,255,255,.9);
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+  }
+
+  .plate-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .plate-dash {
+    width: 14px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--kc-accent);
+    flex: none;
+  }
+
+  .plate-footnote {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    margin-top: 4px;
   }
 
   /* Text side */
@@ -574,7 +508,7 @@ const linkedin = siteConfig.social.linkedin;
     flex-wrap: wrap;
   }
 
-  .tag-ongoing {
+  .tag-latest {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -614,30 +548,7 @@ const linkedin = siteConfig.social.linkedin;
     text-wrap: pretty;
   }
 
-  .outcome-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-top: 18px;
-    border-top: 1px solid var(--kc-line);
-  }
-
-  .outcome-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-    background: var(--kc-accent);
-    flex: none;
-  }
-
-  .outcome-text {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--kc-ink);
-    line-height: 1.4;
-  }
-
-  /* Stack pills (shared) */
+  /* Pills (shared with /projects) */
   .stack-pills {
     display: flex;
     flex-wrap: wrap;
@@ -659,16 +570,7 @@ const linkedin = siteConfig.social.linkedin;
     padding: 6px 10px;
   }
 
-  .pill-more {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--kc-muted);
-    padding: 6px 4px;
-  }
-
-  .featured-cta {
-    margin-top: 8px;
-  }
+  .featured-cta { margin-top: 8px; }
 
   .btn-primary {
     display: inline-block;
@@ -688,7 +590,7 @@ const linkedin = siteConfig.social.linkedin;
     text-decoration: none;
   }
 
-  /* ── Card grid ─────────────────────────────────────────── */
+  /* ── Post grid ─────────────────────────────────────────── */
   .card-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -701,7 +603,7 @@ const linkedin = siteConfig.social.linkedin;
     flex-direction: column;
     background: var(--kc-white);
     border: 1px solid var(--kc-line);
-    border-radius: 12px;
+    border-radius: var(--card-radius);
     overflow: hidden;
     text-decoration: none;
     color: inherit;
@@ -719,9 +621,7 @@ const linkedin = siteConfig.social.linkedin;
     pointer-events: none;
   }
 
-  .card--featured-hidden {
-    display: none;
-  }
+  .card--featured-hidden { display: none; }
 
   .card-media {
     position: relative;
@@ -735,26 +635,6 @@ const linkedin = siteConfig.social.linkedin;
     height: 100%;
     object-fit: cover;
     display: block;
-  }
-
-  .card-img--placeholder {
-    background: linear-gradient(135deg, #e8ecf0, #d1d8de);
-  }
-
-  .card-tag-ongoing {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    background: var(--kc-accent);
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    pointer-events: none;
   }
 
   .card-body {
@@ -784,6 +664,8 @@ const linkedin = siteConfig.social.linkedin;
     text-wrap: pretty;
   }
 
+  /* Clamped: post descriptions vary a lot in length, and without this the
+     cards in a row pull to wildly different heights. */
   .card-desc {
     font-size: 14px;
     font-weight: 500;
@@ -791,19 +673,10 @@ const linkedin = siteConfig.social.linkedin;
     color: var(--kc-body);
     margin: 0;
     text-wrap: pretty;
-  }
-
-  .card-outcome {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    background: var(--kc-accent-tint);
-    border-radius: 6px;
-    padding: 9px 12px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--kc-accent-deep);
-    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .card-footer {
@@ -819,15 +692,23 @@ const linkedin = siteConfig.social.linkedin;
   }
 
   .card-year {
-    font-size: 12px;
-    font-weight: 600;
     color: var(--kc-muted);
+    font-weight: 600;
   }
 
-  /* ── LinkedIn strip ────────────────────────────────────── */
-  .linkedin-strip {
+  .empty-state {
+    text-align: center;
+    color: var(--kc-body-2);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 40px 0;
+    margin: 0;
+  }
+
+  /* ── Newsletter strip ──────────────────────────────────── */
+  .lab-strip {
     background: var(--kc-ocean);
-    border-radius: 12px;
+    border-radius: var(--card-radius);
     padding: 28px 32px;
     display: flex;
     align-items: center;
@@ -835,28 +716,28 @@ const linkedin = siteConfig.social.linkedin;
     box-shadow: var(--kc-shadow-soft);
   }
 
-  .li-tile {
+  .strip-tile {
     flex: none;
     width: 52px;
     height: 52px;
     border-radius: 10px;
-    background: var(--kc-linkedin);
+    background: var(--kc-accent);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-logo);
     font-weight: 800;
-    font-size: 22px;
+    font-size: 18px;
     color: #fff;
     letter-spacing: -.04em;
   }
 
-  .li-content {
+  .strip-content {
     flex: 1;
     min-width: 0;
   }
 
-  .li-title {
+  .strip-title {
     font-family: var(--font-display);
     font-size: 21px;
     font-weight: 600;
@@ -865,7 +746,7 @@ const linkedin = siteConfig.social.linkedin;
     color: #fff;
   }
 
-  .li-body {
+  .strip-body {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.6;
@@ -908,9 +789,7 @@ const linkedin = siteConfig.social.linkedin;
     align-items: start;
   }
 
-  .contact-left .eyebrow {
-    margin-bottom: 14px;
-  }
+  .contact-left .eyebrow { margin-bottom: 14px; }
 
   .contact-h2 {
     font-family: var(--font-display);
@@ -955,18 +834,16 @@ const linkedin = siteConfig.social.linkedin;
     flex: none;
   }
 
-  /* Contact form card — override the component's defaults */
   .contact-right {
     background: var(--kc-white);
     border: 1px solid var(--kc-line);
-    border-radius: 12px;
+    border-radius: var(--card-radius);
     padding: 32px;
     box-shadow: var(--kc-shadow-soft);
   }
 
-  /* .contact-right is already the card here, so strip the elevation the
-     component carries for the centred layouts — otherwise it nests a second
-     bordered, shadowed box inside this one. */
+  /* .contact-right is already the card, so strip the elevation the component
+     carries for the centred layouts — same as /projects. */
   .contact-right :global(.contact-form) {
     max-width: none;
     margin: 0;
@@ -1025,18 +902,26 @@ const linkedin = siteConfig.social.linkedin;
     }
   }
 
+  @media (max-width: 900px) {
+    .featured {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-text { padding: 32px; }
+
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
   @media (max-width: 760px) {
     .page-header {
       padding: 40px 24px 28px;
     }
 
-    .page-h1 {
-      font-size: 36px;
-    }
-
-    .page-lead {
-      font-size: 15px;
-    }
+    .page-h1 { font-size: 36px; }
+    .page-lead { font-size: 15px; }
 
     .filter-inner {
       padding: 12px 24px;
@@ -1045,44 +930,19 @@ const linkedin = siteConfig.social.linkedin;
       gap: 12px;
     }
 
-    .filter-chips {
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      width: 100%;
+    .case-band {
+      padding: 48px 24px 56px;
     }
 
-    .filter-chips::-webkit-scrollbar { display: none; }
-
-    .featured {
-      grid-template-columns: 1fr;
-    }
-
-    .featured-text {
-      padding: 28px 24px;
-    }
-
-    .featured-h2 {
-      font-size: 26px;
-    }
+    .band-inner { gap: 32px; }
 
     .card-grid {
       grid-template-columns: 1fr;
     }
 
-    .case-band {
-      padding: 48px 24px 56px;
-    }
-
-    .band-inner {
-      gap: 32px;
-    }
-
-    .linkedin-strip {
+    .lab-strip {
       flex-direction: column;
-      text-align: center;
-      padding: 24px;
+      align-items: flex-start;
       gap: 18px;
     }
 
@@ -1090,16 +950,6 @@ const linkedin = siteConfig.social.linkedin;
       padding: 56px 24px;
     }
 
-    .contact-grid {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-
-    .contact-h2 {
-      font-size: 30px;
-    }
+    .contact-h2 { font-size: 30px; }
   }
 </style>
-
-<!-- Smooth scroll and the nav content-edge override now live on .kc-page
-     in global.css, shared with /blog. -->

@@ -103,6 +103,60 @@
   --card-radius:        12px;
   --card-shadow:        0 2px 10px rgba(9,38,52,.08);
   --card-shadow-raised: 0 4px 18px rgba(9,38,52,.12);
+}
+
+/* ── Index-page shell ─────────────────────────────────────────────────
+   Shared palette and type stack for the full-bleed index pages
+   (/projects and /blog). Both apply class="kc-page", so the two can't
+   drift apart the way their card treatments once did. Page-specific
+   layout stays in each page's own scoped <style>. */
+.kc-page {
+  --kc-ink: #092634;
+  --kc-ink-2: #0c2b3b;
+  --kc-ocean: #004E72;
+  --kc-accent: #FF6E42;
+  --kc-accent-hover: #f2603a;
+  --kc-accent-deep: #c9512c;
+  --kc-accent-tint: rgba(255,110,66,.12);
+  --kc-accent-ring: rgba(255,110,66,.15);
+  --kc-surface: #F9F9F9;
+  --kc-surface-2: #eef1f2;
+  --kc-line: #E6E9EA;
+  --kc-line-2: #f0f2f3;
+  --kc-body: #4A5A60;
+  --kc-body-2: #6a7a80;
+  --kc-muted: #9AA6AB;
+  --kc-white: #FFFFFF;
+  --kc-input-border: #cdd4d7;
+  --kc-linkedin: #0a66c2;
+  --kc-shadow-soft: var(--card-shadow);
+  --kc-shadow-raised: var(--card-shadow-raised);
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-logo: 'Inter', system-ui, sans-serif;
+
+  width: 100%;
+  font-family: var(--font-sans);
+  color: var(--kc-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* These pages run their content to a 1120px edge, wider than the default
+   nav shell — see the content-edge rules in each page. */
+html:has(.kc-page) { scroll-behavior: smooth; }
+
+body:has(.kc-page) .site-nav {
+  max-width: 1200px;
+  padding: 0 40px;
+}
+
+@media (max-width: 760px) {
+  body:has(.kc-page) .site-nav { padding: 0 24px; }
+}
+
+:root {
+  /* (continues) */
 
   /* Transitions */
   --transition-fast: 150ms ease;

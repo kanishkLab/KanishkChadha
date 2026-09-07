@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/tokens/colors.css">
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/tokens/typography.css">
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/styles.css">
+<script src="_ds/kanishk-chadha-design-system-1b15040e-e7ed-4688-9235-8f53232983d3/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: #fff; font-family: var(--kc-font-sans); -webkit-font-smoothing: antialiased; }
+  a { color: var(--kc-accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</helmet>
+
+<div style="background:#fff;color:var(--kc-ink);font-family:var(--kc-font-sans)">
+
+  <nav style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,.96);border-bottom:1px solid var(--kc-line)">
+    <div style="max-width:1120px;margin:0 auto;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between">
+      <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Logo" variant="lockup" size="22" hint-size="180px,26px"></x-import>
+      <div style="display:flex;align-items:center;gap:30px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">
+        <a href="#" style="color:var(--kc-ink)">Home</a>
+        <a href="#" style="color:var(--kc-accent);padding-bottom:4px;border-bottom:2px solid var(--kc-accent)">Work</a>
+        <a href="#" style="color:var(--kc-ink)">Stack</a>
+        <a href="#" style="color:var(--kc-ink)">Notes</a>
+        <a href="#contact" style="color:var(--kc-ink)">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <header style="max-width:1120px;margin:0 auto;padding:64px 40px 40px">
+    <div>
+      <div style="margin-bottom:14px">
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Eyebrow" tone="accent" size="lg" hint-size="auto,16px">Selected work</x-import>
+      </div>
+      <h1 style="font-family:var(--kc-font-display);font-size:52px;font-weight:600;letter-spacing:-.03em;line-height:1.04;margin:0;color:var(--kc-ink);max-width:16ch;text-wrap:pretty">All case studies.</h1>
+      <p style="font-size:17px;font-weight:500;line-height:1.65;color:var(--kc-body);margin:20px 0 0;max-width:54ch;text-wrap:pretty">How I approach a marketing problem — diagnosing the constraint, choosing the channel mix, building the AI-powered system, and measuring what actually moved the needle.</p>
+    </div>
+    <sc-if value="{{ showProof }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-top:30px;padding-top:20px;border-top:1px solid var(--kc-line);font-size:13px;font-weight:600;color:var(--kc-body-2)">
+        <span>4 systems, 2023–2024</span>
+        <span style="width:4px;height:4px;border-radius:999px;background:var(--kc-line);flex:none"></span>
+        <span>2 still running today</span>
+      </div>
+    </sc-if>
+  </header>
+
+  <div style="position:sticky;top:68px;z-index:30;background:rgba(255,255,255,.96);border-bottom:1px solid var(--kc-line)">
+    <div style="max-width:1120px;margin:0 auto;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="5">
+          <button type="button" onClick="{{ chip.onClick }}" style="{{ chip.style }}">{{ chip.label }}<span style="opacity:.55;margin-left:7px">{{ chip.count }}</span></button>
+        </sc-for>
+      </div>
+      <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--kc-muted);white-space:nowrap">{{ countLabel }}</div>
+    </div>
+  </div>
+
+  <section style="background:var(--kc-surface);border-bottom:1px solid var(--kc-line);padding:56px 0 72px">
+    <div style="max-width:1120px;margin:0 auto;padding:0 40px;display:flex;flex-direction:column;gap:44px">
+
+      <sc-if value="{{ showFeatured }}" hint-placeholder-val="{{ true }}">
+        <article style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);border:1px solid var(--kc-line);border-radius:14px;overflow:hidden;box-shadow:var(--kc-shadow-raised);background:#fff">
+          <div style="background:var(--kc-ink-2);background-image:repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 2px, transparent 2px 22px);padding:36px 32px;display:flex;flex-direction:column;gap:14px;justify-content:center">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--kc-accent);margin-bottom:4px">Lead qualification flow</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="border:1px solid var(--kc-on-dark-line);background:var(--kc-on-dark-fill);border-radius:10px;padding:14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff">Inbound form</div>
+              <div style="border:1px solid var(--kc-on-dark-line);background:var(--kc-on-dark-fill);border-radius:10px;padding:14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff">Enrichment</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;color:var(--kc-on-dark-3);font-size:16px;text-align:center;line-height:1">
+              <span>↓</span><span>↓</span>
+            </div>
+            <div style="border:1px solid rgba(255,110,66,.55);background:rgba(255,110,66,.12);border-radius:12px;padding:18px">
+              <div style="font-size:14px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#fff">Qualify + score agent</div>
+              <div style="font-size:12px;font-weight:600;color:var(--kc-on-dark-2);margin-top:6px">n8n · Make · Anthropic · OpenAI</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+                <div style="flex:1;height:8px;border-radius:999px;background:rgba(255,255,255,.16);overflow:hidden">
+                  <div style="width:78%;height:100%;background:var(--kc-accent)"></div>
+                </div>
+                <span style="font-size:12px;font-weight:800;color:var(--kc-accent)">0.92</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;color:var(--kc-on-dark-3);font-size:16px;text-align:center;line-height:1">
+              <span>↓</span><span>↓</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="border:1px solid var(--kc-on-dark-line);background:var(--kc-on-dark-fill);border-radius:10px;padding:14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff">CRM record</div>
+              <div style="border:1px solid rgba(255,110,66,.5);border-radius:10px;padding:14px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--kc-accent)">Eval suite</div>
+            </div>
+            <div style="margin-top:8px;padding-top:14px;border-top:1px solid var(--kc-on-dark-line);font-size:12px;font-weight:600;color:var(--kc-on-dark-2)">Every run scored before it reaches a rep.</div>
+          </div>
+          <div style="padding:44px;display:flex;flex-direction:column;gap:18px;justify-content:center">
+            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Tag" variant="solid" hint-size="auto,24px">Ongoing</x-import>
+              <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Eyebrow" tone="ocean" size="sm" hint-size="auto,14px">Flagship · Martech + AI · 2024</x-import>
+            </div>
+            <h2 style="font-family:var(--kc-font-display);font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.14;margin:0;color:var(--kc-ink);text-wrap:pretty">The agent that qualifies our inbound leads — and how I know it's right.</h2>
+            <p style="font-size:15px;font-weight:500;line-height:1.65;color:var(--kc-body);margin:0;max-width:52ch;text-wrap:pretty">Built on n8n + Make calling the Anthropic and OpenAI APIs: qualifies and scores inbound leads, then pushes enriched records into the CRM so sales works the right buyers first. The part most people skip — the eval that proves it's right.</p>
+            <div style="display:flex;align-items:center;gap:10px;padding-top:18px;border-top:1px solid var(--kc-line)">
+              <span style="width:6px;height:6px;border-radius:999px;background:var(--kc-accent);flex:none"></span>
+              <span style="font-size:13px;font-weight:700;color:var(--kc-ink);line-height:1.4">Eval-gated — drift caught before a rep sees it</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:2px">
+              <span style="font-size:12px;font-weight:600;color:var(--kc-ocean);background:var(--kc-surface-2);border-radius:6px;padding:6px 10px">n8n</span>
+              <span style="font-size:12px;font-weight:600;color:var(--kc-ocean);background:var(--kc-surface-2);border-radius:6px;padding:6px 10px">Make</span>
+              <span style="font-size:12px;font-weight:600;color:var(--kc-ocean);background:var(--kc-surface-2);border-radius:6px;padding:6px 10px">Anthropic API</span>
+              <span style="font-size:12px;font-weight:600;color:var(--kc-ocean);background:var(--kc-surface-2);border-radius:6px;padding:6px 10px">OpenAI API</span>
+              <span style="font-size:12px;font-weight:600;color:var(--kc-muted);padding:6px 4px">+1</span>
+            </div>
+            <div style="margin-top:8px">
+              <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Button" variant="primary" href="#" hint-size="200px,44px">Read the case study →</x-import>
+            </div>
+          </div>
+        </article>
+      </sc-if>
+
+      <div style="{{ gridStyle }}">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+          <a href="#" style="display:flex;flex-direction:column;background:#fff;border:1px solid var(--kc-line);border-radius:12px;overflow:hidden;text-decoration:none;box-shadow:var(--kc-shadow-soft);transition:box-shadow .15s" style-hover="box-shadow:var(--kc-shadow-raised);text-decoration:none">
+            <div style="position:relative;aspect-ratio:16/10;background:var(--kc-ink)">
+              <image-slot id="{{ c.slot }}" shape="rect" src="{{ c.img }}" placeholder="{{ c.slotHint }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+              <sc-if value="{{ c.ongoing }}">
+                <div style="position:absolute;top:14px;left:14px;pointer-events:none">
+                  <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Tag" variant="solid" hint-size="auto,22px">Ongoing</x-import>
+                </div>
+              </sc-if>
+            </div>
+            <div style="padding:24px 24px 0;display:flex;flex-direction:column;gap:12px;flex:1">
+              <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Eyebrow" tone="accent" size="sm" hint-size="auto,14px">{{ c.meta }}</x-import>
+              <h3 style="font-family:var(--kc-font-display);font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.2;margin:0;color:var(--kc-ink);text-wrap:pretty">{{ c.title }}</h3>
+              <p style="font-size:14px;font-weight:500;line-height:1.6;color:var(--kc-body);margin:0;text-wrap:pretty">{{ c.desc }}</p>
+              <sc-if value="{{ c.outcome }}">
+                <div style="display:flex;align-items:center;gap:9px;background:var(--kc-accent-tint);border-radius:6px;padding:9px 12px">
+                  <span style="width:6px;height:6px;border-radius:999px;background:var(--kc-accent);flex:none"></span>
+                  <span style="font-size:13px;font-weight:700;color:var(--kc-accent-deep);line-height:1.35">{{ c.outcome }}</span>
+                </div>
+              </sc-if>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:8px">
+                <sc-for list="{{ c.pills }}" as="p" hint-placeholder-count="3">
+                  <span style="font-size:12px;font-weight:600;color:var(--kc-ocean);background:var(--kc-surface-2);border-radius:6px;padding:6px 10px">{{ p }}</span>
+                </sc-for>
+                <sc-if value="{{ c.more }}">
+                  <span style="font-size:12px;font-weight:600;color:var(--kc-muted);padding:6px 4px">{{ c.more }}</span>
+                </sc-if>
+              </div>
+            </div>
+            <div style="margin-top:18px;padding:14px 24px 18px;border-top:1px solid var(--kc-line-2);font-size:13px;font-weight:700;color:var(--kc-accent);display:flex;align-items:center;justify-content:space-between">
+              <span>View case study →</span>
+              <span style="font-size:12px;font-weight:600;color:var(--kc-muted)">{{ c.year }}</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+
+      <aside style="background:var(--kc-ocean);border-radius:12px;padding:28px 32px;display:flex;align-items:center;gap:26px;box-shadow:var(--kc-shadow-soft)">
+        <div style="flex:none;width:52px;height:52px;border-radius:10px;background:var(--kc-linkedin);display:flex;align-items:center;justify-content:center;font-family:var(--kc-font-logo);font-weight:800;font-size:22px;color:#fff;letter-spacing:-.04em">in</div>
+        <div style="flex:1;min-width:0">
+          <h3 style="font-family:var(--kc-font-display);font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0;color:#fff">What colleagues &amp; clients say</h3>
+          <p style="font-size:14px;font-weight:500;line-height:1.6;color:var(--kc-on-dark);margin:6px 0 0;max-width:62ch">Recommendations from people I've worked with — on collaboration, delivery, and impact.</p>
+        </div>
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Button" variant="ghost" on-dark="{{ true }}" href="#" hint-size="190px,44px">Read on LinkedIn →</x-import>
+      </aside>
+
+    </div>
+  </section>
+
+  <section id="contact" style="max-width:1120px;margin:0 auto;padding:80px 40px;display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:start">
+    <div>
+      <div style="margin-bottom:14px">
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Eyebrow" tone="accent" size="lg" hint-size="auto,16px">Get in touch</x-import>
+      </div>
+      <h2 style="font-family:var(--kc-font-display);font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.1;margin:0;color:var(--kc-ink);max-width:20ch;text-wrap:pretty">Own your tracking, CDP, and the agents on top of it.</h2>
+      <p style="font-size:16px;font-weight:500;line-height:1.65;color:var(--kc-body);margin:18px 0 0;max-width:44ch;text-wrap:pretty">That's the job I do. Tell me what you're building and where the measurement breaks down.</p>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:28px;padding-top:22px;border-top:1px solid var(--kc-line)">
+        <span style="width:8px;height:8px;border-radius:999px;background:var(--kc-accent);flex:none"></span>
+        <span style="font-size:13px;font-weight:600;line-height:1.5;color:var(--kc-body-2)">Open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary and remote.</span>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--kc-line);border-radius:12px;padding:32px;box-shadow:var(--kc-shadow-soft);display:flex;flex-direction:column;gap:18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Input" label="Name" placeholder="Your name" hint-size="100%,64px"></x-import>
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Input" label="Email" type="email" placeholder="you@example.com" hint-size="100%,64px"></x-import>
+      </div>
+      <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Textarea" label="Message" rows="5" placeholder="Tell me about your project or role..." hint-size="100%,140px"></x-import>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Button" variant="primary" hint-size="170px,44px">Send message →</x-import>
+        <span style="font-size:12px;font-weight:500;color:var(--kc-muted)">I reply within two business days.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div style="height:4px;background:var(--kc-accent)"></div>
+    <div style="background:var(--kc-ink)">
+      <div style="max-width:1120px;margin:0 auto;padding:30px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+        <x-import component-from-global-scope="KanishkChadhaDesignSystem_1b1504.Logo" variant="lockup" on-dark="{{ true }}" size="22" hint-size="180px,26px"></x-import>
+        <div style="font-size:12px;font-weight:500;color:var(--kc-on-dark-3)">Build smarter. Measure better. Automate with intention.</div>
+        <div style="text-align:right;display:flex;flex-direction:column;gap:4px">
+          <a href="#" style="font-size:12px;font-weight:600;color:var(--kc-accent)">LinkedIn</a>
+          <span style="font-size:12px;font-weight:500;color:var(--kc-on-dark-3)">© 2026 Kanishk Chadha</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;featuredHero&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;gridColumns&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;2&quot;,&quot;3&quot;],&quot;default&quot;:&quot;3&quot;,&quot;tsType&quot;:&quot;'2' | '3'&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;showProofBand&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+const DATA = [
+  {
+    cat: 'Martech + AI', year: '2024', ongoing: true, slot: 'cs-agent',
+    img: 'assets/cs-agent.png', outcome: 'Eval-gated — drift caught before a rep sees it',
+    slotHint: 'Drop the lead-agent workflow screenshot',
+    title: "The agent that qualifies our inbound leads — and how I know it's right",
+    desc: "Built on n8n + Make calling the Anthropic and OpenAI APIs: qualifies and scores inbound leads, pushes enriched records into the CRM so sales works the right buyers first. The part most people skip — the eval that proves it's right.",
+    stack: ['n8n', 'Make', 'Anthropic API', 'OpenAI API', 'HubSpot']
+  },
+  {
+    cat: 'Measurement & Instrumentation', year: '2024', ongoing: true, slot: 'cs-cdp',
+    img: 'assets/cs-cdp.png', outcome: 'One event schema governing every downstream tool',
+    slotHint: 'Drop the tracking-plan / CDP screenshot',
+    title: 'The tracking plan that governs a CDP',
+    desc: 'Segment end-to-end: event design, identity resolution, server-side GTM, and the governance that keeps it clean.',
+    stack: ['Segment', 'Google Tag Manager (server-side)', 'GA4', 'Consent Mode v2', 'BigQuery']
+  },
+  {
+    cat: 'Analytics / BI', year: '2023', ongoing: false, slot: 'cs-bi',
+    img: 'assets/cs-bi.png', outcome: '40% less reporting time',
+    slotHint: 'Drop the Looker Studio dashboard',
+    title: 'Five spreadsheets to one source of truth',
+    desc: 'A live dashboard on synthetic data — CAC, LTV, ROAS, MER, contribution margin, anomaly detection. 40% less reporting time.',
+    stack: ['Looker Studio', 'GA4', 'Google Ads', 'Meta Ads', 'BigQuery']
+  },
+  {
+    cat: 'Growth / CRO', year: '2023', ongoing: false, slot: 'cs-cro',
+    img: 'assets/cs-cro.png', outcome: '35% lift in inbound leads across 10+ builds',
+    slotHint: 'Drop a test / experiment screenshot',
+    title: 'Owning a CRO program',
+    desc: 'Hotjar → Optimizely testing loop across 10+ builds → 35% lift in inbound leads, with release QA and consent checks before anything ships.',
+    stack: ['Hotjar', 'Optimizely', 'GA4', 'Google Tag Manager', 'Consent Mode v2']
+  }
+];
+
+const CATS = ['All', 'Martech + AI', 'Measurement & Instrumentation', 'Analytics / BI', 'Growth / CRO'];
+
+class Component extends DCLogic {
+  state = { filter: 'All' };
+
+  chipStyle(on) {
+    return {
+      fontFamily: 'var(--kc-font-sans)', fontSize: 13, fontWeight: 600, lineHeight: 1,
+      padding: '10px 15px', borderRadius: 999, cursor: 'pointer',
+      transition: 'background .15s, border-color .15s, color .15s',
+      background: on ? 'var(--kc-ink)' : '#fff',
+      color: on ? '#fff' : 'var(--kc-ink)',
+      border: on ? '1px solid var(--kc-ink)' : '1px solid var(--kc-line)'
+    };
+  }
+
+  card(d) {
+    const max = 4;
+    return {
+      ...d,
+      meta: d.cat.toUpperCase(),
+      pills: d.stack.slice(0, max),
+      more: d.stack.length > max ? '+' + (d.stack.length - max) : ''
+    };
+  }
+
+  renderVals() {
+    const f = this.state.filter;
+    const cols = this.props.gridColumns === '2' ? 2 : 3;
+    const heroOn = (this.props.featuredHero ?? true) && f === 'All';
+    const matched = f === 'All' ? DATA : DATA.filter(d => d.cat === f);
+    const grid = heroOn ? matched.filter(d => d !== DATA[0]) : matched;
+
+    return {
+      showProof: this.props.showProofBand ?? true,
+      showFeatured: heroOn,
+      chips: CATS.map(c => ({
+        label: c,
+        count: c === 'All' ? DATA.length : DATA.filter(d => d.cat === c).length,
+        style: this.chipStyle(c === f),
+        onClick: () => this.setState({ filter: c })
+      })),
+      cards: grid.map(d => this.card(d)),
+      gridStyle: {
+        display: 'grid',
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+        gap: 24,
+        alignItems: 'stretch'
+      },
+      countLabel: matched.length + (matched.length === 1 ? ' case study' : ' case studies')
+    };
+  }
+}
+</script>
+</body>
+</html>

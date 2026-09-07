@@ -1,0 +1,7 @@
+/* Kanishk Chadha — Elevation & shadow tokens. All shadows tint with navy (9,38,52). */
+:root {
+  --kc-shadow-subtle: 0 1px 3px rgba(9,38,52,.05);  /* pills, chips */
+  --kc-shadow-soft: 0 2px 10px rgba(9,38,52,.08);   /* resting cards, nav, footer */
+  --kc-shadow-raised: 0 4px 18px rgba(9,38,52,.12); /* hover, feature blocks */
+  --kc-focus-ring: 0 0 0 3px rgba(255,110,66,.15);  /* orange focus ring */
+}

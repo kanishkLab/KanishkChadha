@@ -1,0 +1,49 @@
+/* Kanishk Chadha — Colour tokens
+ * A deep, trustworthy navy paired with an oceanic blue on clean white.
+ * Signal Orange is the single accent: CTAs, links, emphasis — never a background wash. */
+:root {
+  /* Brand core */
+  --kc-ink: #092634;          /* Deep Navy — primary ink, headlines, dark surfaces */
+  --kc-ink-2: #0c2b3b;        /* Slightly lifted navy — featured/textured panels */
+  --kc-ink-hover: #0d3547;    /* Navy button hover */
+  --kc-ocean: #004E72;        /* Oceanic Blue — secondary text, supporting fills */
+  --kc-accent: #FF6E42;       /* Signal Orange — accent only */
+  --kc-accent-hover: #f2603a; /* Orange pressed/hover */
+  --kc-accent-deep: #c9512c;  /* Orange text on light accent tint */
+  --kc-accent-tint: rgba(255,110,66,.12); /* Orange 12% — soft accent fills */
+  --kc-accent-ring: rgba(255,110,66,.15); /* Focus ring */
+
+  /* Neutrals */
+  --kc-white: #FFFFFF;        /* Page background, negative space */
+  --kc-surface: #F9F9F9;      /* Off-white — panels, page shell */
+  --kc-surface-2: #eef1f2;    /* Light panel / neutral tag fill */
+  --kc-line: #E6E9EA;         /* Hairline borders */
+  --kc-line-2: #f0f2f3;       /* Faint internal dividers */
+  --kc-input-border: #cdd4d7; /* Input resting border */
+  --kc-body: #4A5A60;         /* Body Slate — body text */
+  --kc-body-2: #6a7a80;       /* Secondary caption text */
+  --kc-muted: #9AA6AB;        /* Muted — captions, meta, disabled */
+
+  /* On-dark text ramps */
+  --kc-on-dark: rgba(255,255,255,.88);
+  --kc-on-dark-2: rgba(255,255,255,.65);
+  --kc-on-dark-3: rgba(255,255,255,.5);
+  --kc-on-dark-fill: rgba(255,255,255,.1);
+  --kc-on-dark-line: rgba(255,255,255,.2);
+
+  /* External brand */
+  --kc-linkedin: #0a66c2;
+
+  /* Semantic aliases */
+  --text-heading: var(--kc-ink);
+  --text-body: var(--kc-body);
+  --text-muted: var(--kc-muted);
+  --text-link: var(--kc-accent);
+  --surface-page: var(--kc-white);
+  --surface-shell: var(--kc-surface);
+  --surface-card: var(--kc-white);
+  --surface-dark: var(--kc-ink);
+  --surface-ocean: var(--kc-ocean);
+  --border-hairline: var(--kc-line);
+  --accent: var(--kc-accent);
+}

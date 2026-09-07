@@ -1,0 +1,50 @@
+/* Kanishk Chadha — Typography tokens */
+:root {
+  /* Families */
+  --kc-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --kc-font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --kc-font-logo: 'Inter', system-ui, sans-serif;
+  --kc-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Weights */
+  --kc-w-regular: 400; /* @kind font */
+  --kc-w-medium: 500; /* @kind font */
+  --kc-w-semibold: 600; /* @kind font */
+  --kc-w-bold: 700; /* @kind font */
+  --kc-w-black: 800; /* @kind font */
+
+  /* Display / heading scale (Playfair Display, 600) */
+  --kc-size-display: 58px;   /* hero */
+  --kc-size-display-2: 44px; /* large display */
+  --kc-size-h1: 34px;
+  --kc-size-h2: 30px;        /* section headers */
+  --kc-size-h3: 24px;        /* subhead */
+  --kc-size-h4: 18px;        /* card title */
+
+  /* Body & UI (Manrope) */
+  --kc-size-lead: 18px;      /* lead paragraph */
+  --kc-size-body: 15px;      /* default body */
+  --kc-size-sm: 13px;        /* small / dense body */
+  --kc-size-label: 12px;     /* overline label */
+  --kc-size-caption: 11px;   /* caption / meta */
+
+  /* Line heights */
+  --kc-lh-tight: 1.02; /* @kind font */
+  --kc-lh-heading: 1.2; /* @kind font */
+  --kc-lh-body: 1.6; /* @kind font */
+  --kc-lh-relaxed: 1.7; /* @kind font */
+
+  /* Tracking */
+  --kc-track-display: -.03em;
+  --kc-track-heading: -.02em;
+  --kc-track-logo: -.04em;
+  --kc-track-mono: -.08em;   /* monogram */
+  --kc-track-body: -.01em;
+  --kc-track-overline: .16em; /* uppercase labels */
+  --kc-track-eyebrow: .22em;  /* wide eyebrow */
+
+  /* Semantic aliases */
+  --font-heading: var(--kc-font-display);
+  --font-body: var(--kc-font-sans);
+  --font-mono: var(--kc-font-mono);
+}

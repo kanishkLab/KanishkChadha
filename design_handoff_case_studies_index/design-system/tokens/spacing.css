@@ -1,0 +1,22 @@
+/* Kanishk Chadha — Spacing & radius tokens. 4px base grid. */
+:root {
+  --kc-space-1: 4px;
+  --kc-space-2: 8px;
+  --kc-space-3: 12px;
+  --kc-space-4: 16px;
+  --kc-space-6: 24px;
+  --kc-space-8: 32px;
+  --kc-space-12: 48px;
+  --kc-space-16: 64px;
+
+  /* Corner radius (as rendered across the brand surfaces) */
+  --kc-radius-xs: 6px;    /* small accent tags */
+  --kc-radius-sm: 8px;    /* buttons, inputs, stack pills */
+  --kc-radius-md: 12px;   /* cards, panels */
+  --kc-radius-lg: 14px;   /* feature blocks, stat band */
+  --kc-radius-full: 999px;/* avatars, dots */
+
+  /* Common component padding */
+  --kc-pad-button: 13px 24px;
+  --kc-pad-card: 24px;
+}

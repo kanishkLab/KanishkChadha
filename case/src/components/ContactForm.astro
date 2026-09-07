@@ -78,22 +78,19 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
 </script>
 
 <style>
-  /* Raised card, built from the values the rest of the site already uses:
-     12px is the panel radius everywhere (.matrix, .newsletter, .linkedin,
-     the case cards), and the shadow is the one the homepage portrait carries.
-     Reusing them keeps this in the site's vocabulary instead of introducing a
-     third elevation. Navy-tinted, not var(--shadow-lg), which is single-layer
-     pure black and reads as grey haze on a white ground.
+  /* Card treatment comes from the shared --card-* scale in global.css, so this
+     matches the featured work cards, the /projects grid, and the .contact-right
+     wrapper this same form sits in on /projects.
      Width is 540px so the 2rem padding leaves the fields at their old 480px. */
   .contact-form {
     max-width: 540px;
     margin: 0 auto;
     padding: 2rem;
     text-align: left;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    box-shadow: 0 4px 18px rgba(9, 38, 52, 0.12);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
   }
 
   .form-row {

@@ -91,6 +91,19 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
   --shadow-lg: 0 12px 32px rgba(0,0,0,0.12);
 
+  /* Cards — the single source of truth for every card on the site: the
+     featured work cards, the /projects grid, and the contact form. Two
+     elevation steps only, both navy-tinted (the shadows above are pure
+     black and read as grey haze on these near-white grounds).
+     --card-shadow is the resting state, --card-shadow-raised is hover and
+     genuinely featured panels. Don't add a third step. */
+  --card-bg:            #ffffff;
+  --card-border:        #e6e9ea;
+  --card-border-hover:  #cfd6d9;
+  --card-radius:        12px;
+  --card-shadow:        0 2px 10px rgba(9,38,52,.08);
+  --card-shadow-raised: 0 4px 18px rgba(9,38,52,.12);
+
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;

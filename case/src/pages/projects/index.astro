@@ -305,8 +305,9 @@ const linkedin = siteConfig.social.linkedin;
     --kc-white: #FFFFFF;
     --kc-input-border: #cdd4d7;
     --kc-linkedin: #0a66c2;
-    --kc-shadow-soft: 0 2px 10px rgba(9,38,52,.08);
-    --kc-shadow-raised: 0 4px 18px rgba(9,38,52,.12);
+    /* Aliases onto the global card scale so this page can't drift from it. */
+    --kc-shadow-soft: var(--card-shadow);
+    --kc-shadow-raised: var(--card-shadow-raised);
 
     --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
     --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
@@ -466,7 +467,7 @@ const linkedin = siteConfig.social.linkedin;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
     border: 1px solid var(--kc-line);
-    border-radius: 14px;
+    border-radius: var(--card-radius);
     overflow: hidden;
     box-shadow: var(--kc-shadow-raised);
     background: var(--kc-white);

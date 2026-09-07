@@ -1,4 +1,18 @@
 ---
+/* DISABLED — deferred past v1.
+ *
+ * The leading underscore in the filename is what disables this: Astro skips
+ * anything in src/pages/ whose name starts with "_", so no /journey route is
+ * generated and it drops out of the sitemap. The page is otherwise intact.
+ *
+ * It's still on the old theme design (all-Inter, centred .page-container) and
+ * doesn't match the homepage / projects / blog system. Re-enable by renaming
+ * back to journey.astro, but redesign it on the .kc-page shell first, and add
+ * it to siteConfig.nav.
+ *
+ * The `journey` content collection stays registered — the content is fine,
+ * only the page is off.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import TimelineEntry from '../components/TimelineEntry.astro';

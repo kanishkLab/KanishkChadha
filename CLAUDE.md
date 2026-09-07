@@ -28,12 +28,31 @@ Built on the [Case Astro theme](https://github.com/erlandv/case) — a case-stud
 | Case studies | `/projects`, `/projects/[slug]` | Built — **content is still theme demo data** |
 | Contact | `/contact` | Built |
 
-**Deferred to a later release** — these pages exist and build, but are out of
-scope until they're planned: `/blog`, `/journey`, `/stuff-i-like`.
+**Resolved 2026-09-07.** `/blog` was promoted into v1 — it's now "The Lab",
+rebuilt on the `/projects` design and linked in the nav. Its *content* is still
+theme demo data.
 
-They are still linked in the main nav (`siteConfig.nav` in `src/config.ts`) and
-still appear in the sitemap. **Decide before launching v1** whether to trim them
-from the nav and exclude them from the sitemap, or ship them as-is.
+`/journey` and `/stuff-i-like` are **disabled**: their files are
+`src/pages/_journey.astro` and `src/pages/_stuff-i-like.astro`. Astro ignores
+anything under `src/pages/` starting with `_`, so no route is generated and they
+drop out of the sitemap. Both files are otherwise intact, with a header comment
+explaining how to bring them back. Neither was in the nav, and nothing links to
+them. Their content collections (`journey`, `resources`) stay registered.
+
+Re-enable by renaming the file back — but redesign on the `.kc-page` shell
+first (see Layout below), since both are still on the old all-Inter theme
+design, and add them to `siteConfig.nav`.
+
+### Layout
+
+Every designed page runs to a **1120px content edge** — a 1200px container
+with a 40px gutter, dropping to 24px at 760px wide. That applies to the nav
+(`Navigation.astro`), the homepage (`.wrap` + `.sec`), `/projects` and `/blog`.
+Change one and the header visibly shifts width between pages.
+
+`/projects` and `/blog` share their palette and type stack via the `.kc-page`
+class in `src/styles/global.css`; card treatment across the whole site comes
+from the `--card-*` tokens in the same file.
 
 #### v1 launch checklist
 
@@ -49,7 +68,10 @@ from the nav and exclude them from the sitemap, or ship them as-is.
 - [ ] **Turn off sample-data flags** — `showSampleFlags = false` in
       `src/pages/index.astro`, once the credibility metrics and timeline are real.
 - [ ] **Wire the newsletter form** to Beehiiv/ESP — currently visual only.
-- [ ] Decide the nav/sitemap question above.
+- [x] ~~Decide the nav/sitemap question above.~~ Resolved 2026-09-07 — see above.
+- [ ] **Replace the blog posts.** All 22 files in `src/content/blog/` are demo
+      software-engineering content. `/blog` is now a prominent, designed page,
+      so this is more visible than it was as a plain list.
 - [ ] **Finish the Obsidian setup** (see Editing content below) — open the vault,
       install Obsidian Git, point the attachment folder at `case/public/`.
 

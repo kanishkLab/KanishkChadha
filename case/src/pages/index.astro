@@ -266,17 +266,22 @@ const linkedin = siteConfig.social.linkedin;
     <!-- ── 7. NEWSLETTER ────────────────────────────────── -->
     <section class="wrap sec block">
       <div id="newsletter" class="newsletter">
-        <p class="overline">The Newsletter</p>
-        <p class="newsletter-title">Automated Marketer</p>
-        <p class="newsletter-sub">
-          A weekly note on using AI, analytics and automation in real campaigns.
-          Build smarter, measure better, automate with intention.
-        </p>
-        <form class="newsletter-form" method="post" action="#">
-          <label class="sr-only" for="newsletter-email">Email address</label>
-          <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" />
-          <button type="submit">Subscribe</button>
-        </form>
+        <div class="newsletter-media">
+          <img src="/images/newsletter-desk.jpg" alt="" loading="lazy" width="1400" height="933" />
+        </div>
+        <div class="newsletter-body">
+          <p class="overline">The Newsletter</p>
+          <p class="newsletter-title">Automated Marketer</p>
+          <p class="newsletter-sub">
+            A weekly note on using AI, analytics and automation in real campaigns.
+            Build smarter, measure better, automate with intention.
+          </p>
+          <form class="newsletter-form" method="post" action="#">
+            <label class="sr-only" for="newsletter-email">Email address</label>
+            <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" />
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
       </div>
     </section>
 
@@ -325,7 +330,12 @@ const linkedin = siteConfig.social.linkedin;
         Looking for someone who can own your tracking, CDP, reporting and the
         AI agents on top of it? That's the job I do.
       </p>
-      <ContactForm />
+      <div class="contact-layout">
+        <div class="contact-visual">
+          <img src="/images/contact-workshop.jpg" alt="" loading="lazy" width="1400" height="933" />
+        </div>
+        <ContactForm />
+      </div>
       <p class="availability">Currently open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary (and remote).</p>
     </section>
 
@@ -671,13 +681,15 @@ const linkedin = siteConfig.social.linkedin;
     flex-direction: column;
     overflow: hidden;
     text-decoration: none;
-    background: #ffffff;
-    border: 1px solid var(--hairline);
-    border-radius: 12px;
-    transition: border-color 150ms ease, transform 150ms ease;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
   }
   .case:hover {
-    border-color: #cfd6d9;
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-raised);
     transform: translateY(-2px);
   }
 
@@ -783,10 +795,21 @@ const linkedin = siteConfig.social.linkedin;
   /* ── 7. Newsletter ──────────────────────────────────────── */
   .newsletter {
     background: var(--navy);
-    border-radius: 12px;
-    padding: 52px;
-    text-align: center;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    align-items: stretch;
+    text-align: left;
   }
+  .newsletter-media { min-height: 320px; }
+  .newsletter-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .newsletter-body { padding: 52px; }
   .newsletter .overline { margin-bottom: 14px; }
   .newsletter-title {
     font-family: var(--font-display);
@@ -805,7 +828,7 @@ const linkedin = siteConfig.social.linkedin;
     max-width: 440px;
     margin: 0 auto 28px;
   }
-  .newsletter-form { display: flex; gap: 9px; justify-content: center; }
+  .newsletter-form { display: flex; gap: 9px; flex-wrap: wrap; }
   .newsletter-form input {
     width: 260px;
     padding: 12px 16px;
@@ -950,6 +973,29 @@ const linkedin = siteConfig.social.linkedin;
     padding-top: 80px;
     padding-bottom: 64px;
   }
+  /* Heading and lede stay centred above; the image and form sit side by side
+     so the section isn't another centred column of text on white. */
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: stretch;
+    max-width: 1040px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .contact-visual {
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  .contact-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
   .contact-lede {
     font-size: 17px;
     font-weight: 500;
@@ -983,7 +1029,9 @@ const linkedin = siteConfig.social.linkedin;
 
     .lab-row { gap: 16px; }
 
-    .newsletter { padding: 40px 28px; }
+    .newsletter { grid-template-columns: 1fr; }
+    .newsletter-media { min-height: 200px; max-height: 240px; }
+    .newsletter-body { padding: 40px 28px; }
   }
 
   @media (max-width: 640px) {
@@ -1021,5 +1069,7 @@ const linkedin = siteConfig.social.linkedin;
 
     .contact { padding-top: 56px; padding-bottom: 48px; }
     .contact-lede { font-size: 15px; }
+    .contact-layout { grid-template-columns: 1fr; gap: 20px; }
+    .contact-visual { max-height: 220px; }
   }
 </style>

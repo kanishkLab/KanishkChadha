@@ -7,8 +7,8 @@ import { siteConfig } from '../config';
 import ContactForm from '../components/ContactForm.astro';
 
 /* ── Featured work ─────────────────────────────────────────
-   Four equal cards in a 2x2 grid. Featured projects lead (by manual
-   order), then the newest remaining projects fill the grid. */
+   Three cards. Featured projects lead (by manual order), then the newest
+   remaining projects fill the grid. The full set lives on /projects. */
 const allProjects = await getCollection('projects');
 const featured = allProjects
   .filter(p => p.data.featured)
@@ -16,7 +16,7 @@ const featured = allProjects
 const others = allProjects
   .filter(p => !p.data.featured)
   .sort((a, b) => b.data.year - a.data.year);
-const cases = [...featured, ...others].slice(0, 4);
+const cases = [...featured, ...others].slice(0, 3);
 
 /* ── The Lab (upcoming — switch to collection query once posts publish) */
 const labPosts = [
@@ -225,13 +225,16 @@ const linkedin = siteConfig.social.linkedin;
       {cases.length > 0 && (
         <div class="case-grid">
           {cases.map(project => (
-            <a class="case case-thumb" href={`/projects/${project.id}`}>
-              {project.data.coverImage
-                ? <img class="case-img" src={project.data.coverImage} alt="" loading="lazy" />
-                : <div class="case-img case-ph" aria-hidden="true"></div>}
-              <div class="case-overlay case-overlay--thumb">
+            <a class="case" href={`/projects/${project.id}`}>
+              <div class="case-media">
+                {project.data.coverImage
+                  ? <img class="case-img" src={project.data.coverImage} alt="" loading="lazy" />
+                  : <div class="case-img case-ph" aria-hidden="true"></div>}
+              </div>
+              <div class="case-body">
                 <span class="case-category">{project.data.role}</span>
-                <h3 class="case-thumb-title">{project.data.title}</h3>
+                <h3 class="case-title">{project.data.title}</h3>
+                <p class="case-outcome">{project.data.outcomeSummary}</p>
               </div>
             </a>
           ))}
@@ -659,23 +662,35 @@ const linkedin = siteConfig.social.linkedin;
   }
 
   /* ── 5. Featured work ───────────────────────────────────── */
+  /* Text sits below the cover, not on top of it. The covers are dense
+     technical diagrams, and no gradient scrim makes a headline read cleanly
+     over schema rows and bar charts — separating the two is the only fix.
+     Matches the card on /projects. */
   .case {
-    position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     text-decoration: none;
-    background: var(--navy);
+    background: #ffffff;
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    transition: border-color 150ms ease, transform 150ms ease;
   }
-  /* Taller than the old 3-up thumbnails: at two columns each card is roughly
-     twice as wide, and 210px left the cover art in a letterbox slot. */
-  .case-thumb { height: 260px; border-radius: 12px; }
+  .case:hover {
+    border-color: #cfd6d9;
+    transform: translateY(-2px);
+  }
 
+  .case-media {
+    aspect-ratio: 16 / 10;
+    background: var(--navy);
+    overflow: hidden;
+  }
   .case-img {
-    position: absolute;
-    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
     transition: transform 400ms ease;
   }
   .case:hover .case-img { transform: scale(1.04); }
@@ -687,29 +702,11 @@ const linkedin = siteConfig.social.linkedin;
       var(--navy);
   }
 
-  .case-overlay {
-    position: absolute;
-    inset: 0;
+  .case-body {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 34px;
-    background: linear-gradient(to top, rgba(9,38,52,.92) 0%, rgba(9,38,52,.25) 55%, transparent 100%);
-    pointer-events: none;
-  }
-  /* Carries further up the card than a single stop would: these covers are busy
-     technical diagrams, and a two-line title otherwise runs off the scrim and
-     sits directly on the artwork. */
-  .case-overlay--thumb {
+    gap: 8px;
     padding: 20px;
-    background: linear-gradient(
-      to top,
-      rgba(9,38,52,.96) 0%,
-      rgba(9,38,52,.88) 30%,
-      rgba(9,38,52,.55) 55%,
-      rgba(9,38,52,.15) 78%,
-      transparent 100%
-    );
   }
   .case-category {
     font-size: 11.5px;
@@ -717,20 +714,34 @@ const linkedin = siteConfig.social.linkedin;
     text-transform: uppercase;
     letter-spacing: 0.11em;
     color: var(--orange);
-    margin-bottom: 5px;
   }
-  .case-thumb-title {
+  .case-title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.25;
     letter-spacing: -0.02em;
-    color: #fff;
+    color: var(--navy);
     margin: 0;
+    text-wrap: pretty;
+  }
+  /* Clamped so one long summary doesn't leave the other two cards half empty;
+     the full text is on the case study itself. */
+  .case-outcome {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 0;
+    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
   .case-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
   }
 
@@ -954,6 +965,8 @@ const linkedin = siteConfig.social.linkedin;
     .stack-inner { padding-inline: 24px; }
     .block { padding-top: 56px; }
 
+    .case-grid { grid-template-columns: repeat(2, 1fr); }
+
     .hero {
       grid-template-columns: 1fr;
       gap: 40px;
@@ -989,7 +1002,6 @@ const linkedin = siteConfig.social.linkedin;
     .cred-statement { font-size: 21px; }
     .cred-stats { grid-template-columns: 1fr; gap: 20px; }
 
-    .case-overlay { padding: 22px; }
     .case-grid { grid-template-columns: 1fr; }
 
     .timeline-row { flex-direction: column; gap: 6px; }

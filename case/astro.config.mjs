@@ -47,7 +47,18 @@ export default defineConfig({
    * and hosting flexibility. All pages are pre-rendered.
    */
   output: 'static',
-  
+
+  /**
+   * Redirects
+   *
+   * /contact was a standalone page before the contact form moved inline onto
+   * every page (see src/pages/_contact.astro). It was in the sitemap, so it
+   * redirects rather than 404s for anyone holding the old URL.
+   */
+  redirects: {
+    '/contact': '/#contact',
+  },
+
   /**
    * Astro integrations
    * 

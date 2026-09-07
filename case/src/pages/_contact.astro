@@ -1,4 +1,17 @@
 ---
+/* DISABLED — superseded by the inline contact CTA.
+ *
+ * The contact form now renders at the bottom of every page via
+ * components/ContactForm.astro, and the nav "Contact" link is a #contact
+ * anchor on the current page. This standalone page was left behind when that
+ * landed, still on the old all-Inter theme design, orphaned but building.
+ *
+ * The leading underscore is what disables it: Astro skips anything in
+ * src/pages/ starting with "_". /contact is redirected to /#contact in
+ * astro.config.mjs, so old links still land somewhere sensible.
+ *
+ * If this is ever restored, drop that redirect or the route won't win.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SEO from '../components/SEO.astro';
 import { siteConfig } from '../config';

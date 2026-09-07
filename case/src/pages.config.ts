@@ -48,7 +48,7 @@ export const pagesConfig = {
     title: 'Blog & Insights',
     description: 'Articles, decisions, and talks on marketing strategy, AI integration, and building with intention.',
     heading: 'Blog',
-    intro: 'Thoughts on marketing, strategy decisions, and lessons learned. Decisions document the choices I\'ve made and why. Articles explore frameworks and strategies. Talks share my thinking on stage.',
+    intro: 'Experiments with real data, honest tool verdicts, and the strategy decisions behind them. Each post documents what I tried, what worked, and what I\'d do differently.',
   },
   journey: {
     title: 'Journey - Career Growth & Learning Timeline',

@@ -73,7 +73,7 @@ const tagTitle = tag.charAt(0).toUpperCase() + tag.slice(1);
             description={post.data.description}
             publishDate={post.data.publishDate}
             tags={post.data.tags}
-            badge={post.data.type === 'decision' ? 'Decision' : post.data.type === 'talk' ? 'Talk' : 'Article'}
+            badge={post.data.type === 'experiment' ? 'Experiment' : post.data.type === 'tool-verdict' ? 'Tool Verdict' : post.data.type === 'decision' ? 'Decision' : 'Talk'}
           />
         ))}
       </div>

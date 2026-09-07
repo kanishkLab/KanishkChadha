@@ -1,6 +1,6 @@
 ---
 title: "Event Sourcing: Lessons Learned from Production"
-type: article
+type: experiment
 description: "After running an event-sourced system in production for 2 years, here are the lessons I learned about when event sourcing is worth the complexity and when it's not."
 publishDate: 2025-12-15
 tags:

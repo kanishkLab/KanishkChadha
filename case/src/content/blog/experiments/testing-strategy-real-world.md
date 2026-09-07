@@ -1,6 +1,6 @@
 ---
 title: "A Practical Testing Strategy for Real-World Applications"
-type: article
+type: experiment
 description: "How to build a testing strategy that catches bugs without slowing you down, based on years of trial and error."
 publishDate: 2025-05-20
 tags:

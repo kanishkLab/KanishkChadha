@@ -54,8 +54,8 @@ export const siteConfig = {
     { label: 'Home', href: '/' },
     { label: 'Work', href: '/projects' },
     { label: 'Stack', href: '/#stack' },
-    { label: 'Notes', href: '/blog' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'The Lab', href: '/blog' },
+    { label: 'Contact', href: '#contact' },
   ],
 } as const;
 export type SiteConfig = typeof siteConfig;

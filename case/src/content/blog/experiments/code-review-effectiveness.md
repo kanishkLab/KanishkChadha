@@ -1,6 +1,6 @@
 ---
 title: "Making Code Reviews Actually Effective"
-type: article
+type: experiment
 description: "How to transform code reviews from a bottleneck into a tool for knowledge sharing, quality improvement, and team growth."
 publishDate: 2025-07-24
 tags:

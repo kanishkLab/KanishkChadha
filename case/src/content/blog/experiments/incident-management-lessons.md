@@ -1,6 +1,6 @@
 ---
 title: "Incident Management: Lessons from 5 Years of On-Call"
-type: article
+type: experiment
 description: "Practical insights on building effective incident response processes, reducing MTTR, and creating a sustainable on-call culture."
 publishDate: 2026-01-05
 updatedDate: 2026-01-06

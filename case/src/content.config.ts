@@ -67,8 +67,10 @@ const projectsCollection = defineCollection({
     
     learnings: z.array(z.string()),
     
+    outcomeHighlight: z.string().optional(),
+
     featured: z.boolean().default(false),
-    
+
     status: z.enum(['completed', 'ongoing', 'archived']).default('completed'),
     
     order: z.number().optional(),
@@ -89,7 +91,7 @@ const blogCollection = defineCollection({
 
     updatedDate: z.coerce.date().optional(),
 
-    type: z.enum(['decision', 'article', 'talk']),
+    type: z.enum(['experiment', 'tool-verdict', 'decision', 'talk']),
 
     tags: z.array(z.string()).default([]),
 

@@ -1,6 +1,6 @@
 ---
 title: "Observability Beyond Logging: Traces, Metrics, and Understanding Production"
-type: article
+type: experiment
 description: "A practical guide to implementing observability that actually helps you understand and debug production systems."
 publishDate: 2025-06-13
 tags:

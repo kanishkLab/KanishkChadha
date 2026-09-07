@@ -59,7 +59,7 @@ function formatDate(date: Date): string {
   }).format(date);
 }
 
-const typeLabel = type === 'decision' ? 'Decision' : type === 'talk' ? 'Talk' : 'Article';
+const typeLabel = type === 'experiment' ? 'Experiment' : type === 'tool-verdict' ? 'Tool Verdict' : type === 'decision' ? 'Decision' : 'Talk';
 ---
 
 <BaseLayout>

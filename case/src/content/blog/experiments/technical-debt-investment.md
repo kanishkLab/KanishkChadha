@@ -1,6 +1,6 @@
 ---
 title: "Treating Technical Debt as Investment, Not Burden"
-type: article
+type: experiment
 description: "A framework for quantifying, prioritizing, and communicating technical debt to stakeholders in terms they understand."
 publishDate: 2025-11-10
 tags:

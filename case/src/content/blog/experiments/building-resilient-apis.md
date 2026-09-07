@@ -1,6 +1,6 @@
 ---
 title: "Building Resilient APIs: Patterns for Production"
-type: article
+type: experiment
 description: "A practical guide to building APIs that gracefully handle failures, with real-world examples from production systems."
 publishDate: 2025-09-28
 updatedDate: 2025-09-30

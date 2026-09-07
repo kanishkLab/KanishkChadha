@@ -1,6 +1,6 @@
 ---
 title: "API Versioning Strategies That Actually Work"
-type: article
+type: experiment
 description: "A practical comparison of API versioning approaches with recommendations based on real-world experience."
 publishDate: 2025-04-05
 tags:

@@ -1,6 +1,6 @@
 ---
 title: "Microservices vs Monolith: Making the Right Choice"
-type: article
+type: experiment
 description: "A decision framework for choosing between microservices and monolithic architecture, based on team size, domain complexity, and organizational factors."
 publishDate: 2025-08-17
 tags:

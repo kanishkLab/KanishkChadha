@@ -1,6 +1,6 @@
 ---
 title: "Zero-Downtime Database Migrations: A Practical Guide"
-type: article
+type: experiment
 description: "How to evolve your database schema without taking your application offline, with real examples from PostgreSQL migrations."
 publishDate: 2025-10-20
 tags:

@@ -9,10 +9,11 @@ const BASE_URL = process.env.SCREENSHOT_URL || 'http://localhost:4321';
 const PAGES = [
   { name: 'home', path: '/' },
   { name: 'projects', path: '/projects' },
-  { name: 'writing', path: '/writing' },
+  { name: 'case-study', path: '/projects/lead-qualification-agent' },
+  { name: 'blog', path: '/blog' },
   { name: 'journey', path: '/journey' },
-  { name: 'tools', path: '/tools' },
-  { name: 'speaking', path: '/speaking' },
+  { name: 'stuff-i-like', path: '/stuff-i-like' },
+  { name: 'contact', path: '/contact' },
 ];
 
 const VIEWPORTS = [
@@ -24,7 +25,13 @@ const outDir = join(__dirname, '../screenshots/auto');
 mkdirSync(outDir, { recursive: true });
 
 async function takeScreenshots() {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    // Containers and CI run as root, where Chromium's sandbox refuses to
+    // start. Opt out only when PUPPETEER_NO_SANDBOX is set so local runs
+    // keep the sandbox on.
+    args: process.env.PUPPETEER_NO_SANDBOX ? ['--no-sandbox'] : [],
+  });
 
   for (const viewport of VIEWPORTS) {
     const page = await browser.newPage();

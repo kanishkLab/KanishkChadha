@@ -78,10 +78,12 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
 </script>
 
 <style>
-  /* Raised card. The shadow is layered and tinted with the brand navy rather
-     than var(--shadow-lg): every surface token on this site resolves to white,
-     and a single flat black shadow on a white ground reads as grey haze. Three
-     stops give a contact edge, a soft body, and a wide ambient pool.
+  /* Raised card, built from the values the rest of the site already uses:
+     12px is the panel radius everywhere (.matrix, .newsletter, .linkedin,
+     the case cards), and the shadow is the one the homepage portrait carries.
+     Reusing them keeps this in the site's vocabulary instead of introducing a
+     third elevation. Navy-tinted, not var(--shadow-lg), which is single-layer
+     pure black and reads as grey haze on a white ground.
      Width is 540px so the 2rem padding leaves the fields at their old 480px. */
   .contact-form {
     max-width: 540px;
@@ -89,12 +91,9 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     padding: 2rem;
     text-align: left;
     background: var(--color-white);
-    border: 1px solid rgba(9, 38, 52, 0.07);
-    border-radius: 16px;
-    box-shadow:
-      0 1px 2px rgba(9, 38, 52, 0.04),
-      0 8px 20px -6px rgba(9, 38, 52, 0.08),
-      0 24px 48px -16px rgba(9, 38, 52, 0.10);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(9, 38, 52, 0.12);
   }
 
   .form-row {
@@ -166,25 +165,18 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    /* Accent-tinted, not navy: a shadow under a saturated button reads as dirt
-       unless it carries the button's own hue. */
-    box-shadow:
-      0 2px 6px rgba(255, 110, 66, 0.24),
-      0 8px 18px -6px rgba(255, 110, 66, 0.34);
-    transition: background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    /* No shadow: the card is the raised object, and every other button on the
+       site (.btn, the newsletter submit) is flat. */
+    transition: background 150ms ease, transform 150ms ease;
   }
 
   .form-submit:hover {
     background: #ed5a2e;
     transform: translateY(-1px);
-    box-shadow:
-      0 4px 10px rgba(255, 110, 66, 0.28),
-      0 14px 28px -8px rgba(255, 110, 66, 0.42);
   }
 
   .form-submit:active {
     transform: translateY(0);
-    box-shadow: 0 1px 3px rgba(255, 110, 66, 0.30);
   }
 
   .form-submit:focus-visible {
@@ -196,7 +188,6 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
-    box-shadow: 0 2px 6px rgba(255, 110, 66, 0.18);
   }
 
   .form-success {

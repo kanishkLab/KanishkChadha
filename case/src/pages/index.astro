@@ -4,6 +4,7 @@ import SEO from '../components/SEO.astro';
 import StructuredData from '../components/StructuredData.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '../config';
+import ContactForm from '../components/ContactForm.astro';
 
 /* ── Featured work ─────────────────────────────────────────
    One flagship card + three thumbnails. Featured projects lead
@@ -17,11 +18,11 @@ const others = allProjects
   .sort((a, b) => b.data.year - a.data.year);
 const [flagship, ...thumbnails] = [...featured, ...others].slice(0, 4);
 
-/* ── Recent writing (upcoming — switch to collection query once posts publish) */
-const upcomingPosts = [
-  { title: 'What a tracking plan should actually contain', category: 'Instrumentation', readTime: 7, date: 'Aug 2026' },
-  { title: 'Consent Mode v2 default states, explained properly', category: 'Privacy', readTime: 6, date: 'Aug 2026' },
-  { title: 'How I eval an AI agent before I trust it with leads', category: 'AI Systems', readTime: 8, date: 'Sep 2026' },
+/* ── The Lab (upcoming — switch to collection query once posts publish) */
+const labPosts = [
+  { title: 'I built a lead-scoring agent with n8n + Claude — here\'s the eval', type: 'experiment', readTime: 8, date: 'Sep 2026', excerpt: 'A real workflow tested against 200 historical conversions — with the eval spreadsheet.' },
+  { title: 'Clay for enrichment: who it\'s actually for', type: 'tool-verdict', readTime: 5, date: 'Aug 2026', excerpt: 'Tried it on two enrichment jobs. One was perfect, the other was a waste of credits.' },
+  { title: 'What happens when you pipe Segment events into an AI classifier', type: 'experiment', readTime: 7, date: 'Aug 2026', excerpt: 'Intent scoring from raw event streams — the setup, the surprises, and where it broke.' },
 ];
 
 /* ── Tech stack ────────────────────────────────────────────
@@ -305,29 +306,24 @@ const linkedin = siteConfig.social.linkedin;
       </div>
     </section>
 
-    <!-- ── 9. BLOG ──────────────────────────────────────── -->
-    <section id="blog" class="wrap sec block">
-      <div class="blog-head">
+    <!-- ── 9. THE LAB ───────────────────────────────────── -->
+    <section id="lab" class="wrap sec block">
+      <div class="lab-head">
         <div>
-          <p class="overline">Field Notes</p>
-          <h2 class="h2 h2--sm">What I'm writing about</h2>
+          <p class="overline">The Lab</p>
+          <h2 class="h2 h2--sm">Experiments & tool verdicts</h2>
         </div>
         <a class="link-all" href="/blog">View all →</a>
       </div>
-      <div class="blog-grid">
-        {upcomingPosts.map((post, i) => (
-          <div class:list={['blog-card', 'blog-card--upcoming', { 'blog-card--featured': i === 0 }]}>
-            <div class="blog-cover blog-ph" aria-hidden="true"></div>
-            <div class="blog-body">
-              <span class="blog-category">{post.category}</span>
-              <h3 class="blog-title">{post.title}</h3>
-              <p class="blog-excerpt">
-                {i === 0 ? 'Event taxonomy, naming conventions, and the governance layer most teams skip — the document that keeps your data clean at scale.' : ''}
-              </p>
-              <span class="blog-meta">
-                {post.readTime} min read · {post.date}
-              </span>
+      <div class="lab-list">
+        {labPosts.map((post) => (
+          <div class="lab-row">
+            <span class:list={['lab-badge', { 'lab-badge--verdict': post.type === 'tool-verdict' }]}>{post.type === 'tool-verdict' ? 'Tool Verdict' : post.type === 'experiment' ? 'Experiment' : post.type === 'decision' ? 'Decision' : 'Talk'}</span>
+            <div class="lab-content">
+              <h3 class="lab-title">{post.title}</h3>
+              {post.excerpt && <p class="lab-excerpt">{post.excerpt}</p>}
             </div>
+            <span class="lab-meta">{post.readTime} min · {post.date}</span>
           </div>
         ))}
       </div>
@@ -340,7 +336,7 @@ const linkedin = siteConfig.social.linkedin;
         Looking for someone who can own your tracking, CDP, reporting and the
         AI agents on top of it? That's the job I do.
       </p>
-      <a class="btn btn-orange" href={`mailto:${siteConfig.author.email}`}>Start a conversation</a>
+      <ContactForm />
       <p class="availability">Currently open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary (and remote).</p>
     </section>
 
@@ -901,8 +897,8 @@ const linkedin = siteConfig.social.linkedin;
     margin: 4px 0 0;
   }
 
-  /* ── 9. Blog ────────────────────────────────────────────── */
-  .blog-head {
+  /* ── 9. The Lab ─────────────────────────────────────────── */
+  .lab-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -918,69 +914,55 @@ const linkedin = siteConfig.social.linkedin;
   }
   .link-all:hover { color: var(--orange-hover); }
 
-  .blog-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 20px;
+  .lab-list {
+    border-top: 1px solid var(--hairline);
   }
-  .blog-card--upcoming { cursor: default; }
-  .blog-card--upcoming:hover { border-color: var(--hairline); transform: none; }
-  .blog-card--featured { grid-row: 1 / 3; }
-  .blog-card--featured .blog-cover { height: 100%; min-height: 220px; }
-  .blog-card--featured .blog-body { padding: 26px; }
-  .blog-card--featured .blog-title { font-size: 24px; line-height: 1.25; }
-  .blog-card {
+  .lab-row {
     display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border: 1px solid var(--hairline);
-    border-radius: 12px;
-    overflow: hidden;
-    color: inherit;
-    text-decoration: none;
-    transition: border-color 150ms ease, transform 150ms ease;
+    align-items: baseline;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--hairline);
   }
-  .blog-card:hover { border-color: var(--orange); transform: translateY(-2px); }
-
-  .blog-cover {
-    display: block;
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
+  .lab-badge {
     flex-shrink: 0;
-  }
-  .blog-ph {
-    background:
-      repeating-linear-gradient(135deg, rgba(9,38,52,0.04) 0 2px, transparent 2px 14px),
-      linear-gradient(160deg, #eef4f7 0%, #dde8ef 100%);
-  }
-  .blog-body { display: flex; flex-direction: column; flex: 1; padding: 20px; }
-  .blog-category {
-    font-size: 12px;
+    width: 110px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.11em;
+    letter-spacing: 0.08em;
     color: var(--orange);
   }
-  .blog-title {
+  .lab-badge--verdict {
+    color: var(--teal);
+  }
+  .lab-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .lab-title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 19px;
+    font-size: 20px;
     line-height: 1.3;
     letter-spacing: -0.02em;
     color: var(--navy);
-    margin: 10px 0;
+    margin: 0 0 6px;
   }
-  .blog-excerpt {
+  .lab-excerpt {
     font-size: 15px;
     font-weight: 500;
     line-height: 1.6;
     color: var(--slate);
-    margin: 0 0 auto;
+    margin: 0;
   }
-  .blog-excerpt:empty { display: none; }
-  .blog-meta { font-size: 13.5px; font-weight: 500; color: var(--slate-muted); margin-top: 12px; }
+  .lab-meta {
+    flex-shrink: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--slate-muted);
+    white-space: nowrap;
+  }
 
   /* ── 10. Contact ────────────────────────────────────────── */
   .contact {
@@ -1018,9 +1000,7 @@ const linkedin = siteConfig.social.linkedin;
     .matrix-tags { justify-content: flex-start; }
 
     .case-grid { grid-template-columns: repeat(2, 1fr); }
-    .blog-grid { grid-template-columns: 1fr; }
-    .blog-card--featured { grid-row: auto; }
-    .blog-card--featured .blog-cover { min-height: 180px; }
+    .lab-row { gap: 16px; }
 
     .newsletter { padding: 40px 28px; }
   }
@@ -1057,7 +1037,10 @@ const linkedin = siteConfig.social.linkedin;
 
     .linkedin { padding: 24px; gap: 16px; }
 
-    .blog-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .lab-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .lab-row { flex-direction: column; gap: 8px; }
+    .lab-badge { width: auto; }
+    .lab-meta { align-self: flex-start; }
 
     .contact { padding-top: 56px; padding-bottom: 48px; }
     .contact-lede { font-size: 15px; }

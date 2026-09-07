@@ -10,9 +10,11 @@
   padding: 2rem 1.5rem;
 }
 
-.page-header {
-  margin-bottom: 3rem;
-}
+/* No shared .page-header rule on purpose. It collided with the scoped
+   .page-header every page already defines: Astro's scoped selector won
+   on the properties it declared, but silently inherited the ones it
+   didn't, stacking spacing nobody asked for. Set header spacing in the
+   page. */
 
 .page-title {
   font-size: 2.5rem;

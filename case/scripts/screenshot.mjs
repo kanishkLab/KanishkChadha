@@ -19,6 +19,10 @@ const PAGES = [
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'mobile', width: 390, height: 844 },
+  // iPhone Pro Max class. Worth its own pass: layout bugs have hidden in the
+  // 390-430 gap before, where a grid column gets wide enough to expose a
+  // shrink-to-fit child that looks fine at 390.
+  { name: 'mobile-max', width: 430, height: 932 },
 ];
 
 const outDir = join(__dirname, '../screenshots/auto');

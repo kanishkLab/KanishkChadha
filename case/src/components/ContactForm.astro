@@ -83,6 +83,11 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
      wrapper this same form sits in on /projects.
      Width is 540px so the 2rem padding leaves the fields at their old 480px. */
   .contact-form {
+    /* width:100% is load-bearing. In a grid parent (the homepage contact
+       section) `margin: 0 auto` overrides the default stretch alignment, so
+       without an explicit width the form shrinks to max-content — 278px once
+       the fields stack under 480px — instead of filling the column. */
+    width: 100%;
     max-width: 540px;
     margin: 0 auto;
     padding: 2rem;

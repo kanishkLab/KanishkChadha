@@ -382,8 +382,11 @@ const linkedin = siteConfig.social.linkedin;
     outline-offset: 2px;
   }
 
-  .wrap { max-width: 1280px; margin-inline: auto; }
-  .sec  { padding-inline: 64px; }
+  /* 1200 minus the 40px gutter gives the same 1120px content edge as the nav
+     and as /projects and /blog. Changing either number desyncs this page from
+     the header. */
+  .wrap { max-width: 1200px; margin-inline: auto; }
+  .sec  { padding-inline: 40px; }
   .block { padding-top: 72px; }
 
   .sr-only {
@@ -1037,8 +1040,12 @@ const linkedin = siteConfig.social.linkedin;
     .newsletter-body { padding: 40px 28px; }
   }
 
+  /* Matches the nav gutter and /projects, /blog at the same breakpoint. */
+  @media (max-width: 760px) {
+    .sec { padding-inline: 24px; }
+  }
+
   @media (max-width: 640px) {
-    .sec { padding-inline: 20px; }
     .stack-inner { padding-inline: 16px; }
 
     .hero-title { font-size: 32px; }

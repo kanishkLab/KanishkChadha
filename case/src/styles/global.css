@@ -142,18 +142,7 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* These pages run their content to a 1120px edge, wider than the default
-   nav shell — see the content-edge rules in each page. */
 html:has(.kc-page) { scroll-behavior: smooth; }
-
-body:has(.kc-page) .site-nav {
-  max-width: 1200px;
-  padding: 0 40px;
-}
-
-@media (max-width: 760px) {
-  body:has(.kc-page) .site-nav { padding: 0 24px; }
-}
 
 :root {
   /* (continues) */

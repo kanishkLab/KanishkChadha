@@ -167,14 +167,17 @@ const isActive = (href: string) => {
     border-bottom: 1px solid var(--color-border);
   }
 
-  /* ── Nav shell — content-aligned ─────────────────────────────────── */
+  /* ── Nav shell — content-aligned ───────────────────────────────────
+     1200 minus a 40px gutter leaves a 1120px content edge, which is the
+     width every designed page runs to. Keep these two numbers in step with
+     the page containers or the nav visibly changes width between pages. */
   .site-nav {
     display: flex;
     align-items: center;
     gap: 0;
-    max-width: var(--max-width-content);
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 40px;
     height: 64px;
   }
 
@@ -390,8 +393,13 @@ const isActive = (href: string) => {
     .nav-scroll { display: none; }
     .hamburger  { display: flex; }
 
-    .site-nav { padding: 0 var(--space-md); }
     .nav-brand { margin-right: auto; }
+  }
+
+  /* Gutter switches at 760px to stay in step with the page containers,
+     which is a different breakpoint from the hamburger above. */
+  @media (max-width: 760px) {
+    .site-nav { padding: 0 24px; }
   }
 
   /* Below ~360px the lockup drops to the mark only */

@@ -990,9 +990,17 @@ const linkedin = siteConfig.social.linkedin;
     box-shadow: var(--kc-shadow-soft);
   }
 
+  /* .contact-right is already the card here, so strip the elevation the
+     component carries for the centred layouts — otherwise it nests a second
+     bordered, shadowed box inside this one. */
   .contact-right :global(.contact-form) {
     max-width: none;
     margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .contact-right :global(.form-field label) {

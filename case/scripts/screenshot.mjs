@@ -9,22 +9,33 @@ const BASE_URL = process.env.SCREENSHOT_URL || 'http://localhost:4321';
 const PAGES = [
   { name: 'home', path: '/' },
   { name: 'projects', path: '/projects' },
-  { name: 'writing', path: '/writing' },
+  { name: 'case-study', path: '/projects/lead-qualification-agent' },
+  { name: 'blog', path: '/blog' },
   { name: 'journey', path: '/journey' },
-  { name: 'tools', path: '/tools' },
-  { name: 'speaking', path: '/speaking' },
+  { name: 'stuff-i-like', path: '/stuff-i-like' },
+  { name: 'contact', path: '/contact' },
 ];
 
 const VIEWPORTS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'mobile', width: 390, height: 844 },
+  // iPhone Pro Max class. Worth its own pass: layout bugs have hidden in the
+  // 390-430 gap before, where a grid column gets wide enough to expose a
+  // shrink-to-fit child that looks fine at 390.
+  { name: 'mobile-max', width: 430, height: 932 },
 ];
 
 const outDir = join(__dirname, '../screenshots/auto');
 mkdirSync(outDir, { recursive: true });
 
 async function takeScreenshots() {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    // Containers and CI run as root, where Chromium's sandbox refuses to
+    // start. Opt out only when PUPPETEER_NO_SANDBOX is set so local runs
+    // keep the sandbox on.
+    args: process.env.PUPPETEER_NO_SANDBOX ? ['--no-sandbox'] : [],
+  });
 
   for (const viewport of VIEWPORTS) {
     const page = await browser.newPage();

@@ -1185,6 +1185,14 @@ const resumeUrl =
        squeezing the form into a narrow column. */
     .contact-layout { grid-template-columns: 1fr; gap: 20px; }
 
+    /* Once stacked, the form is the full-width row rather than a column, so
+       the component's 540px cap leaves it visibly narrower than the image
+       above it — 148px short at a 768px window, 280px at 900px. Release the
+       cap for the stacked range only; the two-column layout above 960px
+       still sizes the form from its column. /projects and /blog already do
+       this via .contact-right. */
+    .contact-layout :global(.contact-form) { max-width: none; }
+
     .hero {
       grid-template-columns: 1fr;
       gap: 40px;

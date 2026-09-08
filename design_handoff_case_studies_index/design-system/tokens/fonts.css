@@ -1,6 +1,0 @@
-/* Kanishk Chadha — Webfonts
- * Playfair Display (serif display/headings), Manrope (sans body & UI), Inter (logo/wordmark).
- * All three are genuine Google Fonts — loaded from the Google Fonts API.
- * NOTE: no self-hosted binaries were provided; if offline hosting is required,
- * drop the .woff2 files into assets/fonts/ and replace this @import with @font-face rules. */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Inter:wght@700;800&display=swap');

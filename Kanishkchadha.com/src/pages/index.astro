@@ -144,7 +144,7 @@ const portraitOverride = siteConfig.author.portrait;
 const { name: authorName, title: authorTitle } = siteConfig.author;
 const linkedin = siteConfig.social.linkedin;
 
-const newsletterAction = siteConfig.newsletter.action;
+const newsletterFormId = siteConfig.newsletter.formId;
 const newsletterUrl = siteConfig.newsletter.url;
 
 /* The hero button used to point at '/resume.pdf' unconditionally, which 404'd
@@ -333,16 +333,14 @@ const resumeUrl =
             Build smarter, measure better, automate with intention.
           </p>
           {/* Was method="post" action="#", which reloaded the page and threw the
-              address away with no confirmation. Posts to the beehiiv embed
-              endpoint now; beehiiv confirms in the new tab. With no endpoint
-              set, a plain link to the publication is shown instead of a form
-              that quietly loses signups. */}
-          {newsletterAction ? (
-            <form class="newsletter-form" method="post" action={newsletterAction} target="_blank">
-              <label class="sr-only" for="newsletter-email">Email address</label>
-              <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" />
-              <button type="submit">Subscribe</button>
-            </form>
+              address away with no confirmation. beehiiv's own v3 loader renders
+              and submits the form now, so signups are handled by them rather
+              than by posting at an endpoint we'd be guessing at. With no form
+              id set, a plain link is shown instead of a form that loses
+              signups. See the script below for why it isn't a bare
+              <script async> tag. */}
+          {newsletterFormId ? (
+            <div class="newsletter-embed" data-beehiiv-form-id={newsletterFormId}></div>
           ) : newsletterUrl ? (
             <a class="btn btn-orange newsletter-link" href={newsletterUrl} target="_blank" rel="noopener noreferrer">Subscribe on beehiiv →</a>
           ) : null}
@@ -408,6 +406,32 @@ const resumeUrl =
 
   </div>
 </BaseLayout>
+
+<script>
+  /* beehiiv's snippet is a bare `<script async src=... data-beehiiv-form=...>`.
+     Dropped straight into the markup it works on a cold load and then never
+     again: `<ClientRouter />` swaps the DOM instead of reloading, so on any
+     client-side return to this page the script is inert markup and the panel
+     is left with an empty hole where the signup form should be.
+
+     So the tag is injected per page-load into a placeholder instead, guarded
+     so a second astro:page-load can't stack a duplicate form. */
+  function mountBeehiiv() {
+    document.querySelectorAll<HTMLElement>('[data-beehiiv-form-id]').forEach((host) => {
+      if (host.dataset.mounted === 'true') return;
+      host.dataset.mounted = 'true';
+
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://subscribe-forms.beehiiv.com/v3/loader.js';
+      s.setAttribute('data-beehiiv-form', host.dataset.beehiivFormId || '');
+      host.appendChild(s);
+    });
+  }
+
+  document.addEventListener('astro:page-load', mountBeehiiv);
+</script>
+
 
 <style>
   /* ── Nautical brand v1.0 — Playfair + Manrope ─────────────
@@ -901,8 +925,22 @@ const resumeUrl =
        right of the title above it. */
     margin: 0 0 28px;
   }
+  /* beehiiv renders its own form in here, so the site only controls the box it
+     sits in. Capped so a wide embed can't stretch the navy panel's copy
+     column; style the form itself in beehiiv's editor to match. */
+  .newsletter-embed {
+    width: 100%;
+    max-width: 420px;
+    min-height: 52px;
+  }
+  .newsletter-embed :global(iframe) {
+    width: 100% !important;
+    border: 0;
+    color-scheme: normal;   /* keep their light form light on the navy panel */
+  }
+
   .newsletter-form { display: flex; gap: 9px; flex-wrap: wrap; }
-  /* Fallback CTA shown when BEEHIIV_EMBED_URL is unset but NEWSLETTER_URL
+  /* Fallback CTA shown when BEEHIIV_FORM_ID is unset but NEWSLETTER_URL
      is known — sits on the navy panel where the form would be. */
   .newsletter-link { align-self: flex-start; }
   .newsletter-form input {

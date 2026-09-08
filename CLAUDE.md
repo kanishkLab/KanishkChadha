@@ -74,16 +74,22 @@ ticked open, so check the code before trusting any line here.
       for the domain. **This is the last real content blocker.**
       The homepage Lab section stays hidden until a real post exists — see
       `DEMO_SLUG_PREFIXES` in `src/pages/index.astro`.
-- [ ] **Add `public/resume.pdf`** — the hero "Download Résumé" button is hidden
-      while the file is missing (it used to 404). Dropping the PDF in is enough;
-      no config change needed. `SITE_RESUME_URL` overrides with another URL.
-- [ ] **Set `BEEHIIV_EMBED_URL`** in `.env` — beehiiv → Settings → Publication →
-      Embed forms, copy the iframe `src`, drop any `?slim=true`. Until it is
-      set the newsletter panel renders copy with no signup control (the form
-      used to POST to `#`, reload the page, and discard the address).
-- [ ] **Set `FORMSPREE_ENDPOINT`** in `.env` — until then the contact block
-      renders as a direct `mailto:` card. It used to render a live-looking form
-      that POSTed to a `mailto:` URL and silently threw every message away.
+- [x] ~~Add `public/resume.pdf`~~ Done 2026-09-07 — the master résumé (6pp).
+      The hero button is gated on the file existing, so dropping a replacement
+      in is enough; `SITE_RESUME_URL` overrides with another URL.
+- [x] ~~Wire the newsletter~~ Done 2026-09-07 — `BEEHIIV_FORM_ID` is set and
+      beehiiv's v3 loader renders the form. **The form still carries beehiiv's
+      own styling** (white card, black button, heading "Kanishk's Newsletter"
+      directly under the panel's "Automated Marketer"). Restyle it in beehiiv:
+      Grow → Subscribe Forms → edit → background `#092634`, button `#ff6e42`,
+      and clear the form heading since the panel already has one.
+- [x] ~~Set `FORMSPREE_ENDPOINT`~~ Done 2026-09-07. Endpoint verified live
+      (GET returns 405 Method Not Allowed, which is correct — it is POST-only).
+      **Send one real test message after deploying** to confirm delivery.
+
+> `.env` is gitignored, so none of the three values above travel with a push.
+> They must be re-entered in Vercel → Settings → Environment Variables or the
+> live site falls back to theme defaults.
 - [ ] **Finish the Obsidian setup** (see Editing content below) — open the vault,
       install Obsidian Git, point the attachment folder at `Kanishkchadha.com/public/`.
 

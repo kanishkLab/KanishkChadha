@@ -217,13 +217,12 @@ contact — see the Release scope section in the root `CLAUDE.md`).
   nav-linked as "The Lab", so this is what Google indexes for the domain.
   The homepage Lab section is hidden until at least one real post exists (see
   `DEMO_SLUG_PREFIXES` in `index.astro`).
-- **`FORMSPREE_ENDPOINT` is unset**, so the contact form renders as a direct
-  `mailto:` card instead of a form. Nothing is lost either way now, but there
-  is no form until the endpoint is set.
-- **`BEEHIIV_EMBED_URL` is unset**, so the newsletter panel shows copy with no
-  signup control. Set it to the beehiiv embed URL.
-- **No `public/resume.pdf`**, so the hero's "Download Résumé" button does not
-  render. Drop the PDF in and it reappears with no config change.
+- **The beehiiv signup carries beehiiv's styling, not the site's.** Their v3
+  loader renders the form inside a cross-origin iframe, so no CSS here can
+  reach it — it is a white card with a black button on the navy panel, headed
+  "Kanishk's Newsletter" directly beneath the panel's own "Automated Marketer".
+  Fix it in beehiiv (Grow → Subscribe Forms → edit): background `#092634`,
+  button `#ff6e42`, and clear the form's heading.
 
 ### Resolved 2026-09-07
 

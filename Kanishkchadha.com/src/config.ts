@@ -46,14 +46,18 @@ export const siteConfig = {
   resumeUrl: getEnv('SITE_RESUME_URL', ''),
 
   newsletter: {
-    /* beehiiv embed endpoint for the "Automated Marketer" signup, e.g.
-       https://embeds.beehiiv.com/<publication-uuid>. Posting the form
-       straight at it keeps the site's own form design instead of dropping in
-       beehiiv's iframe. Empty means the signup form is not rendered at all —
-       a form that posts nowhere loses addresses silently. */
-    action: getEnv('BEEHIIV_EMBED_URL', ''),
+    /* beehiiv subscribe-form id — the data-beehiiv-form value from the embed
+       snippet in beehiiv (Grow → Subscribe Forms → Embed). Their v3 loader
+       renders and submits the form, so signups are handled by beehiiv rather
+       than by a hand-rolled POST to an undocumented endpoint.
+
+       The trade-off is that the form carries beehiiv's styling, not the
+       site's; style it in beehiiv's form editor to match the navy panel.
+       Empty means no signup control is rendered at all — better nothing than
+       a form that quietly drops addresses. */
+    formId: getEnv('BEEHIIV_FORM_ID', ''),
     /* Optional public URL of the publication, used as a plain link fallback
-       while the embed endpoint is unset. */
+       while the form id is unset. */
     url: getEnv('NEWSLETTER_URL', ''),
   },
   social: {

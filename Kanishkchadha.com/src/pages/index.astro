@@ -137,10 +137,25 @@ const timeline = [
 ];
 
 
-/* SITE_AUTHOR_PORTRAIT is now an escape hatch for pointing at some other image
+/* SITE_AUTHOR_PORTRAIT is an escape hatch for pointing at some other image
    (an external URL, a different crop). Left empty — the default — the bundled
-   and optimised src/assets/kanishk.jpeg is used instead. */
-const portraitOverride = siteConfig.author.portrait;
+   and optimised src/assets/kanishk.jpeg is used instead.
+
+   The value is only honoured if it can actually resolve. A stale
+   SITE_AUTHOR_PORTRAIT=/Kanishk.jpeg in Vercel's environment did exactly this:
+   the portrait moved into src/assets so Astro could process it, the override
+   still pointed at the old public/ path, and production shipped a broken hero
+   image while local (with the var cleared) looked fine. A site-relative path
+   that isn't in public/ is now ignored rather than rendered as a dead <img>.
+   Absolute URLs are trusted as-is since they can't be checked at build time. */
+const rawPortrait = siteConfig.author.portrait;
+const isRemote = /^https?:\/\//.test(rawPortrait);
+const portraitOverride =
+  !rawPortrait || isRemote
+    ? (isRemote ? rawPortrait : '')
+    : existsSync(new URL(`../../public${rawPortrait.startsWith('/') ? '' : '/'}${rawPortrait}`, import.meta.url))
+      ? rawPortrait
+      : '';
 const { name: authorName, title: authorTitle } = siteConfig.author;
 const linkedin = siteConfig.social.linkedin;
 

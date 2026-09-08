@@ -11,7 +11,7 @@ Last updated: 2026-07-28
 
 The repo contains two brand specs that **directly contradict each other**.
 
-| | `case/Branding Guidlines /` | `design_handoff_brand_guidelines/` |
+| | `Kanishkchadha.com/Branding Guidlines /` | `design_handoff_brand_guidelines/` |
 |---|---|---|
 | Typeface | **Inter only** — "no second family, no serif" | **Playfair Display + Manrope** (+ Inter for the logo) |
 | Manrope | listed under "find & replace → **remove**" | the body/UI font |
@@ -26,7 +26,7 @@ applied to the **homepage only**. Internal pages stay on the all-Inter system.
 This split is **intentional, not a bug**. Do not "fix" the homepage to match the
 internal pages or vice versa without asking.
 
-> The Typography Implementation Brief in `case/Branding Guidlines /` is now
+> The Typography Implementation Brief in `Kanishkchadha.com/Branding Guidlines /` is now
 > **stale for the homepage** — its acceptance checklist ("only Inter loads",
 > "no serif") is deliberately false there. It still governs internal pages.
 

@@ -1,0 +1,150 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Navigation from '../components/Navigation.astro';
+import NavProgress from '../components/NavProgress.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config';
+import '../styles/global.css';
+import '../styles/typography.css';
+import '../styles/utilities.css';
+---
+
+<!DOCTYPE html>
+<html lang={siteConfig.language}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Brand type system, loaded here rather than via a CSS @import so the
+         download starts with the HTML instead of waiting on a second
+         round-trip.
+
+         Playfair Display (headings) + Manrope (body/UI) used to be requested
+         only by /, /projects and /blog, so clicking into a case study or a
+         post dropped the reader onto an all-Inter page — the type changed
+         underneath them at exactly the moment they started reading the work.
+         One request here covers every page. Inter stays for the KC lockup and
+         the nav, which is what the brand guidelines reserve it for. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&family=Playfair+Display:wght@500;600;700&family=Manrope:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap"
+    />
+
+    <!-- SEO tags injected via slot -->
+    <slot name="head" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#092634" />
+
+    <ClientRouter />
+
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      main {
+        flex: 1;
+      }
+
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      /* ── Page transitions ──────────────────────────────────
+         Sequenced, not simultaneous. The outgoing page eases out
+         first; the incoming one waits until that is nearly done
+         before lifting in. Overlapping the two (the previous
+         setup: 90ms out and 220ms in, both starting at zero) put
+         two half-transparent pages on screen at once, which reads
+         as a flicker rather than a movement — and at 220ms total
+         there was no time to perceive it as anything but a jump.
+
+         Tune it with the three variables below. Total navigation
+         time is --kc-nav-in-delay + --kc-nav-in, currently 540ms
+         (was 220ms). Much past ~600ms and clicking through a few
+         pages starts to feel like waiting rather than polish.
+
+         The travel is 16px: over 360ms an 8px lift reads as a
+         slow fade rather than a movement, so the distance has to
+         grow with the duration.
+
+         The persisted header is excluded (see kc-header below) so
+         the nav stays anchored while the body moves under it.
+      ────────────────────────────────────────────────────── */
+      :root {
+        --kc-nav-out: 160ms;        /* outgoing page fades away    */
+        --kc-nav-in-delay: 180ms;   /* 20ms of hold after it goes  */
+        --kc-nav-in: 360ms;         /* incoming page lifts in      */
+      }
+
+      @keyframes kc-fade-out {
+        from { opacity: 1; transform: none; }
+        to   { opacity: 0; transform: translateY(-6px); }
+      }
+      @keyframes kc-fade-up {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: none; }
+      }
+
+      ::view-transition-old(root) {
+        animation: kc-fade-out var(--kc-nav-out) cubic-bezier(0.4, 0, 1, 1) both;
+      }
+      ::view-transition-new(root) {
+        animation: kc-fade-up var(--kc-nav-in) cubic-bezier(0.16, 1, 0.3, 1)
+                   var(--kc-nav-in-delay) both;
+      }
+
+      /* Chrome's UA sheet blends these with plus-lighter, which is right for
+         a true cross-fade but brightens the overlap into a visible flash when
+         the two are sequenced like this. */
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        mix-blend-mode: normal;
+      }
+
+      /* The sticky header is persisted across navigations; giving it
+         its own transition name keeps it out of the root snapshot so
+         it doesn't fade with the page body. */
+      .site-header {
+        view-transition-name: kc-header;
+      }
+      ::view-transition-old(kc-header),
+      ::view-transition-new(kc-header),
+      ::view-transition-old(kc-progress),
+      ::view-transition-new(kc-progress) {
+        animation: none;
+        mix-blend-mode: normal;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-old(root),
+        ::view-transition-new(root) {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <NavProgress />
+    <header class="site-header" transition:persist>
+      <Navigation />
+    </header>
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

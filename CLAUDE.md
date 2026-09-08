@@ -6,11 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repository contains:
 
-1. **`case/`** — Kanishk Chadha's personal portfolio website
+1. **`Kanishkchadha.com/`** — Kanishk Chadha's personal portfolio website
 
 ---
 
-## Portfolio Site (`case/`)
+## Portfolio Site (`Kanishkchadha.com/`)
 
 Built on the [Case Astro theme](https://github.com/erlandv/case) — a case-study-first portfolio for professionals.
 
@@ -25,8 +25,9 @@ Built on the [Case Astro theme](https://github.com/erlandv/case) — a case-stud
 | Surface | Route | Status |
 |---|---|---|
 | Homepage | `/` | Built (Playfair + Manrope, see BRANDING.md) |
-| Case studies | `/projects`, `/projects/[slug]` | Built — **content is still theme demo data** |
-| Contact | `/contact` | Built |
+| Case studies | `/projects`, `/projects/[slug]` | Built, real content |
+| The Lab | `/blog`, `/blog/[...slug]` | Built — **content is still theme demo data** |
+| Contact | inline `#contact` on every page | Built — `/contact` redirects to `/#contact` |
 
 **Resolved 2026-09-07.** `/blog` was promoted into v1 — it's now "The Lab",
 rebuilt on the `/projects` design and linked in the nav. Its *content* is still
@@ -56,29 +57,51 @@ from the `--card-*` tokens in the same file.
 
 #### v1 launch checklist
 
-- [ ] **Replace the case studies.** All 8 files in `src/content/projects/` are
-      the Astro theme's demo content — software-engineering write-ups ("Senior
-      Backend Engineer", Node.js/PostgreSQL). Kanishk's are marketing/martech.
-      The homepage "Featured Work" section reads from this collection, so this
-      blocks both launch surfaces.
-- [ ] **Add `public/resume.pdf`** (or set `SITE_RESUME_URL`) — the hero
-      "Download Résumé" button currently 404s.
-- [ ] **Portrait photo** — set `SITE_AUTHOR_PORTRAIT`; a placeholder shows now.
-- [ ] **Case cover images** — add `coverImage:` to project frontmatter.
-- [ ] **Turn off sample-data flags** — `showSampleFlags = false` in
-      `src/pages/index.astro`, once the credibility metrics and timeline are real.
-- [ ] **Wire the newsletter form** to Beehiiv/ESP — currently visual only.
-- [x] ~~Decide the nav/sitemap question above.~~ Resolved 2026-09-07 — see above.
-- [ ] **Replace the blog posts.** All 22 files in `src/content/blog/` are demo
-      software-engineering content. `/blog` is now a prominent, designed page,
-      so this is more visible than it was as a plain list.
+Verified 2026-09-07 — several items below were already done and had been left
+ticked open, so check the code before trusting any line here.
+
+- [x] ~~Replace the case studies.~~ Done — all four files in
+      `src/content/projects/` are real martech/analytics work.
+- [x] ~~Portrait photo.~~ Done — `SITE_AUTHOR_PORTRAIT` is set and
+      `/Kanishk.jpeg` renders on the homepage.
+- [x] ~~Case cover images.~~ Done — all four projects set a `.png` `coverImage`.
+- [x] ~~Turn off sample-data flags.~~ Moot — `showSampleFlags` no longer exists.
+- [x] ~~Decide the nav/sitemap question above.~~ Resolved — see above.
+- [ ] **Replace the blog posts.** All 22 files in `src/content/blog/` are still
+      demo software-engineering content, and they account for 68 of the 74
+      sitemap URLs (47 of those are generated tag pages like `/blog/kubernetes`).
+      `/blog` is nav-linked as "The Lab", so this is what search engines index
+      for the domain. **This is the last real content blocker.**
+      The homepage Lab section stays hidden until a real post exists — see
+      `DEMO_SLUG_PREFIXES` in `src/pages/index.astro`.
+- [x] ~~Add `public/resume.pdf`~~ Done 2026-09-07 — the master résumé (6pp).
+      The hero button is gated on the file existing, so dropping a replacement
+      in is enough; `SITE_RESUME_URL` overrides with another URL.
+- [x] ~~Wire the newsletter~~ Done 2026-09-07 — the signup posts to **Formspree**
+      over fetch and keeps the site's own design. beehiiv was tried first and
+      reverted on 2026-09-07: their v3 loader renders the form in a
+      cross-origin iframe, so it arrived with beehiiv's styling (white card,
+      black button, its own heading) and no CSS here could reach it.
+      **Interim, not a real ESP** — addresses land in the Formspree inbox
+      alongside contact messages, tagged "Automated Marketer — new subscriber",
+      and share the free tier's 50 submissions/month. Pick a proper newsletter
+      tool before promoting the signup, and set
+      `NEWSLETTER_FORMSPREE_ENDPOINT` to a second Formspree form if the shared
+      inbox gets noisy in the meantime.
+- [x] ~~Set `FORMSPREE_ENDPOINT`~~ Done 2026-09-07. Endpoint verified live
+      (GET returns 405 Method Not Allowed, which is correct — it is POST-only).
+      **Send one real test message after deploying** to confirm delivery.
+
+> `.env` is gitignored, so none of the three values above travel with a push.
+> They must be re-entered in Vercel → Settings → Environment Variables or the
+> live site falls back to theme defaults.
 - [ ] **Finish the Obsidian setup** (see Editing content below) — open the vault,
-      install Obsidian Git, point the attachment folder at `case/public/`.
+      install Obsidian Git, point the attachment folder at `Kanishkchadha.com/public/`.
 
 ### Running locally
 
 ```bash
-cd case
+cd Kanishkchadha.com
 npm install
 npm run dev        # → http://localhost:4321
 ```
@@ -88,27 +111,42 @@ npm run dev        # → http://localhost:4321
 Make sure the dev server is running first, then:
 
 ```bash
-cd case
+cd Kanishkchadha.com
 npm run screenshot                                        # local (desktop + mobile)
 SCREENSHOT_URL=https://your-site.vercel.app npm run screenshot  # production
 ```
 
-Screenshots are saved to `case/screenshots/auto/`.
+Screenshots are saved to `Kanishkchadha.com/screenshots/auto/`. The script
+scrolls each page before shooting — without that pass, `loading="lazy"` images
+never load and every below-the-fold photo comes out blank, which reads as a
+missing asset when it isn't.
+
+### Regenerating the social card
+
+```bash
+cd Kanishkchadha.com
+node scripts/og-image.mjs      # -> public/og-image.png
+```
+
+Renders a 1200x630 card through headless Chrome so it uses the real Playfair
+Display + Manrope webfonts. Re-run after changing the name, headline or brand
+colours. Until 2026-09-07 this file was still the Case theme's own advert
+("Case-Study-First Portfolio Theme for Astro"), shown on every LinkedIn share.
 
 ### Branding
 
-**Read [`case/BRANDING.md`](case/BRANDING.md) before changing any colour, typeface, or surface.**
+**Read [`Kanishkchadha.com/BRANDING.md`](Kanishkchadha.com/BRANDING.md) before changing any colour, typeface, or surface.**
 
 Two brand documents in this repo contradict each other. `design_handoff_brand_guidelines/`
 (Playfair Display + Manrope) is current and applies to the **homepage only**;
-internal pages stay on the all-Inter system from `case/Branding Guidlines /`.
+internal pages stay on the all-Inter system from `Kanishkchadha.com/Branding Guidlines /`.
 That split is intentional. BRANDING.md records the resolved tokens, the type
 scales, the logo construction rules, and the known gaps.
 
 ### Content structure
 
-All content is Markdown (`.md`) files in `case/src/content/`. Only these five are
-registered as collections in `case/src/content.config.ts` — a folder on disk
+All content is Markdown (`.md`) files in `Kanishkchadha.com/src/content/`. Only these five are
+registered as collections in `Kanishkchadha.com/src/content.config.ts` — a folder on disk
 that isn't listed here is **not** queryable and will render empty. Four such
 folders (`decisions/`, `writing/`, `speaking/`, `uses/`) were removed on
 2026-08-16; they shadowed live collections with identical filenames, so edits
@@ -117,10 +155,12 @@ landed in files that never built.
 | Collection | Purpose |
 |---|---|
 | `projects/` | Case studies (problem → solution → outcomes) |
-| `blog/` | Posts, split into `articles/`, `decisions/`, `talks/` via a `type` field |
+| `blog/` | Posts, split into `experiments/`, `tool-verdicts/`, `decisions/`, `talks/` via a `type` field |
 | `journey/` | Career milestones |
 | `resources/` | Books, podcasts, tools ("Stuff I Like") |
-| `testimonials/` | Peer and client recommendations |
+
+The `testimonials/` collection was removed on 2026-09-07: it held two entries of
+theme demo data about the theme's author and was rendered nowhere.
 
 ### Configuration
 
@@ -133,15 +173,17 @@ See `.env.example` for the full list.
 
 ### Adding a blog post
 
-Create a new `.md` file in `case/src/content/blog/articles/` following the
+Create a new `.md` file under `Kanishkchadha.com/src/content/blog/` — in
+`experiments/`, `tool-verdicts/`, `decisions/` or `talks/` — following the
 existing frontmatter schema (`title`, `description`, `publishDate`, `type`,
-`tags`, `draft`, optional `coverImage`). Posts are served at
-`/blog/articles/<slug>`.
+`tags`, `draft`, optional `coverImage`). The `type` must be one of
+`experiment | tool-verdict | decision | talk`. Posts are served at
+`/blog/<folder>/<slug>`.
 
 ### Editing content (Obsidian)
 
 Content is authored in **Obsidian over the git repo — there is no headless CMS.**
-Open `case/src/content/` as the vault (not the repo root, or Obsidian indexes
+Open `Kanishkchadha.com/src/content/` as the vault (not the repo root, or Obsidian indexes
 `node_modules/` and `dist/`), and let the Obsidian Git plugin commit; Vercel
 deploys from there.
 
@@ -152,7 +194,7 @@ an individual file to `.mdx` only if it genuinely needs to import a component.
 Two Obsidian caveats:
 
 - **Wikilinks don't render.** `[[post]]` and `![[image.png]]` come out as literal
-  text in Astro. Use `[text](/blog/articles/slug)` and `![alt](/path.jpg)`.
+  text in Astro. Use `[text](/blog/experiments/slug)` and `![alt](/path.jpg)`.
 - **Case-study frontmatter is hand-written.** Obsidian's Properties panel handles
   the flat blog schema, but the `projects` schema nests
   `keyDecisions[].alternatives[]` and `impact.metrics[]`, which it can't edit as

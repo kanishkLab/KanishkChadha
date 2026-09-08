@@ -1,0 +1,1235 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+import StructuredData from '../components/StructuredData.astro';
+import { getCollection } from 'astro:content';
+import { siteConfig } from '../config';
+import ContactForm from '../components/ContactForm.astro';
+import { existsSync } from 'node:fs';
+import { Picture } from 'astro:assets';
+/* These three live in src/assets rather than public/ so Astro's image pipeline
+   can process them. The portrait especially: it is a 1856x2304 / 2.1MB JPEG
+   being painted into a 452x565 box, and it is the hero's LCP element — served
+   raw from public/ it was several times the weight of the rest of the page put
+   together. Picture emits AVIF/WebP with a JPEG fallback at the widths the
+   layout actually uses. */
+import portraitImg from '../assets/kanishk.jpeg';
+import newsletterImg from '../assets/newsletter-desk.jpg';
+import contactImg from '../assets/contact-conversation.jpg';
+
+/* ── Featured work ─────────────────────────────────────────
+   Three cards. Featured projects lead (by manual order), then the newest
+   remaining projects fill the grid. The full set lives on /projects. */
+const allProjects = await getCollection('projects');
+const featured = allProjects
+  .filter(p => p.data.featured)
+  .sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+const others = allProjects
+  .filter(p => !p.data.featured)
+  .sort((a, b) => b.data.year - a.data.year);
+const cases = [...featured, ...others].slice(0, 3);
+
+/* ── The Lab ───────────────────────────────────────────────
+   These three rows were hardcoded placeholders: real-looking titles, excerpts
+   and dates for posts that did not exist and could not be clicked. They now
+   come from the blog collection and link to the actual post.
+
+   DEMO_SLUG_PREFIXES filters out the Case theme's sample software-engineering
+   posts, which are still sitting in src/content/blog/. While they are the only
+   thing in the collection this list comes back empty and the whole section
+   stops rendering — better a missing section than three fabricated ones. Add
+   one real post and the section switches itself back on; delete the demo
+   files and this filter quietly becomes a no-op. */
+const DEMO_SLUG_PREFIXES = ['experiments/', 'decisions/', 'talks/'];
+const DEMO_SLUGS = new Set(
+  (await getCollection('blog'))
+    .filter(p => DEMO_SLUG_PREFIXES.some(prefix => p.id.startsWith(prefix)))
+    .map(p => p.id)
+);
+
+const TYPE_LABELS: Record<string, string> = {
+  experiment: 'Experiment',
+  'tool-verdict': 'Tool Verdict',
+  decision: 'Decision',
+  talk: 'Talk',
+};
+
+const labPosts = (await getCollection('blog', ({ data }) => data.draft === false))
+  .filter(p => !DEMO_SLUGS.has(p.id))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3)
+  .map(p => ({
+    href: `/blog/${p.id}`,
+    title: p.data.title,
+    label: TYPE_LABELS[p.data.type] ?? p.data.type,
+    isVerdict: p.data.type === 'tool-verdict',
+    excerpt: p.data.description,
+    date: p.data.publishDate.toLocaleDateString('en-CA', { month: 'short', year: 'numeric' }),
+  }));
+
+/* ── Tech stack ────────────────────────────────────────────
+   Logos are self-hosted SVGs (brand colours) in /public/logos. */
+const tools = [
+  { name: 'HubSpot', slug: 'hubspot' },
+  { name: 'Salesforce', slug: 'salesforce' },
+  { name: 'Segment', slug: 'segment' },
+  { name: 'GA4', slug: 'googleanalytics' },
+  { name: 'Google Data Studio', slug: 'googledatastudio' },
+  { name: 'Google Ads', slug: 'googleads' },
+  { name: 'Meta', slug: 'meta' },
+  { name: 'n8n', slug: 'n8n' },
+  { name: 'Make', slug: 'make' },
+  { name: 'Zapier', slug: 'zapier' },
+  { name: 'OpenAI', slug: 'openai' },
+  { name: 'Claude', slug: 'anthropic' },
+  { name: 'Notion', slug: 'notion' },
+  { name: 'Slack', slug: 'slack' },
+  { name: 'Power BI', slug: 'powerbi' },
+  { name: 'GTM', slug: 'googletagmanager' },
+  { name: 'Cookiebot', slug: 'cookiebot' },
+  { name: 'Optimizely', slug: 'optimizely' },
+  { name: 'Hotjar', slug: 'hotjar' },
+  { name: 'Mixpanel', slug: 'mixpanel' },
+  { name: 'Clay', slug: 'clay' },
+].map(t => ({
+  ...t,
+  logo: `/logos/${t.slug}.svg`,
+}));
+
+const credibilityStats = [
+  { value: '9+ yrs', label: 'Owning martech, measurement & reporting' },
+  { value: '$250K+', label: 'Paid media managed at 3.8× ROAS' },
+  { value: '10+', label: 'Locations / web properties instrumented end-to-end' },
+];
+
+const capabilities = [
+  {
+    num: '01',
+    title: 'Automation & AI Systems',
+    desc: 'Agentic workflows with tool access, decision loops, and escalation logic — not one-off prompts. Systems that run and self-correct after launch — and I show the eval, not just the workflow — the test cases, expected vs. actual, and the failure modes I found before trusting it with real leads.',
+    tags: ['n8n', 'HubSpot', 'Salesforce', 'GPT / Claude'],
+  },
+  {
+    num: '02',
+    title: 'Analytics & Attribution',
+    desc: 'Full-funnel measurement and reporting so every spend and campaign decision is grounded in real, queryable data.',
+    tags: ['SQL', 'GA4', 'Looker Studio', 'Meta / Google Ads', 'Server-side GTM', 'GA4 Measurement Protocol'],
+  },
+  {
+    num: '03',
+    title: 'Customer Data / CDP',
+    desc: 'Unified customer profiles, event tracking, and audience activation across the stack for clean, real-time segmentation.',
+    tags: ['Segment', 'GTM', 'Consent Mode v2', 'Identity resolution'],
+  },
+  {
+    num: '04',
+    title: 'AI Enablement & Governance',
+    desc: 'Rolling AI out across a marketing team with guardrails, review gates, and documented decision-making that scales safely.',
+    tags: ['Prompt Systems', 'Guardrails', 'Enablement', 'Governance'],
+  },
+];
+
+const timeline = [
+  { period: '2024 — Present', role: 'MarTech Partner', org: 'Rohit Group of Companies', desc: 'Building the measurement and AI-agent layer for Alberta’s largest private developer — attribution, CDP, DSP implementation, and agentic automation across master-planned communities in Calgary and Edmonton.' },
+  { period: '2021 — 2024', role: 'Data & Analytics Marketing Manager', org: 'Mosaic Home Services', desc: 'Primary measurement advisor across a 10+ location franchise network. Owned attribution, $250K+ paid media at 3.8× ROAS, reporting, and 10+ lead-gen web builds (35% more inbound leads).' },
+  { period: '2017 — 2019', role: 'IT Project & Business Analyst', org: 'Virala (Toronto)', desc: 'Translated client requirements into technical specs across 15+ web and mobile builds; bridged analytics, marketing and engineering.' },
+  { period: '2014 — 2017', role: 'Digital PM & Marketing Specialist', org: 'Virala (India)', desc: 'Client-facing analytics and campaign partner for Sony, Fitbit, SanDisk and Gold Coast University — measurement, reporting and channel optimization across SEO, SEM and programmatic.' },
+];
+
+
+/* SITE_AUTHOR_PORTRAIT is now an escape hatch for pointing at some other image
+   (an external URL, a different crop). Left empty — the default — the bundled
+   and optimised src/assets/kanishk.jpeg is used instead. */
+const portraitOverride = siteConfig.author.portrait;
+const { name: authorName, title: authorTitle } = siteConfig.author;
+const linkedin = siteConfig.social.linkedin;
+
+const newsletterEndpoint = siteConfig.newsletter.endpoint;
+const newsletterUrl = siteConfig.newsletter.url;
+
+/* The hero button used to point at '/resume.pdf' unconditionally, which 404'd
+   because no such file exists yet. Prefer an explicit SITE_RESUME_URL; failing
+   that, use /resume.pdf only once it is actually sitting in public/, and
+   otherwise render no button at all. Dropping the PDF in is enough to bring
+   the button back — no config change needed. */
+const resumeUrl =
+  siteConfig.resumeUrl ||
+  (existsSync(new URL('../../public/resume.pdf', import.meta.url)) ? '/resume.pdf' : '');
+---
+
+<BaseLayout>
+  <SEO
+    slot="head"
+    title={`${authorName} — ${authorTitle}`}
+    description={siteConfig.description}
+    type="website"
+    noSuffix
+  />
+
+  <StructuredData type="WebSite" />
+  <StructuredData type="Person" />
+
+  <div class="home">
+
+    <!-- ── 1. HERO ──────────────────────────────────────── -->
+    <section class="hero-band">
+      <div class="wrap sec hero">
+      <div>
+        <p class="overline">AI &nbsp;·&nbsp; Analytics &nbsp;·&nbsp; Automation</p>
+        <h1 class="hero-title">I don't just run campaigns. I build the data layer marketing runs on — and the AI agents that act on it.</h1>
+        <p class="hero-sub">
+          I'm Kanishk — a martech and analytics builder with 9+ years across real estate,
+          home services and agency. I build tracking, CDP, lifecycle and reporting systems,
+          and the AI agents that work on top of them, so growth keeps compounding after launch.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn-orange" href="#cases">See the work</a>
+          {/* TODO: résumé PDF — user wants three variants (Martech, Analytics, Ops). Add PDFs to public/ and convert this to a dropdown or three links. */}
+          {resumeUrl && <a class="btn btn-navy" href={resumeUrl}>Download Résumé ↓</a>}
+        </div>
+      </div>
+
+
+      <div class="portrait">
+        {portraitOverride
+          ? <img src={portraitOverride} alt={`${authorName}, ${authorTitle}`} width="800" height="1000" />
+          : <Picture
+              src={portraitImg}
+              formats={['avif', 'webp']}
+              widths={[452, 678, 904]}
+              sizes="(max-width: 900px) min(90vw, 420px), 452px"
+              alt={`${authorName}, ${authorTitle}`}
+              loading="eager"
+              fetchpriority="high"
+            />}
+
+      </div>
+      </div>
+    </section>
+
+    <!-- ── 2. TECH STACK ────────────────────────────────── -->
+    <section id="stack" class="band band-white">
+      <div class="wrap stack-inner">
+        <p class="band-label">The Stack I Work In</p>
+        <ul class="tools">
+          {tools.map(t => (
+            <li class="tool">
+              <span class="tool-mark">
+                <img src={t.logo} alt="" width="18" height="18" loading="lazy" />
+              </span>
+              <span class="tool-name">{t.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ── 3. CREDIBILITY STRIP ─────────────────────────── -->
+    <section class="band band-navy">
+      <div class="wrap sec cred">
+        <div>
+          <p class="overline">9+ Years in Martech & Analytics</p>
+          <h2 class="cred-statement">Senior enough to be trusted with the stack — and the outcomes.</h2>
+          <p class="cred-trusted">Real estate · home services · technology — from Alberta's largest private developer to a 10+ location franchise network.</p>
+        </div>
+        <div class="cred-stats">
+          {credibilityStats.map(s => (
+            <div>
+              <div class="cred-value">{s.value}</div>
+              <div class="cred-label">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 4. CAPABILITIES ──────────────────────────────── -->
+    <section id="skills" class="wrap sec block">
+      <div class="sec-head">
+        <p class="overline">Capabilities</p>
+        <h2 class="h2">What I bring to a senior martech team</h2>
+        <p class="sec-lede">
+          Four clusters, mapped to how martech and marketing-ops roles are scoped —
+          so you can check it against the JD fast.
+        </p>
+      </div>
+      <div class="matrix">
+        {capabilities.map(c => (
+          <div class="matrix-row">
+            <div class="matrix-main">
+              <span class="matrix-num">{c.num}</span>
+              <div>
+                <h3 class="matrix-title">{c.title}</h3>
+                <p class="matrix-desc">{c.desc}</p>
+              </div>
+            </div>
+            <div class="matrix-tags">
+              {c.tags.map(tag => <span class="matrix-tag">{tag}</span>)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- ── 5. FEATURED WORK ─────────────────────────────── -->
+    <section id="cases" class="wrap sec block">
+      <div class="sec-head sec-head--tight">
+        <p class="overline">Featured Work</p>
+        <h2 class="h2">Outcomes, not project names</h2>
+      </div>
+
+      {cases.length > 0 && (
+        <div class="case-grid">
+          {cases.map(project => (
+            <a class="case" href={`/projects/${project.id}`}>
+              <div class="case-media">
+                {project.data.coverImage
+                  ? <img class="case-img" src={project.data.coverImage} alt="" loading="lazy" />
+                  : <div class="case-img case-ph" aria-hidden="true"></div>}
+              </div>
+              <div class="case-body">
+                <span class="case-category">{project.data.role}</span>
+                <h3 class="case-title">{project.data.title}</h3>
+                <p class="case-outcome">{project.data.outcomeSummary}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ── 6. EXPERIENCE ────────────────────────────────── -->
+    <section id="experience" class="wrap sec block">
+      <div class="timeline-wrap">
+        <div class="sec-head sec-head--tight">
+          <p class="overline">Experience</p>
+          <h2 class="h2 h2--sm">The path so far</h2>
+        </div>
+        <div class="timeline">
+          {timeline.map(t => (
+            <div class="timeline-row">
+              <span class="timeline-period">{t.period}</span>
+              <div>
+                <div class="timeline-role">{t.role} <span class="timeline-org">· {t.org}</span></div>
+                <p class="timeline-desc">{t.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 7. NEWSLETTER ────────────────────────────────── -->
+    <section class="wrap sec block">
+      <div id="newsletter" class="newsletter">
+        <div class="newsletter-media">
+          <Picture src={newsletterImg} formats={['avif', 'webp']} widths={[476, 720, 952]} sizes="(max-width: 900px) 100vw, 476px" alt="" loading="lazy" />
+        </div>
+        <div class="newsletter-body">
+          <p class="overline">The Newsletter</p>
+          <p class="newsletter-title">Automated Marketer</p>
+          <p class="newsletter-sub">
+            A weekly note on using AI, analytics and automation in real campaigns.
+            Build smarter, measure better, automate with intention.
+          </p>
+          {/* Was method="post" action="#", which reloaded the page and threw the
+              address away with no confirmation. Submits to Formspree over
+              fetch now, so the address is captured and the reader stays put.
+              With no endpoint set, a plain link is shown instead of a form
+              that loses signups. */}
+          {newsletterEndpoint ? (
+            <form class="newsletter-form" method="POST" action={newsletterEndpoint} data-newsletter-form>
+              <label class="sr-only" for="newsletter-email">Email address</label>
+              <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" autocomplete="email" />
+              {/* Names the submission in the Formspree inbox, so signups are
+                  tellable from contact messages while both share one form. */}
+              <input type="hidden" name="_subject" value="Automated Marketer — new subscriber" />
+              <input type="hidden" name="source" value="Newsletter signup (homepage)" />
+              <button type="submit">Subscribe</button>
+              <p class="newsletter-msg" data-newsletter-msg hidden role="status"></p>
+            </form>
+          ) : newsletterUrl ? (
+            <a class="btn btn-orange newsletter-link" href={newsletterUrl} target="_blank" rel="noopener noreferrer">Subscribe →</a>
+          ) : null}
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 8. LINKEDIN ──────────────────────────────────── -->
+    <section class="wrap sec linkedin-sec">
+      <div class="linkedin">
+        <span class="linkedin-tile" aria-hidden="true">in</span>
+        <div class="linkedin-copy">
+          <div class="linkedin-title">Let's connect on LinkedIn</div>
+          <p class="linkedin-desc">
+            I share tracking teardowns, AI-agent experiments, and the occasional
+            "here's what actually moved the number."
+          </p>
+        </div>
+        <a class="btn btn-teal" href={linkedin || '#'} target="_blank" rel="noopener noreferrer">Follow →</a>
+      </div>
+    </section>
+
+    <!-- ── 9. THE LAB ───────────────────────────────────── -->
+    {labPosts.length > 0 && (
+      <section id="lab" class="wrap sec block">
+        <div class="lab-head">
+          <div>
+            <p class="overline">The Lab</p>
+            <h2 class="h2 h2--sm">Experiments & tool verdicts</h2>
+          </div>
+          <a class="link-all" href="/blog">View all →</a>
+        </div>
+        <div class="lab-list">
+          {labPosts.map((post) => (
+            <a class="lab-row" href={post.href}>
+              <span class:list={['lab-badge', { 'lab-badge--verdict': post.isVerdict }]}>{post.label}</span>
+              <div class="lab-content">
+                <h3 class="lab-title">{post.title}</h3>
+                {post.excerpt && <p class="lab-excerpt">{post.excerpt}</p>}
+              </div>
+              <span class="lab-meta">{post.date}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ── 10. CONTACT ──────────────────────────────────── -->
+    <section id="contact" class="wrap sec contact">
+      <h2 class="h2 h2--lg">Get in touch</h2>
+      <p class="contact-lede">
+        Looking for someone who can own your tracking, CDP, reporting and the
+        AI agents on top of it? That's the job I do.
+      </p>
+      <div class="contact-layout">
+        <div class="contact-visual">
+          <Picture src={contactImg} formats={['avif', 'webp']} widths={[504, 760, 1008]} sizes="(max-width: 900px) 100vw, 504px" alt="" loading="lazy" />
+        </div>
+        <ContactForm />
+      </div>
+      <p class="availability">Currently open to Martech, Marketing Analytics, and Marketing Ops roles in Calgary (and remote).</p>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<script>
+  /* Submits over fetch so the reader is not thrown to Formspree's own thank-you
+     page and back. Bound on astro:page-load, guarded because <ClientRouter />
+     fires that event on every navigation and the listener would otherwise
+     stack. */
+  function initNewsletter() {
+    document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]').forEach((form) => {
+      if ((form as any).__nlBound) return;
+      (form as any).__nlBound = true;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button') as HTMLButtonElement;
+        const msg = form.querySelector('[data-newsletter-msg]') as HTMLElement;
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Subscribing…';
+        msg.hidden = true;
+
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { Accept: 'application/json' },
+          });
+          if (res.ok) {
+            form.reset();
+            btn.textContent = 'Subscribed';
+            msg.textContent = "You're on the list — thanks.";
+            msg.classList.remove('newsletter-msg--error');
+            msg.hidden = false;
+          } else {
+            throw new Error(String(res.status));
+          }
+        } catch {
+          // A failed signup must say so rather than silently resetting.
+          btn.textContent = original;
+          btn.disabled = false;
+          msg.textContent = "That didn't go through. Try again in a moment.";
+          msg.classList.add('newsletter-msg--error');
+          msg.hidden = false;
+        }
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initNewsletter);
+</script>
+
+
+<style>
+  /* ── Nautical brand v1.0 — Playfair + Manrope ─────────────
+     Tokens from design_handoff_brand_guidelines/. Type system:
+     Playfair Display 600 for headings/display, Manrope for body
+     and UI, Inter reserved for the logo lockup.
+     Usage ratio white 60 / navy 25 / blue 10 / orange 5 — so the
+     page ground is White and off-white is a tinted panel surface.
+  ──────────────────────────────────────────────────────────── */
+  .home {
+    --navy: #092634;
+    --teal: #004e72;
+    --orange: #ff6e42;
+    --orange-hover: #ed5a2e;    /* darken ~8% */
+    --navy-hover: #0d3346;      /* lighten ~10% */
+    --smoke: #f9f9f9;           /* tinted panel / hero surface */
+    --slate: #3a4a52;           /* body grey (darkened for contrast) */
+    --slate-muted: #556670;     /* secondary body / caption (darkened) */
+    --label: #9aa6ab;           /* overlines & footers on light */
+    --hairline: #e6e9ea;
+
+    --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-ui: 'Manrope', system-ui, -apple-system, sans-serif;
+    --font-logo: 'Inter', system-ui, -apple-system, sans-serif;
+
+    background: #ffffff;
+    color: var(--navy);
+    font-family: var(--font-ui);
+    font-weight: 500;
+    letter-spacing: normal;     /* Manrope sets its own; no Inter tracking */
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Visible focus ring, per the guide's interaction notes */
+  .home a:focus-visible,
+  .home button:focus-visible,
+  .home input:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  /* 1200 minus the 40px gutter gives the same 1120px content edge as the nav
+     and as /projects and /blog. Changing either number desyncs this page from
+     the header. */
+  .wrap { max-width: 1200px; margin-inline: auto; }
+  .sec  { padding-inline: 40px; }
+  .block { padding-top: 72px; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ── Shared type ────────────────────────────────────────── */
+  .overline {
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--orange);
+    margin: 0 0 10px;
+  }
+
+  .h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--navy);
+    margin: 0;
+  }
+  .h2--sm { font-size: 30px; }
+  .h2--lg { font-size: 40px; }
+
+  .sec-head {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 38px;
+  }
+  .sec-head--tight { margin-bottom: 34px; }
+  .sec-lede {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 12px 0 0;
+  }
+
+  /* ── Buttons ────────────────────────────────────────────── */
+  .btn {
+    display: inline-block;
+    font-family: var(--font-ui);
+    padding: 13px 26px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: normal;
+    text-decoration: none;
+    color: #fff;
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .btn:hover { transform: translateY(-1px); color: #fff; }
+  .btn-orange { background: var(--orange); }
+  .btn-orange:hover { background: var(--orange-hover); }
+  .btn-navy { background: var(--navy); }
+  .btn-navy:hover { background: var(--navy-hover); }
+  .btn-teal { background: var(--teal); white-space: nowrap; }
+  .btn-teal:hover { background: #063d59; }
+
+  /* ── 1. Hero ────────────────────────────────────────────── */
+  /* The guide's off-white "hero body surface" is a bordered card on a
+     white page, not a full-bleed band — run full width it reads as the
+     page being grey. The hero sits on white; discrete panels below
+     carry the off-white tint. */
+  .hero-band { background: #ffffff; }
+  .hero {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 56px;
+    align-items: center;
+    padding-top: 80px;
+    padding-bottom: 60px;
+  }
+  .hero .overline { font-size: 13px; margin-bottom: 24px; }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 56px;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--navy);
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+  .hero-sub {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.65;
+    color: var(--slate);
+    max-width: 540px;
+    margin: 6px 0 30px;
+    text-wrap: pretty;
+  }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  .availability {
+    margin: 22px 0 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--slate-muted);
+  }
+
+  .portrait {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(9, 38, 52, 0.12);
+    overflow: hidden;
+    background: #eef1f2;
+  }
+  .portrait img,
+  .portrait-ph {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .portrait-ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--navy) 0%, #0a3a50 100%);
+  }
+  .portrait-ph span {
+    font-family: var(--font-logo);
+    font-size: 96px;
+    font-weight: 800;
+    letter-spacing: -0.08em;
+    color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* ── 2. Tech stack ──────────────────────────────────────── */
+  .band-white {
+    background: #ffffff;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .stack-inner { padding: 34px 40px; }
+
+  .band-label {
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--slate-muted);
+    margin: 0 0 22px;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .tool {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 15px;
+    background: var(--smoke);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+  }
+  .tool-mark {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tool-mark img { width: 18px; height: 18px; object-fit: contain; display: block; }
+  .tool-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+
+  /* ── 3. Credibility strip ───────────────────────────────── */
+  .band-navy { background: var(--navy); }
+  .cred {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 48px;
+    align-items: center;
+    padding-top: 44px;
+    padding-bottom: 44px;
+  }
+  .cred .overline { margin-bottom: 12px; }
+  .cred-statement {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 12px;
+  }
+  .cred-trusted {
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+  }
+  .cred-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .cred-value {
+    font-family: var(--font-ui);
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .cred-label {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+  }
+
+  /* ── 4. Capabilities matrix ─────────────────────────────── */
+  .matrix {
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .matrix-row {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 36px;
+    align-items: center;
+    padding: 26px 30px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .matrix-row:last-child { border-bottom: none; }
+
+  .matrix-main { display: flex; gap: 18px; align-items: baseline; }
+  .matrix-num {
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: var(--orange);
+    flex-shrink: 0;
+  }
+  .matrix-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0 0 6px;
+  }
+  .matrix-desc {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 0;
+  }
+  .matrix-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    justify-content: flex-end;
+  }
+  .matrix-tag {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    padding-bottom: 3px;
+    border-bottom: 2px solid var(--orange);
+  }
+
+  /* ── 5. Featured work ───────────────────────────────────── */
+  /* Text sits below the cover, not on top of it. The covers are dense
+     technical diagrams, and no gradient scrim makes a headline read cleanly
+     over schema rows and bar charts — separating the two is the only fix.
+     Matches the card on /projects. */
+  .case {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    text-decoration: none;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  }
+  .case:hover {
+    border-color: var(--card-border-hover);
+    box-shadow: var(--card-shadow-raised);
+    transform: translateY(-2px);
+  }
+
+  .case-media {
+    aspect-ratio: 16 / 10;
+    background: var(--navy);
+    overflow: hidden;
+  }
+  .case-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms ease;
+  }
+  .case:hover .case-img { transform: scale(1.04); }
+
+  /* Branded stand-in until owner-supplied case imagery lands. */
+  .case-ph {
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 16px),
+      var(--navy);
+  }
+
+  .case-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+  }
+  .case-category {
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: var(--orange);
+  }
+  .case-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  /* Clamped so one long summary doesn't leave the other two cards half empty;
+     the full text is on the case study itself. */
+  .case-outcome {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 0;
+    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  /* ── 6. Experience ──────────────────────────────────────── */
+  .timeline-wrap { max-width: 820px; margin: 0 auto; }
+  .timeline { margin-top: 20px; }
+  .timeline-row {
+    display: flex;
+    gap: 26px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--hairline);
+    align-items: baseline;
+  }
+  .timeline-period {
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: 0.01em;
+    color: var(--orange);
+    width: 170px;
+    flex-shrink: 0;
+  }
+  .timeline-role {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+  }
+  .timeline-org  { font-family: var(--font-ui); font-weight: 500; font-size: 15px; color: var(--slate-muted); }
+  .timeline-desc {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 5px 0 0;
+  }
+
+
+  /* ── 7. Newsletter ──────────────────────────────────────── */
+  .newsletter {
+    background: var(--navy);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    align-items: stretch;
+    text-align: left;
+  }
+  .newsletter-media { min-height: 320px; }
+  .newsletter-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .newsletter-body { padding: 52px; }
+  .newsletter .overline { margin-bottom: 14px; }
+  .newsletter-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0 0 12px;
+  }
+  .newsletter-sub {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 440px;
+    /* Not `0 auto` — the auto margins are left over from the centred layout
+       and would centre this block inside the left-aligned column, floating it
+       right of the title above it. */
+    margin: 0 0 28px;
+  }
+  .newsletter-form { display: flex; gap: 9px; flex-wrap: wrap; }
+
+  /* Confirmation / error line under the field. Takes the full row so it sits
+     beneath the input and button rather than squeezing between them. */
+  .newsletter-msg {
+    flex-basis: 100%;
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #9fe0b8;
+  }
+  .newsletter-msg--error { color: #ffb3a0; }
+
+  /* Fallback CTA shown when no endpoint is set but NEWSLETTER_URL is known —
+     sits on the navy panel where the form would be. */
+  .newsletter-link { align-self: flex-start; }
+  .newsletter-form input {
+    width: 260px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .newsletter-form input::placeholder { color: rgba(255, 255, 255, 0.45); }
+  .newsletter-form input:focus {
+    outline: none;
+    border-color: var(--orange);
+  }
+  .newsletter-form button {
+    padding: 13px 26px;
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 150ms ease;
+  }
+  .newsletter-form button:hover { background: var(--orange-hover); }
+
+  /* ── 8. LinkedIn ────────────────────────────────────────── */
+  .linkedin-sec { padding-top: 36px; }
+  .linkedin {
+    background: var(--smoke);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .linkedin-tile {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: var(--teal);
+    color: #fff;
+    font-weight: 700;
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .linkedin-copy { flex: 1; min-width: 220px; }
+  .linkedin-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+  }
+  .linkedin-desc {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate-muted);
+    margin: 4px 0 0;
+  }
+
+  /* ── 9. The Lab ─────────────────────────────────────────── */
+  .lab-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 26px;
+  }
+  .link-all {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--orange);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .link-all:hover { color: var(--orange-hover); }
+
+  .lab-list {
+    border-top: 1px solid var(--hairline);
+  }
+  /* Each row is the whole link, so the tap target is the full-width band
+     rather than the title text alone — the difference matters most on a
+     phone, where these rows stack. */
+  .lab-row {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--hairline);
+    text-decoration: none;
+    color: inherit;
+    transition: background 150ms ease;
+  }
+  .lab-row:hover { background: var(--smoke); }
+  .lab-row:hover .lab-title { color: var(--orange); }
+  .lab-title { transition: color 150ms ease; }
+  .lab-badge {
+    flex-shrink: 0;
+    width: 110px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--orange);
+  }
+  .lab-badge--verdict {
+    color: var(--teal);
+  }
+  .lab-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .lab-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0 0 6px;
+  }
+  .lab-excerpt {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    margin: 0;
+  }
+  .lab-meta {
+    flex-shrink: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--slate-muted);
+    white-space: nowrap;
+  }
+
+  /* ── 10. Contact ────────────────────────────────────────── */
+  .contact {
+    text-align: center;
+    padding-top: 80px;
+    padding-bottom: 64px;
+  }
+  /* Heading and lede stay centred above; the image and form sit side by side
+     so the section isn't another centred column of text on white. */
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: stretch;
+    max-width: 1040px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .contact-visual {
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  .contact-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .contact-lede {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--slate);
+    max-width: 490px;
+    margin: 14px auto 32px;
+  }
+
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 960px) {
+    .sec { padding-inline: 40px; }
+    .stack-inner { padding-inline: 24px; }
+    .block { padding-top: 56px; }
+
+    .case-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Stack the image and form near where /projects and /blog stack their
+       contact section, rather than holding two columns down to 640px and
+       squeezing the form into a narrow column. */
+    .contact-layout { grid-template-columns: 1fr; gap: 20px; }
+
+    .hero {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      padding-top: 56px;
+      padding-bottom: 48px;
+    }
+    .hero-title { font-size: 42px; }
+    .portrait { max-width: 420px; }
+
+    .cred { grid-template-columns: 1fr; gap: 32px; }
+
+    .matrix-row { grid-template-columns: 1fr; gap: 16px; }
+    .matrix-tags { justify-content: flex-start; }
+
+    .lab-row { gap: 16px; }
+
+    .newsletter { grid-template-columns: 1fr; }
+    .newsletter-media { min-height: 200px; max-height: 240px; }
+    .newsletter-body { padding: 40px 28px; }
+  }
+
+  /* Matches the nav gutter and /projects, /blog at the same breakpoint. */
+  @media (max-width: 760px) {
+    .sec { padding-inline: 24px; }
+  }
+
+  @media (max-width: 640px) {
+    .stack-inner { padding-inline: 16px; }
+
+    .hero-title { font-size: 32px; }
+    .hero-sub { font-size: 17px; }
+    .hero .overline { font-size: 11px; }
+    .btn { padding: 13px 24px; }
+    .btn-row .btn { flex: 1 1 auto; text-align: center; }
+
+    .h2 { font-size: 27px; }
+    .h2--sm { font-size: 25px; }
+    .h2--lg { font-size: 31px; }
+    .cred-statement { font-size: 21px; }
+    .cred-stats { grid-template-columns: 1fr; gap: 20px; }
+
+    .case-grid { grid-template-columns: 1fr; }
+
+    .timeline-row { flex-direction: column; gap: 6px; }
+    .timeline-period { width: auto; }
+
+    .newsletter-title { font-size: 25px; }
+    .newsletter-sub { font-size: 15px; }
+    .newsletter-form { flex-direction: column; align-items: stretch; }
+    .newsletter-form input { width: 100%; }
+
+    .linkedin { padding: 24px; gap: 16px; }
+
+    .lab-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .lab-row { flex-direction: column; gap: 8px; }
+    .lab-badge { width: auto; }
+    .lab-meta { align-self: flex-start; }
+
+    .contact { padding-top: 56px; padding-bottom: 48px; }
+    .contact-lede { font-size: 15px; }
+    .contact-visual { max-height: 220px; }
+  }
+</style>

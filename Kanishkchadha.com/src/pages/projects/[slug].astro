@@ -332,9 +332,11 @@ const related = (relatedProjects || [])
 
   .hero-title {
     font-family: var(--font-display);
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.12;
+    /* 52px / 600 / 1.04 is the .page-h1 on /projects — this page is one click
+       away from it, so the two h1s should be the same object. */
+    font-size: 3.25rem;
+    font-weight: 600;
+    line-height: 1.04;
     letter-spacing: -0.03em;
     color: var(--color-text);
     margin-bottom: var(--space-lg);
@@ -399,16 +401,19 @@ const related = (relatedProjects || [])
     padding: var(--space-3xl) var(--space-lg) 0;
   }
 
+  /* 64px between sections plus 24px under each heading left the page feeling
+     loose and pushed a short case study to ~4400px. 44/14 keeps the sections
+     distinct without the drift. */
   .body-section {
-    margin-bottom: var(--space-3xl);
+    margin-bottom: 2.75rem;
   }
 
   .body-section h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin-bottom: var(--space-lg);
+    font-size: 2.125rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0.875rem;
     color: var(--color-text);
   }
 
@@ -757,8 +762,10 @@ const related = (relatedProjects || [])
   }
 
   @media (max-width: 480px) {
+    /* Was 1.875rem (30px), which undershot the 36px .page-h1 on /projects at
+       the same width. Both h1s should land on the same size. */
     .hero-title {
-      font-size: 1.875rem;
+      font-size: 2.25rem;
     }
 
     .hero-meta {

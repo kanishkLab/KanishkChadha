@@ -1,33 +1,57 @@
 ---
 import { siteConfig } from '../config';
 
+/* An empty endpoint used to fall through to `action="mailto:…"` with
+   method="POST". Browsers do not send form posts to mailto: — Chrome silently
+   does nothing at all — so every message typed into this form was discarded
+   with no error shown to the sender. The form now refuses to pretend: with no
+   endpoint configured it renders as a direct email card instead of a dead
+   submit button. Set FORMSPREE_ENDPOINT in .env to switch it on. */
 const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
+const email = siteConfig.author.email;
 ---
 
-<form
-  class="contact-form"
-  method="POST"
-  action={endpoint || `mailto:${siteConfig.author.email}`}
-  data-contact-form
-  data-endpoint={endpoint}
->
-  <div class="form-row">
-    <div class="form-field">
-      <label for="contact-name">Name</label>
-      <input type="text" id="contact-name" name="name" required placeholder="Your name" autocomplete="name" />
+{endpoint ? (
+  <form
+    class="contact-form"
+    method="POST"
+    action={endpoint}
+    data-contact-form
+    data-endpoint={endpoint}
+    data-email={email}
+  >
+    <div class="form-row">
+      <div class="form-field">
+        <label for="contact-name">Name</label>
+        <input type="text" id="contact-name" name="name" required placeholder="Your name" autocomplete="name" />
+      </div>
+      <div class="form-field">
+        <label for="contact-email">Email</label>
+        <input type="email" id="contact-email" name="email" required placeholder="you@example.com" autocomplete="email" />
+      </div>
     </div>
     <div class="form-field">
-      <label for="contact-email">Email</label>
-      <input type="email" id="contact-email" name="email" required placeholder="you@example.com" autocomplete="email" />
+      <label for="contact-message">Message</label>
+      <textarea id="contact-message" name="message" required rows="4" placeholder="Tell me about your project or role..."></textarea>
     </div>
+    {/* Formspree reads _subject for the notification subject line, and uses the
+        `email` field above as the reply-to automatically. */}
+    <input type="hidden" name="_subject" value="New message from kanishkchadha.com" />
+    <button type="submit" class="form-submit">Send Message</button>
+    <p class="form-success" data-form-success hidden role="status">Thanks for reaching out — I'll get back to you soon.</p>
+    <p class="form-error" data-form-error hidden role="alert">
+      That didn't send. Email me directly at <a href={`mailto:${email}`}>{email}</a>.
+    </p>
+  </form>
+) : (
+  <div class="contact-form contact-form--direct">
+    <p class="direct-label">Email</p>
+    <a class="direct-address" href={`mailto:${email}?subject=${encodeURIComponent('Hello from kanishkchadha.com')}`}>{email}</a>
+    <p class="direct-note">
+      The quickest way to reach me — I read everything and reply personally.
+    </p>
   </div>
-  <div class="form-field">
-    <label for="contact-message">Message</label>
-    <textarea id="contact-message" name="message" required rows="4" placeholder="Tell me about your project or role..."></textarea>
-  </div>
-  <button type="submit" class="form-submit">Send Message</button>
-  <p class="form-success" data-form-success hidden>Thanks for reaching out — I'll get back to you soon.</p>
-</form>
+)}
 
 <script>
   function initContactForm() {
@@ -36,15 +60,28 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
       (form as any).__contactBound = true;
 
       const endpoint = form.dataset.endpoint;
+      // No endpoint means the direct-email card rendered instead of a form,
+      // so there is nothing to bind. Never leave a live submit button that
+      // posts nowhere.
       if (!endpoint) return;
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = form.querySelector('.form-submit') as HTMLButtonElement;
         const success = form.querySelector('[data-form-success]') as HTMLElement;
+        const error = form.querySelector('[data-form-error]') as HTMLElement;
         const origText = btn.textContent;
         btn.textContent = 'Sending…';
         btn.disabled = true;
+        error.hidden = true;
+
+        // A failed send must say so. Silently re-enabling the button reads as
+        // "sent" to the person who just typed a message.
+        const fail = () => {
+          error.hidden = false;
+          btn.textContent = origText;
+          btn.disabled = false;
+        };
 
         try {
           const res = await fetch(endpoint, {
@@ -63,12 +100,10 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
               success.hidden = true;
             }, 5000);
           } else {
-            btn.textContent = origText;
-            btn.disabled = false;
+            fail();
           }
         } catch {
-          btn.textContent = origText;
-          btn.disabled = false;
+          fail();
         }
       });
     });
@@ -202,6 +237,67 @@ const endpoint = import.meta.env.FORMSPREE_ENDPOINT || '';
     font-weight: 600;
     color: var(--color-navy);
     margin-top: 1rem;
+  }
+
+  .form-error {
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b3311a;
+    margin-top: 1rem;
+  }
+  .form-error a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ── Direct-email fallback ─────────────────────────────────
+     Shown in place of the form when FORMSPREE_ENDPOINT is unset. Same card
+     shell so the page composition is unchanged — only the contents differ. */
+  .contact-form--direct {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .direct-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-signal-orange);
+    margin-bottom: 0.5rem;
+  }
+
+  .direct-address {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-navy);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-signal-orange);
+    padding-bottom: 2px;
+    /* Long addresses must not push the card wider than its column. */
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    transition: color 150ms ease;
+  }
+  .direct-address:hover { color: var(--color-signal-orange); }
+  .direct-address:focus-visible {
+    outline: 2px solid var(--color-navy);
+    outline-offset: 3px;
+  }
+
+  .direct-note {
+    margin-top: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: #4A5A60;
+  }
+
+  @media (max-width: 480px) {
+    .direct-address { font-size: 1.125rem; }
   }
 
   /* Stack name/email on the FORM's width, not the viewport. A viewport query

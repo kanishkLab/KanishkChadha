@@ -46,6 +46,28 @@ async function takeScreenshots() {
       const url = `${BASE_URL}${path}`;
       try {
         await page.goto(url, { waitUntil: 'networkidle2', timeout: 15000 });
+
+        // Scroll the whole page before shooting. A fullPage screenshot does
+        // not itself trigger loading="lazy" images, so without this pass
+        // every below-the-fold image came out blank — the newsletter and
+        // contact photos looked like missing assets in every screenshot when
+        // they were fine in a real browser.
+        await page.evaluate(async () => {
+          await new Promise((resolve) => {
+            let y = 0;
+            const step = setInterval(() => {
+              window.scrollBy(0, 600);
+              y += 600;
+              if (y >= document.body.scrollHeight) {
+                clearInterval(step);
+                resolve();
+              }
+            }, 50);
+          });
+        });
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await new Promise((r) => setTimeout(r, 800));
+
         const file = join(outDir, `${name}-${viewport.name}.png`);
         await page.screenshot({ path: file, fullPage: true });
         console.log(`✓ ${name} (${viewport.name}) → ${file}`);

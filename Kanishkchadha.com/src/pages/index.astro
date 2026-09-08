@@ -5,6 +5,17 @@ import StructuredData from '../components/StructuredData.astro';
 import { getCollection } from 'astro:content';
 import { siteConfig } from '../config';
 import ContactForm from '../components/ContactForm.astro';
+import { existsSync } from 'node:fs';
+import { Picture } from 'astro:assets';
+/* These three live in src/assets rather than public/ so Astro's image pipeline
+   can process them. The portrait especially: it is a 1856x2304 / 2.1MB JPEG
+   being painted into a 452x565 box, and it is the hero's LCP element — served
+   raw from public/ it was several times the weight of the rest of the page put
+   together. Picture emits AVIF/WebP with a JPEG fallback at the widths the
+   layout actually uses. */
+import portraitImg from '../assets/kanishk.jpeg';
+import newsletterImg from '../assets/newsletter-desk.jpg';
+import contactImg from '../assets/contact-conversation.jpg';
 
 /* ── Featured work ─────────────────────────────────────────
    Three cards. Featured projects lead (by manual order), then the newest
@@ -18,12 +29,43 @@ const others = allProjects
   .sort((a, b) => b.data.year - a.data.year);
 const cases = [...featured, ...others].slice(0, 3);
 
-/* ── The Lab (upcoming — switch to collection query once posts publish) */
-const labPosts = [
-  { title: 'I built a lead-scoring agent with n8n + Claude — here\'s the eval', type: 'experiment', readTime: 8, date: 'Sep 2026', excerpt: 'A real workflow tested against 200 historical conversions — with the eval spreadsheet.' },
-  { title: 'Clay for enrichment: who it\'s actually for', type: 'tool-verdict', readTime: 5, date: 'Aug 2026', excerpt: 'Tried it on two enrichment jobs. One was perfect, the other was a waste of credits.' },
-  { title: 'What happens when you pipe Segment events into an AI classifier', type: 'experiment', readTime: 7, date: 'Aug 2026', excerpt: 'Intent scoring from raw event streams — the setup, the surprises, and where it broke.' },
-];
+/* ── The Lab ───────────────────────────────────────────────
+   These three rows were hardcoded placeholders: real-looking titles, excerpts
+   and dates for posts that did not exist and could not be clicked. They now
+   come from the blog collection and link to the actual post.
+
+   DEMO_SLUG_PREFIXES filters out the Case theme's sample software-engineering
+   posts, which are still sitting in src/content/blog/. While they are the only
+   thing in the collection this list comes back empty and the whole section
+   stops rendering — better a missing section than three fabricated ones. Add
+   one real post and the section switches itself back on; delete the demo
+   files and this filter quietly becomes a no-op. */
+const DEMO_SLUG_PREFIXES = ['experiments/', 'decisions/', 'talks/'];
+const DEMO_SLUGS = new Set(
+  (await getCollection('blog'))
+    .filter(p => DEMO_SLUG_PREFIXES.some(prefix => p.id.startsWith(prefix)))
+    .map(p => p.id)
+);
+
+const TYPE_LABELS: Record<string, string> = {
+  experiment: 'Experiment',
+  'tool-verdict': 'Tool Verdict',
+  decision: 'Decision',
+  talk: 'Talk',
+};
+
+const labPosts = (await getCollection('blog', ({ data }) => data.draft === false))
+  .filter(p => !DEMO_SLUGS.has(p.id))
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 3)
+  .map(p => ({
+    href: `/blog/${p.id}`,
+    title: p.data.title,
+    label: TYPE_LABELS[p.data.type] ?? p.data.type,
+    isVerdict: p.data.type === 'tool-verdict',
+    excerpt: p.data.description,
+    date: p.data.publishDate.toLocaleDateString('en-CA', { month: 'short', year: 'numeric' }),
+  }));
 
 /* ── Tech stack ────────────────────────────────────────────
    Logos are self-hosted SVGs (brand colours) in /public/logos. */
@@ -95,8 +137,24 @@ const timeline = [
 ];
 
 
-const { portrait, name: authorName, title: authorTitle } = siteConfig.author;
+/* SITE_AUTHOR_PORTRAIT is now an escape hatch for pointing at some other image
+   (an external URL, a different crop). Left empty — the default — the bundled
+   and optimised src/assets/kanishk.jpeg is used instead. */
+const portraitOverride = siteConfig.author.portrait;
+const { name: authorName, title: authorTitle } = siteConfig.author;
 const linkedin = siteConfig.social.linkedin;
+
+const newsletterAction = siteConfig.newsletter.action;
+const newsletterUrl = siteConfig.newsletter.url;
+
+/* The hero button used to point at '/resume.pdf' unconditionally, which 404'd
+   because no such file exists yet. Prefer an explicit SITE_RESUME_URL; failing
+   that, use /resume.pdf only once it is actually sitting in public/, and
+   otherwise render no button at all. Dropping the PDF in is enough to bring
+   the button back — no config change needed. */
+const resumeUrl =
+  siteConfig.resumeUrl ||
+  (existsSync(new URL('../../public/resume.pdf', import.meta.url)) ? '/resume.pdf' : '');
 ---
 
 <BaseLayout>
@@ -106,16 +164,6 @@ const linkedin = siteConfig.social.linkedin;
     description={siteConfig.description}
     type="website"
     noSuffix
-  />
-
-  {/* Playfair Display + Manrope are the brand-guidelines type system and
-      are used on this page only, so they load here rather than in
-      BaseLayout — internal pages stay on the single-family Inter setup.
-      Inter itself is already loaded globally for the logo lockup. */}
-  <link
-    slot="head"
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
   />
 
   <StructuredData type="WebSite" />
@@ -137,15 +185,23 @@ const linkedin = siteConfig.social.linkedin;
         <div class="btn-row">
           <a class="btn btn-orange" href="#cases">See the work</a>
           {/* TODO: résumé PDF — user wants three variants (Martech, Analytics, Ops). Add PDFs to public/ and convert this to a dropdown or three links. */}
-          <a class="btn btn-navy" href={siteConfig.resumeUrl}>Download Résumé ↓</a>
+          {resumeUrl && <a class="btn btn-navy" href={resumeUrl}>Download Résumé ↓</a>}
         </div>
       </div>
 
 
       <div class="portrait">
-        {portrait
-          ? <img src={portrait} alt={`${authorName}, ${authorTitle}`} width="800" height="1000" />
-          : <div class="portrait-ph" aria-hidden="true"><span>KC</span></div>}
+        {portraitOverride
+          ? <img src={portraitOverride} alt={`${authorName}, ${authorTitle}`} width="800" height="1000" />
+          : <Picture
+              src={portraitImg}
+              formats={['avif', 'webp']}
+              widths={[452, 678, 904]}
+              sizes="(max-width: 900px) min(90vw, 420px), 452px"
+              alt={`${authorName}, ${authorTitle}`}
+              loading="eager"
+              fetchpriority="high"
+            />}
 
       </div>
       </div>
@@ -267,7 +323,7 @@ const linkedin = siteConfig.social.linkedin;
     <section class="wrap sec block">
       <div id="newsletter" class="newsletter">
         <div class="newsletter-media">
-          <img src="/images/newsletter-desk.jpg" alt="" loading="lazy" width="1400" height="933" />
+          <Picture src={newsletterImg} formats={['avif', 'webp']} widths={[476, 720, 952]} sizes="(max-width: 900px) 100vw, 476px" alt="" loading="lazy" />
         </div>
         <div class="newsletter-body">
           <p class="overline">The Newsletter</p>
@@ -276,11 +332,20 @@ const linkedin = siteConfig.social.linkedin;
             A weekly note on using AI, analytics and automation in real campaigns.
             Build smarter, measure better, automate with intention.
           </p>
-          <form class="newsletter-form" method="post" action="#">
-            <label class="sr-only" for="newsletter-email">Email address</label>
-            <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" />
-            <button type="submit">Subscribe</button>
-          </form>
+          {/* Was method="post" action="#", which reloaded the page and threw the
+              address away with no confirmation. Posts to the beehiiv embed
+              endpoint now; beehiiv confirms in the new tab. With no endpoint
+              set, a plain link to the publication is shown instead of a form
+              that quietly loses signups. */}
+          {newsletterAction ? (
+            <form class="newsletter-form" method="post" action={newsletterAction} target="_blank">
+              <label class="sr-only" for="newsletter-email">Email address</label>
+              <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" />
+              <button type="submit">Subscribe</button>
+            </form>
+          ) : newsletterUrl ? (
+            <a class="btn btn-orange newsletter-link" href={newsletterUrl} target="_blank" rel="noopener noreferrer">Subscribe on beehiiv →</a>
+          ) : null}
         </div>
       </div>
     </section>
@@ -301,27 +366,29 @@ const linkedin = siteConfig.social.linkedin;
     </section>
 
     <!-- ── 9. THE LAB ───────────────────────────────────── -->
-    <section id="lab" class="wrap sec block">
-      <div class="lab-head">
-        <div>
-          <p class="overline">The Lab</p>
-          <h2 class="h2 h2--sm">Experiments & tool verdicts</h2>
-        </div>
-        <a class="link-all" href="/blog">View all →</a>
-      </div>
-      <div class="lab-list">
-        {labPosts.map((post) => (
-          <div class="lab-row">
-            <span class:list={['lab-badge', { 'lab-badge--verdict': post.type === 'tool-verdict' }]}>{post.type === 'tool-verdict' ? 'Tool Verdict' : post.type === 'experiment' ? 'Experiment' : post.type === 'decision' ? 'Decision' : 'Talk'}</span>
-            <div class="lab-content">
-              <h3 class="lab-title">{post.title}</h3>
-              {post.excerpt && <p class="lab-excerpt">{post.excerpt}</p>}
-            </div>
-            <span class="lab-meta">{post.readTime} min · {post.date}</span>
+    {labPosts.length > 0 && (
+      <section id="lab" class="wrap sec block">
+        <div class="lab-head">
+          <div>
+            <p class="overline">The Lab</p>
+            <h2 class="h2 h2--sm">Experiments & tool verdicts</h2>
           </div>
-        ))}
-      </div>
-    </section>
+          <a class="link-all" href="/blog">View all →</a>
+        </div>
+        <div class="lab-list">
+          {labPosts.map((post) => (
+            <a class="lab-row" href={post.href}>
+              <span class:list={['lab-badge', { 'lab-badge--verdict': post.isVerdict }]}>{post.label}</span>
+              <div class="lab-content">
+                <h3 class="lab-title">{post.title}</h3>
+                {post.excerpt && <p class="lab-excerpt">{post.excerpt}</p>}
+              </div>
+              <span class="lab-meta">{post.date}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- ── 10. CONTACT ──────────────────────────────────── -->
     <section id="contact" class="wrap sec contact">
@@ -332,7 +399,7 @@ const linkedin = siteConfig.social.linkedin;
       </p>
       <div class="contact-layout">
         <div class="contact-visual">
-          <img src="/images/contact-conversation.jpg" alt="" loading="lazy" width="1400" height="933" />
+          <Picture src={contactImg} formats={['avif', 'webp']} widths={[504, 760, 1008]} sizes="(max-width: 900px) 100vw, 504px" alt="" loading="lazy" />
         </div>
         <ContactForm />
       </div>
@@ -835,6 +902,9 @@ const linkedin = siteConfig.social.linkedin;
     margin: 0 0 28px;
   }
   .newsletter-form { display: flex; gap: 9px; flex-wrap: wrap; }
+  /* Fallback CTA shown when BEEHIIV_EMBED_URL is unset but NEWSLETTER_URL
+     is known — sits on the navy panel where the form would be. */
+  .newsletter-link { align-self: flex-start; }
   .newsletter-form input {
     width: 260px;
     padding: 12px 16px;
@@ -926,13 +996,22 @@ const linkedin = siteConfig.social.linkedin;
   .lab-list {
     border-top: 1px solid var(--hairline);
   }
+  /* Each row is the whole link, so the tap target is the full-width band
+     rather than the title text alone — the difference matters most on a
+     phone, where these rows stack. */
   .lab-row {
     display: flex;
     align-items: baseline;
     gap: 24px;
     padding: 28px 0;
     border-bottom: 1px solid var(--hairline);
+    text-decoration: none;
+    color: inherit;
+    transition: background 150ms ease;
   }
+  .lab-row:hover { background: var(--smoke); }
+  .lab-row:hover .lab-title { color: var(--orange); }
+  .lab-title { transition: color 150ms ease; }
   .lab-badge {
     flex-shrink: 0;
     width: 110px;

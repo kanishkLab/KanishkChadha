@@ -36,11 +36,21 @@
   --color-accent-hover:   #f0592c;
   --color-accent-muted:   rgba(255, 110, 66, 0.10);
 
-  /* Fonts — Inter only (Typography Implementation Brief §01) */
+  /* Fonts — Playfair Display + Manrope, sitewide.
+     These three tokens used to alias Inter, which is why case studies and blog
+     posts rendered in a different typeface from the pages that link to them:
+     only /, /projects and /blog set up the brand faces, and they did it in
+     their own scopes. Defining them at :root makes the brand type the default
+     everywhere — typography.css already points h1–h6 at --font-display, so the
+     detail pages pick up Playfair with no per-page rules.
+
+     --font-family stays Inter deliberately: the KC lockup and the nav are the
+     one place the guidelines reserve it for. */
   --font-family:   'Inter', system-ui, -apple-system, sans-serif;
-  --font-display:  var(--font-family);
-  --font-body:     var(--font-family);
-  --font-utility:  var(--font-family);
+  --font-display:  'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:     'Manrope', system-ui, -apple-system, sans-serif;
+  --font-sans:     var(--font-body);
+  --font-utility:  var(--font-body);
   --font-mono:     ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Tracking — hierarchy comes from weight + size + negative tracking */
@@ -178,18 +188,36 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* The header is position:sticky at 64px tall, so an anchor jump used to
+     park the target's top edge at y=0 — underneath it. Measured: 65px of
+     #contact and #stack sat behind the nav after every jump, on desktop and
+     mobile alike. scroll-padding-top offsets anything scrolled into view in
+     this container, covering both native hash landings and the nav's
+     scrollIntoView calls. 84px = the 64px header plus 20px of air. */
+  scroll-padding-top: 84px;
 }
 
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-normal);
+  font-family: var(--font-body);
+  /* 500, not 400. The brand body weight is Manrope 500 — it is what .home and
+     .kc-page set, so leaving the default at 400 made body copy on the detail
+     pages read lighter than the same copy on the pages linking to them. */
+  font-weight: var(--font-weight-medium);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   letter-spacing: var(--tracking-body);
-  font-feature-settings: 'cv11', 'ss01';   /* Inter's tidier glyphs */
   min-height: 100vh;
+}
+
+/* Inter's tidier glyph alternates — scoped to where Inter is actually used
+   now that body runs on Manrope, which has no cv11/ss01 features. */
+.monogram,
+.wordmark,
+.nav-link {
+  font-feature-settings: 'cv11', 'ss01';
 }
 
 /* ── Links ───────────────────────────────────────────────── */

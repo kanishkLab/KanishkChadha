@@ -99,17 +99,47 @@ const isActive = (href: string) => {
     if (openBtn?.dataset.drawerBound === 'true') return;
     if (openBtn) openBtn.dataset.drawerBound = 'true';
 
+    /* Scroll lock.
+       `body { overflow: hidden }` did not hold — the page scrolled freely
+       behind the open drawer (measured: 400px -> 1000px with the drawer up),
+       and on iOS Safari that approach never works. Pinning the body with
+       position:fixed at a negative offset is the technique that does, but it
+       resets scroll to the top, so the offset is stashed and restored on
+       close. */
+    let lockedY = 0;
+
     function open() {
+      // Re-entering open() while already open would read scrollY as 0 (the
+      // body is pinned), so the stashed offset would be lost and closing
+      // would dump the reader at the top of the page.
+      if (drawer?.classList.contains('drawer--open')) return;
+      lockedY = window.scrollY;
       drawer?.classList.add('drawer--open');
       overlay?.classList.add('drawer-overlay--visible');
       openBtn?.setAttribute('aria-expanded', 'true');
-      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${lockedY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
     }
     function close() {
+      // Guard so a stray close() (Escape with the drawer already shut) can't
+      // yank the page back to a stale offset.
+      const wasOpen = drawer?.classList.contains('drawer--open');
       drawer?.classList.remove('drawer--open');
       overlay?.classList.remove('drawer-overlay--visible');
       openBtn?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      if (wasOpen) {
+        // instant, not smooth — this is restoring where the reader already
+        // was, not travelling somewhere new.
+        window.scrollTo({ top: lockedY, behavior: 'instant' as ScrollBehavior });
+      }
     }
 
     openBtn?.addEventListener('click', open);
@@ -144,11 +174,31 @@ const isActive = (href: string) => {
         const [path, hash] = href.split('#');
         const onTargetPage = !path ? true : path === '/' ? window.location.pathname === '/' : window.location.pathname.startsWith(path);
 
-        if (onTargetPage) {
+        if (!onTargetPage) return;   // let the browser navigate
+
+        const target = document.getElementById(hash);
+
+        /* The Contact nav item is a bare "#contact", so this branch used to be
+           taken on every page — including blog posts, which are the one page
+           type with no contact section. There the target was null, the click
+           was already preventDefault-ed, and tapping Contact did precisely
+           nothing. Fall back to the homepage anchor when the section isn't
+           on this page. */
+        if (!target) {
+          window.location.href = `/#${hash}`;
           e.preventDefault();
-          const target = document.getElementById(hash);
-          target?.scrollIntoView({ behavior: 'smooth' });
+          return;
         }
+
+        e.preventDefault();
+        // The drawer's close() restores scroll synchronously; defer a frame so
+        // this smooth scroll starts from the restored position rather than
+        // being cancelled by it.
+        requestAnimationFrame(() => {
+          target.scrollIntoView({ behavior: 'smooth' });
+          // Keep the URL honest so the anchor is shareable and Back works.
+          history.replaceState(null, '', `#${hash}`);
+        });
       });
     });
   }

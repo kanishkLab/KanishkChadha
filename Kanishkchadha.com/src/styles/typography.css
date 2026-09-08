@@ -17,9 +17,12 @@
 ──────────────────────────────────────────────────────────── */
 
 /* ── Headings ────────────────────────────────────────────── */
+/* Weight 600, not 700. This scale was written for Inter, where 700 was the
+   heading weight; Playfair Display's brand weight is 600 and renders visibly
+   heavier at 700 than the same heading does on /projects or /blog. */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
   color: var(--color-text);
   margin-top: 0;
@@ -27,25 +30,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1, .text-hero {
-  font-size: 3.5rem;         /* 56px */
-  line-height: 1.12;
-  font-weight: 700;
-  letter-spacing: var(--tracking-display);
+  font-size: 3.25rem;        /* 52px — matches .page-h1 on /projects and /blog */
+  line-height: 1.04;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   margin-bottom: var(--space-lg);
 }
 
 h2 {
-  font-size: 2.25rem;        /* 36px */
+  font-size: 2.125rem;       /* 34px — matches the index pages' section h2 */
   line-height: 1.15;
-  font-weight: 700;
-  letter-spacing: -0.035em;
+  font-weight: 600;
+  letter-spacing: -0.03em;
 }
 
 h3 {
-  font-size: 1.5rem;         /* 24px */
+  font-size: 1.3125rem;      /* 21px — matches the index pages' card titles */
   line-height: 1.2;
   font-weight: 600;
-  letter-spacing: var(--tracking-heading);
+  letter-spacing: -0.02em;
 }
 
 h4 {

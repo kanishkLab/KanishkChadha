@@ -68,14 +68,22 @@ ticked open, so check the code before trusting any line here.
 - [x] ~~Turn off sample-data flags.~~ Moot — `showSampleFlags` no longer exists.
 - [x] ~~Decide the nav/sitemap question above.~~ Resolved — see above.
 - [ ] **Replace the blog posts.** All 22 files in `src/content/blog/` are still
-      demo software-engineering content. `/blog` is now a prominent, designed
-      page, so this is far more visible than it was as a plain list. **This is
-      the last real content blocker.**
-- [ ] **Add `public/resume.pdf`** (or set `SITE_RESUME_URL`) — the hero
-      "Download Résumé" button currently 404s.
-- [ ] **Wire the newsletter form** to Beehiiv/ESP — currently visual only.
-- [ ] **Set `FORMSPREE_ENDPOINT`** in `.env` — the contact form renders on every
-      page but does not submit while it is empty.
+      demo software-engineering content, and they account for 68 of the 74
+      sitemap URLs (47 of those are generated tag pages like `/blog/kubernetes`).
+      `/blog` is nav-linked as "The Lab", so this is what search engines index
+      for the domain. **This is the last real content blocker.**
+      The homepage Lab section stays hidden until a real post exists — see
+      `DEMO_SLUG_PREFIXES` in `src/pages/index.astro`.
+- [ ] **Add `public/resume.pdf`** — the hero "Download Résumé" button is hidden
+      while the file is missing (it used to 404). Dropping the PDF in is enough;
+      no config change needed. `SITE_RESUME_URL` overrides with another URL.
+- [ ] **Set `BEEHIIV_EMBED_URL`** in `.env` — beehiiv → Settings → Publication →
+      Embed forms, copy the iframe `src`, drop any `?slim=true`. Until it is
+      set the newsletter panel renders copy with no signup control (the form
+      used to POST to `#`, reload the page, and discard the address).
+- [ ] **Set `FORMSPREE_ENDPOINT`** in `.env` — until then the contact block
+      renders as a direct `mailto:` card. It used to render a live-looking form
+      that POSTed to a `mailto:` URL and silently threw every message away.
 - [ ] **Finish the Obsidian setup** (see Editing content below) — open the vault,
       install Obsidian Git, point the attachment folder at `Kanishkchadha.com/public/`.
 
@@ -97,7 +105,22 @@ npm run screenshot                                        # local (desktop + mob
 SCREENSHOT_URL=https://your-site.vercel.app npm run screenshot  # production
 ```
 
-Screenshots are saved to `Kanishkchadha.com/screenshots/auto/`.
+Screenshots are saved to `Kanishkchadha.com/screenshots/auto/`. The script
+scrolls each page before shooting — without that pass, `loading="lazy"` images
+never load and every below-the-fold photo comes out blank, which reads as a
+missing asset when it isn't.
+
+### Regenerating the social card
+
+```bash
+cd Kanishkchadha.com
+node scripts/og-image.mjs      # -> public/og-image.png
+```
+
+Renders a 1200x630 card through headless Chrome so it uses the real Playfair
+Display + Manrope webfonts. Re-run after changing the name, headline or brand
+colours. Until 2026-09-07 this file was still the Case theme's own advert
+("Case-Study-First Portfolio Theme for Astro"), shown on every LinkedIn share.
 
 ### Branding
 
@@ -124,7 +147,9 @@ landed in files that never built.
 | `blog/` | Posts, split into `experiments/`, `tool-verdicts/`, `decisions/`, `talks/` via a `type` field |
 | `journey/` | Career milestones |
 | `resources/` | Books, podcasts, tools ("Stuff I Like") |
-| `testimonials/` | Peer and client recommendations |
+
+The `testimonials/` collection was removed on 2026-09-07: it held two entries of
+theme demo data about the theme's author and was rendered nowhere.
 
 ### Configuration
 

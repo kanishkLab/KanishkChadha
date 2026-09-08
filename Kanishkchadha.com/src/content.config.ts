@@ -9,7 +9,6 @@
  * - blog: Unified blog collection (decisions, articles, talks with type field)
  * - journey: Career timeline entries
  * - resources: Curated books, podcasts, tools, services, and reading materials
- * - testimonials: Endorsements and recommendations
  *
  * All collections use the glob loader to read Markdown files (.md, with .mdx still
  * accepted) from their respective directories. Content is authored as plain .md so
@@ -171,30 +170,9 @@ const resourcesCollection = defineCollection({
     order: z.number().optional(),
   }),
 });
-const testimonialsCollection = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/testimonials' }),
-  schema: z.object({
-    name: z.string(),
-    
-    role: z.string(),
-    
-    company: z.string(),
-    
-    relationship: z.string(),
-    
-    quote: z.string(),
-    
-    linkedin: z.string().url().optional(),
-    
-    featured: z.boolean().default(false),
-    
-    date: z.coerce.date(),
-  }),
-});
 export const collections = {
   projects: projectsCollection,
   blog: blogCollection,
   journey: journeyCollection,
   resources: resourcesCollection,
-  testimonials: testimonialsCollection,
 };

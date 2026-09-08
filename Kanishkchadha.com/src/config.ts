@@ -38,7 +38,24 @@ export const siteConfig = {
     location: getEnv('SITE_AUTHOR_LOCATION', ''),
     portrait: getEnv('SITE_AUTHOR_PORTRAIT', ''),
   },
-  resumeUrl: getEnv('SITE_RESUME_URL', '/resume.pdf'),
+  /* Left empty on purpose. The hero button used to default to '/resume.pdf'
+     whether or not that file existed, so it 404'd. index.astro now falls back
+     to '/resume.pdf' only when the file is actually present in public/, and
+     hides the button otherwise. Set this to point somewhere else entirely
+     (a Drive link, a per-role variant). */
+  resumeUrl: getEnv('SITE_RESUME_URL', ''),
+
+  newsletter: {
+    /* beehiiv embed endpoint for the "Automated Marketer" signup, e.g.
+       https://embeds.beehiiv.com/<publication-uuid>. Posting the form
+       straight at it keeps the site's own form design instead of dropping in
+       beehiiv's iframe. Empty means the signup form is not rendered at all —
+       a form that posts nowhere loses addresses silently. */
+    action: getEnv('BEEHIIV_EMBED_URL', ''),
+    /* Optional public URL of the publication, used as a plain link fallback
+       while the embed endpoint is unset. */
+    url: getEnv('NEWSLETTER_URL', ''),
+  },
   social: {
     github: getEnv('SOCIAL_GITHUB', ''),
     

@@ -20,24 +20,35 @@ The repo contains two brand specs that **directly contradict each other**.
 | Body grey | `#3a4a52` | `#4a5a60` |
 
 **Resolution (owner decision, 2026-07-28):**
-`design_handoff_brand_guidelines/` (Playfair + Manrope) is current, and it was
-applied to the **homepage only**. Internal pages stay on the all-Inter system.
+`design_handoff_brand_guidelines/` (Playfair + Manrope) is current.
 
-This split is **intentional, not a bug**. Do not "fix" the homepage to match the
-internal pages or vice versa without asking.
+**Updated 2026-09-07 (owner decision): the split is gone — Playfair + Manrope
+is now the sitewide type system.** It was applied to the homepage, `/projects`
+and `/blog` only, which meant the *index* pages carried the brand faces while
+the *detail* pages (case studies, blog posts) fell back to all-Inter. The type
+changed under the reader at exactly the moment they clicked into the work.
+
+Playfair + Manrope now load once in `src/layouts/BaseLayout.astro` and the
+`--font-display` / `--font-body` tokens are defined at `:root` in
+`global.css`, so every page inherits them. `typography.css` already points
+`h1`–`h6` at `--font-display`, so the detail pages needed no per-page rules.
+
+**Inter is still reserved for the KC lockup and the nav** (`--font-family`) —
+that much of the original brief stands.
 
 > The Typography Implementation Brief in `Kanishkchadha.com/Branding Guidlines /` is now
-> **stale for the homepage** — its acceptance checklist ("only Inter loads",
-> "no serif") is deliberately false there. It still governs internal pages.
+> **stale everywhere** — its acceptance checklist ("only Inter loads", "no
+> serif") is deliberately false across the whole site, not just the homepage.
 
 ---
 
 ## Two type systems, by scope
 
-### Homepage (`src/pages/index.astro`) — Playfair + Manrope
+### Sitewide — Playfair + Manrope
 
-Scoped entirely to the page's `<style>` block. Fonts load from a `<link>` in
-this page's `head` slot, so **internal pages never download them**.
+Loaded once from `BaseLayout.astro` and defined as `:root` tokens in
+`global.css`. The homepage additionally re-declares the same families inside
+its own `.home` scope, which is harmless duplication.
 
 | Role | Family | Size | Weight | Tracking |
 |---|---|---|---|---|
@@ -156,13 +167,37 @@ Verified: both `prefers-color-scheme: light` and `dark` render `#f9f9f9`/`#09263
 
 - **Fonts load via `<link>` + preconnect in `<head>`**, never a CSS `@import` —
   an `@import` inside CSS forces a serialised second round-trip before paint.
-- **Internal pages load exactly one font file** (Inter latin). Code blocks use
-  the system mono stack; JetBrains Mono was dropped.
+- **One font request covers the whole site** (Inter + Playfair Display +
+  Manrope in a single Google Fonts URL from `BaseLayout.astro`). Code blocks
+  use the system mono stack; JetBrains Mono was dropped.
+- **Images in `src/assets/` go through Astro's pipeline** (`<Picture>`, AVIF +
+  WebP + JPEG fallback at the widths the layout actually uses). The portrait
+  was a 2.1MB / 1856x2304 JPEG served raw from `public/` into a 452px box and
+  was the hero's LCP element; it now ships as an 8KB AVIF at 1x and a 22KB
+  AVIF at 2x. Homepage total transfer went 2.7MB -> ~250KB. Put new photos in
+  `src/assets/`, not `public/`, unless something needs a stable public URL.
 - **Prefetch** is on (`prefetchAll`, `viewport` strategy in `astro.config.mjs`).
   Measured click→painted: 34–51ms.
-- **View transitions** are custom: 90ms fade-out + 220ms fade-up-8px. The sticky
-  header gets its own `view-transition-name` so it stays anchored, and
-  `prefers-reduced-motion` is honoured.
+- **No browser tab throbber, by design.** `<ClientRouter />` fetches and swaps
+  the DOM instead of doing a document navigation, and prefetch means the HTML
+  is usually already cached (measured: 0 network requests on a nav, and JS
+  globals survive it). The browser has no document load to report, so
+  `NavProgress.astro` supplies that feedback instead: a 2px orange bar that
+  only appears once a navigation has been waiting 180ms. On a warm cache it
+  never shows — that is correct, not broken. It creeps toward 90% by closing a
+  fraction of the remaining gap each tick, then jumps to 100%. Its `done()` is
+  wired to two events and must stay idempotent; without the `finishing` guard
+  the second call cancels the first's hide timer and the bar sticks at 100%.
+- **View transitions** are custom and *sequenced*, not simultaneous: the old
+  page eases out over 160ms, holds 20ms, then the new page lifts in 16px over
+  360ms — 540ms total (~580ms measured end to end). Tune the three
+  `--kc-nav-*` variables at the top of the transition block in
+  `BaseLayout.astro`; past ~600ms clicking through pages starts to feel like
+  waiting. The previous 90ms-out / 220ms-in pair started both at once, so two
+  half-transparent pages overlapped and it read as a flicker. `mix-blend-mode`
+  is forced to `normal` because Chrome's default `plus-lighter` brightens that
+  overlap into a flash. The sticky header gets its own `view-transition-name`
+  so it stays anchored, and `prefers-reduced-motion` is honoured.
 - The header is `transition:persist` while `astro:page-load` fires every
   navigation, so `Navigation.astro` guards listener binding with a
   `data-drawerBound` flag. Removing that guard reintroduces a listener leak.
@@ -176,28 +211,41 @@ contact — see the Release scope section in the root `CLAUDE.md`).
 
 ### Blocks v1
 
-- **Case study content is theme demo data.** All 8 files in
-  `src/content/projects/` are the Astro theme's software-engineering examples.
-  They drive both `/projects` *and* the homepage "Featured Work" section.
-- `/resume.pdf` **404s** — the hero "Download Résumé" button points at it.
-  Add the file to `public/`, or set `SITE_RESUME_URL`. Prefetch surfaces this
-  on page load, not just on click.
-- **Portrait photo** — set `SITE_AUTHOR_PORTRAIT`; a branded placeholder shows
-  until then.
-- **Sample-data flags removed.** Credibility stats and timeline now use real data.
-- **Newsletter form** is visual only — wire to Beehiiv/ESP.
-- **Case cover images** — add `coverImage: "/path.jpg"` to project frontmatter
-  (optional field on the `projects` and `blog` schemas).
+- **Blog content is still theme demo data** — 22 software-engineering posts
+  (Kubernetes, PostgreSQL, microservices) under `src/content/blog/`. They make
+  up 68 of the 74 sitemap URLs, including 47 generated tag pages. `/blog` is
+  nav-linked as "The Lab", so this is what Google indexes for the domain.
+  The homepage Lab section is hidden until at least one real post exists (see
+  `DEMO_SLUG_PREFIXES` in `index.astro`).
+- **`FORMSPREE_ENDPOINT` is unset**, so the contact form renders as a direct
+  `mailto:` card instead of a form. Nothing is lost either way now, but there
+  is no form until the endpoint is set.
+- **`BEEHIIV_EMBED_URL` is unset**, so the newsletter panel shows copy with no
+  signup control. Set it to the beehiiv embed URL.
+- **No `public/resume.pdf`**, so the hero's "Download Résumé" button does not
+  render. Drop the PDF in and it reappears with no config change.
+
+### Resolved 2026-09-07
+
+- ~~Case study content is theme demo data~~ — all four files in
+  `src/content/projects/` are real martech work.
+- ~~`/resume.pdf` 404s~~ — the button is now gated on the file existing.
+- ~~Portrait photo~~ — set, and now optimised through `<Picture>`.
+- ~~`og-image.png` was the Case theme's own advertisement~~ ("Case-Study-First
+  Portfolio Theme for Astro"), shown on every share of every page. Regenerate
+  with `node scripts/og-image.mjs` after changing the name or brand colours.
+- ~~The homepage/internal type split~~ — Playfair + Manrope is now sitewide.
+- ~~Newsletter form posted to `#`~~ and ~~the contact form POSTed to a
+  `mailto:` URL~~ — both silently discarded input; both now degrade honestly.
+- ~~`testimonials` collection~~ — was registered with 2 entries of theme demo
+  data about the theme's author, rendered nowhere. Deleted.
 
 ### Not blocking v1
 
-- The homepage/internal type split is visible when crossing from the homepage
-  to a case study. Case studies use the internal Inter system; only the
-  homepage is Playfair + Manrope. Revisit if it reads as inconsistent once the
-  real case studies are in.
-- `/blog`, `/journey`, `/stuff-i-like` are deferred to a later release but are
-  still linked in the nav and present in the sitemap.
-- Blog post content is also theme demo data — irrelevant until `/blog` ships.
+- `/journey` and `/stuff-i-like` stay disabled (`src/pages/_*.astro`).
+- All four case studies still end with the body line "Full case study in
+  progress." The frontmatter-driven sections carry the substance, but that
+  line is visible to a reader.
 
 ---
 

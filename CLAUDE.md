@@ -77,12 +77,17 @@ ticked open, so check the code before trusting any line here.
 - [x] ~~Add `public/resume.pdf`~~ Done 2026-09-07 — the master résumé (6pp).
       The hero button is gated on the file existing, so dropping a replacement
       in is enough; `SITE_RESUME_URL` overrides with another URL.
-- [x] ~~Wire the newsletter~~ Done 2026-09-07 — `BEEHIIV_FORM_ID` is set and
-      beehiiv's v3 loader renders the form. **The form still carries beehiiv's
-      own styling** (white card, black button, heading "Kanishk's Newsletter"
-      directly under the panel's "Automated Marketer"). Restyle it in beehiiv:
-      Grow → Subscribe Forms → edit → background `#092634`, button `#ff6e42`,
-      and clear the form heading since the panel already has one.
+- [x] ~~Wire the newsletter~~ Done 2026-09-07 — the signup posts to **Formspree**
+      over fetch and keeps the site's own design. beehiiv was tried first and
+      reverted on 2026-09-07: their v3 loader renders the form in a
+      cross-origin iframe, so it arrived with beehiiv's styling (white card,
+      black button, its own heading) and no CSS here could reach it.
+      **Interim, not a real ESP** — addresses land in the Formspree inbox
+      alongside contact messages, tagged "Automated Marketer — new subscriber",
+      and share the free tier's 50 submissions/month. Pick a proper newsletter
+      tool before promoting the signup, and set
+      `NEWSLETTER_FORMSPREE_ENDPOINT` to a second Formspree form if the shared
+      inbox gets noisy in the meantime.
 - [x] ~~Set `FORMSPREE_ENDPOINT`~~ Done 2026-09-07. Endpoint verified live
       (GET returns 405 Method Not Allowed, which is correct — it is POST-only).
       **Send one real test message after deploying** to confirm delivery.

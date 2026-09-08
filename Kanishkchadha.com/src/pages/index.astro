@@ -144,7 +144,7 @@ const portraitOverride = siteConfig.author.portrait;
 const { name: authorName, title: authorTitle } = siteConfig.author;
 const linkedin = siteConfig.social.linkedin;
 
-const newsletterFormId = siteConfig.newsletter.formId;
+const newsletterEndpoint = siteConfig.newsletter.endpoint;
 const newsletterUrl = siteConfig.newsletter.url;
 
 /* The hero button used to point at '/resume.pdf' unconditionally, which 404'd
@@ -333,16 +333,23 @@ const resumeUrl =
             Build smarter, measure better, automate with intention.
           </p>
           {/* Was method="post" action="#", which reloaded the page and threw the
-              address away with no confirmation. beehiiv's own v3 loader renders
-              and submits the form now, so signups are handled by them rather
-              than by posting at an endpoint we'd be guessing at. With no form
-              id set, a plain link is shown instead of a form that loses
-              signups. See the script below for why it isn't a bare
-              <script async> tag. */}
-          {newsletterFormId ? (
-            <div class="newsletter-embed" data-beehiiv-form-id={newsletterFormId}></div>
+              address away with no confirmation. Submits to Formspree over
+              fetch now, so the address is captured and the reader stays put.
+              With no endpoint set, a plain link is shown instead of a form
+              that loses signups. */}
+          {newsletterEndpoint ? (
+            <form class="newsletter-form" method="POST" action={newsletterEndpoint} data-newsletter-form>
+              <label class="sr-only" for="newsletter-email">Email address</label>
+              <input id="newsletter-email" name="email" type="email" required placeholder="your@email.com" autocomplete="email" />
+              {/* Names the submission in the Formspree inbox, so signups are
+                  tellable from contact messages while both share one form. */}
+              <input type="hidden" name="_subject" value="Automated Marketer — new subscriber" />
+              <input type="hidden" name="source" value="Newsletter signup (homepage)" />
+              <button type="submit">Subscribe</button>
+              <p class="newsletter-msg" data-newsletter-msg hidden role="status"></p>
+            </form>
           ) : newsletterUrl ? (
-            <a class="btn btn-orange newsletter-link" href={newsletterUrl} target="_blank" rel="noopener noreferrer">Subscribe on beehiiv →</a>
+            <a class="btn btn-orange newsletter-link" href={newsletterUrl} target="_blank" rel="noopener noreferrer">Subscribe →</a>
           ) : null}
         </div>
       </div>
@@ -408,28 +415,52 @@ const resumeUrl =
 </BaseLayout>
 
 <script>
-  /* beehiiv's snippet is a bare `<script async src=... data-beehiiv-form=...>`.
-     Dropped straight into the markup it works on a cold load and then never
-     again: `<ClientRouter />` swaps the DOM instead of reloading, so on any
-     client-side return to this page the script is inert markup and the panel
-     is left with an empty hole where the signup form should be.
+  /* Submits over fetch so the reader is not thrown to Formspree's own thank-you
+     page and back. Bound on astro:page-load, guarded because <ClientRouter />
+     fires that event on every navigation and the listener would otherwise
+     stack. */
+  function initNewsletter() {
+    document.querySelectorAll<HTMLFormElement>('[data-newsletter-form]').forEach((form) => {
+      if ((form as any).__nlBound) return;
+      (form as any).__nlBound = true;
 
-     So the tag is injected per page-load into a placeholder instead, guarded
-     so a second astro:page-load can't stack a duplicate form. */
-  function mountBeehiiv() {
-    document.querySelectorAll<HTMLElement>('[data-beehiiv-form-id]').forEach((host) => {
-      if (host.dataset.mounted === 'true') return;
-      host.dataset.mounted = 'true';
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = form.querySelector('button') as HTMLButtonElement;
+        const msg = form.querySelector('[data-newsletter-msg]') as HTMLElement;
+        const original = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Subscribing…';
+        msg.hidden = true;
 
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://subscribe-forms.beehiiv.com/v3/loader.js';
-      s.setAttribute('data-beehiiv-form', host.dataset.beehiivFormId || '');
-      host.appendChild(s);
+        try {
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { Accept: 'application/json' },
+          });
+          if (res.ok) {
+            form.reset();
+            btn.textContent = 'Subscribed';
+            msg.textContent = "You're on the list — thanks.";
+            msg.classList.remove('newsletter-msg--error');
+            msg.hidden = false;
+          } else {
+            throw new Error(String(res.status));
+          }
+        } catch {
+          // A failed signup must say so rather than silently resetting.
+          btn.textContent = original;
+          btn.disabled = false;
+          msg.textContent = "That didn't go through. Try again in a moment.";
+          msg.classList.add('newsletter-msg--error');
+          msg.hidden = false;
+        }
+      });
     });
   }
 
-  document.addEventListener('astro:page-load', mountBeehiiv);
+  document.addEventListener('astro:page-load', initNewsletter);
 </script>
 
 
@@ -925,23 +956,21 @@ const resumeUrl =
        right of the title above it. */
     margin: 0 0 28px;
   }
-  /* beehiiv renders its own form in here, so the site only controls the box it
-     sits in. Capped so a wide embed can't stretch the navy panel's copy
-     column; style the form itself in beehiiv's editor to match. */
-  .newsletter-embed {
-    width: 100%;
-    max-width: 420px;
-    min-height: 52px;
-  }
-  .newsletter-embed :global(iframe) {
-    width: 100% !important;
-    border: 0;
-    color-scheme: normal;   /* keep their light form light on the navy panel */
-  }
-
   .newsletter-form { display: flex; gap: 9px; flex-wrap: wrap; }
-  /* Fallback CTA shown when BEEHIIV_FORM_ID is unset but NEWSLETTER_URL
-     is known — sits on the navy panel where the form would be. */
+
+  /* Confirmation / error line under the field. Takes the full row so it sits
+     beneath the input and button rather than squeezing between them. */
+  .newsletter-msg {
+    flex-basis: 100%;
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #9fe0b8;
+  }
+  .newsletter-msg--error { color: #ffb3a0; }
+
+  /* Fallback CTA shown when no endpoint is set but NEWSLETTER_URL is known —
+     sits on the navy panel where the form would be. */
   .newsletter-link { align-self: flex-start; }
   .newsletter-form input {
     width: 260px;

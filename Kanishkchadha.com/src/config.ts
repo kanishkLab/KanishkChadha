@@ -46,18 +46,17 @@ export const siteConfig = {
   resumeUrl: getEnv('SITE_RESUME_URL', ''),
 
   newsletter: {
-    /* beehiiv subscribe-form id — the data-beehiiv-form value from the embed
-       snippet in beehiiv (Grow → Subscribe Forms → Embed). Their v3 loader
-       renders and submits the form, so signups are handled by beehiiv rather
-       than by a hand-rolled POST to an undocumented endpoint.
+    /* The "Automated Marketer" signup posts to Formspree, the same service the
+       contact form uses, until a real ESP is chosen. Defaults to the contact
+       endpoint so there is nothing extra to configure; set
+       NEWSLETTER_FORMSPREE_ENDPOINT to a second Formspree form to keep
+       signups out of the contact inbox (and off the same monthly quota).
 
-       The trade-off is that the form carries beehiiv's styling, not the
-       site's; style it in beehiiv's form editor to match the navy panel.
        Empty means no signup control is rendered at all — better nothing than
-       a form that quietly drops addresses. */
-    formId: getEnv('BEEHIIV_FORM_ID', ''),
+       a form that quietly drops addresses, which is what action="#" did. */
+    endpoint: getEnv('NEWSLETTER_FORMSPREE_ENDPOINT', '') || getEnv('FORMSPREE_ENDPOINT', ''),
     /* Optional public URL of the publication, used as a plain link fallback
-       while the form id is unset. */
+       while no endpoint is set. */
     url: getEnv('NEWSLETTER_URL', ''),
   },
   social: {

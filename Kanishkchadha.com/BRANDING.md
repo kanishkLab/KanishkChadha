@@ -217,12 +217,17 @@ contact — see the Release scope section in the root `CLAUDE.md`).
   nav-linked as "The Lab", so this is what Google indexes for the domain.
   The homepage Lab section is hidden until at least one real post exists (see
   `DEMO_SLUG_PREFIXES` in `index.astro`).
-- **The beehiiv signup carries beehiiv's styling, not the site's.** Their v3
-  loader renders the form inside a cross-origin iframe, so no CSS here can
-  reach it — it is a white card with a black button on the navy panel, headed
-  "Kanishk's Newsletter" directly beneath the panel's own "Automated Marketer".
-  Fix it in beehiiv (Grow → Subscribe Forms → edit): background `#092634`,
-  button `#ff6e42`, and clear the form's heading.
+- **The newsletter signup is on Formspree as a stopgap, not a real ESP.**
+  Addresses land in the same inbox as contact messages (tagged "Automated
+  Marketer — new subscriber") and share the free tier's 50 submissions/month.
+  There is no double opt-in, list management, or sending. Fine for collecting
+  interest; replace it before the newsletter actually ships.
+
+  beehiiv's v3 embed was tried and reverted on 2026-09-07: it renders inside a
+  cross-origin iframe, so the form came with beehiiv's own white card, black
+  button and heading, and no CSS here could restyle it. Any hosted embed will
+  have the same constraint — prefer an ESP with a plain POST endpoint or an
+  API if keeping this panel's design matters.
 
 ### Resolved 2026-09-07
 

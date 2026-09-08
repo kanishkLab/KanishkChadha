@@ -53,6 +53,20 @@
   --font-utility:  var(--font-body);
   --font-mono:     ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
+  /* The reading face. Manrope carries body copy everywhere it is doing a UI
+     job — labels, buttons, cards, nav-adjacent text — but the two long-form
+     columns (a case study, a blog post) run on Literata instead.
+
+     Literata is a text serif drawn for screen reading at length: low contrast,
+     sturdy serifs, and a large x-height that holds up at the small sizes and
+     on the low-DPI screens where a display serif thins out. That is the whole
+     reason it is here rather than Playfair Display, which is a display face
+     and stays on the headings.
+
+     Scoped by hand to the reading columns rather than set at :root, so a
+     stray :root change cannot quietly move the whole UI onto a serif. */
+  --font-reading:  'Literata', Charter, 'Bitstream Charter', Georgia, serif;
+
   /* Tracking — hierarchy comes from weight + size + negative tracking */
   --tracking-display: -0.04em;   /* h1, hero */
   --tracking-heading: -0.03em;   /* h2–h4, subheads */

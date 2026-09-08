@@ -481,7 +481,15 @@ const typeLabel = type === 'experiment' ? 'Experiment' : type === 'tool-verdict'
       color: var(--color-text);
     }
 
+    /* The reading column — see --font-reading in global.css. 22px against
+       this 800px measure is ~67 characters a line. letter-spacing resets to 0
+       for the same reason as the case study column: --tracking-body's -0.01em
+       is a Manrope setting. */
     .article-content :global(p) {
+      font-family: var(--font-reading);
+      font-size: 1.375rem;
+      line-height: 1.6;
+      letter-spacing: 0;
       margin-bottom: 1.5rem;
       color: var(--color-text-secondary);
     }
@@ -494,8 +502,11 @@ const typeLabel = type === 'experiment' ? 'Experiment' : type === 'tool-verdict'
     }
 
     .article-content :global(li) {
+      font-family: var(--font-reading);
+      font-size: 1.375rem;
+      line-height: 1.6;
+      letter-spacing: 0;
       margin-bottom: 0.5rem;
-      line-height: 1.7;
     }
 
     .article-content :global(blockquote) {
@@ -594,6 +605,11 @@ const typeLabel = type === 'experiment' ? 'Experiment' : type === 'tool-verdict'
 
       .article-content {
         font-size: 1.0625rem;
+      }
+
+      .article-content :global(p),
+      .article-content :global(li) {
+        font-size: 1.1875rem;
       }
     }
   </style>

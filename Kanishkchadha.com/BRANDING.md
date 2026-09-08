@@ -60,6 +60,50 @@ its own `.home` scope, which is harmless duplication.
 | Buttons | Manrope | 15px | 700 | normal |
 | Meta / caption | Manrope | 13.5px | 500 | normal |
 
+### The reading columns — Literata
+
+Manrope is the body face everywhere it is doing a **UI** job. The two
+**long-form** columns run on Literata instead:
+
+| Surface | Family | Size | Line-height | Tracking |
+|---|---|---|---|---|
+| Case study body | Literata | 22px (19px ≤768px) | 1.6 | 0 |
+| Case study lead paragraph | Literata | 24px (21px ≤768px) | 1.55 | 0 |
+| Blog post body | Literata | 22px (19px ≤768px) | 1.6 | 0 |
+
+Token: `--font-reading` in `global.css`. It is **not** set at `:root` — it is
+applied by hand to the reading rules, so that a `:root` edit can't move the
+whole UI onto a serif by accident.
+
+Two things that are deliberate and easy to undo by mistake:
+
+- **`letter-spacing: 0`, not `--tracking-body`.** That token is −0.01em, which
+  was chosen for Manrope. Negative tracking closes up a text serif at reading
+  size.
+- **Playfair Display stays on the headings.** Playfair is a *display* face —
+  high contrast, thin hairlines — and it thins out badly as running text on
+  low-DPI screens. Literata is a screen text serif: low contrast, sturdy
+  serifs, large x-height. They are not interchangeable.
+
+**Decision cards and the rest of the case-study furniture stay on Manrope.**
+They are components, not prose, and the serif/sans split is what separates
+them from the reading flow.
+
+#### Four rules, because there is no single reading column
+
+`.prose` in `typography.css` governs almost nothing — only `TimelineEntry` and
+`PageLayout` use it. The real reading columns are set per page:
+
+| Surface | Rule |
+|---|---|
+| Case study (hand-written) | `.body-section p`, `.numbered-list li` |
+| Case study (markdown) | `.prose-content :global(p, li)` |
+| Blog post | `.article-content :global(p, li)` |
+
+The markdown halves **must** be `:global()`. `<Content />` output carries no
+Astro scope attribute, so a scoped `.body-section p` cannot reach it — miss
+this and half of every case study silently stays on Manrope.
+
 ### Internal pages (`src/styles/typography.css`) — Inter only
 
 | Role | Size / line-height | Weight | Tracking |

@@ -917,11 +917,30 @@ const fmtLong = (d: Date) =>
     .page-lead { font-size: 15px; }
 
     .filter-inner {
-      padding: 12px 24px;
+      padding: 12px 0 12px 24px;
       flex-direction: column;
       align-items: flex-start;
       gap: 12px;
     }
+
+    /* The chips wrapped onto a second row on a phone, so a four-type filter
+       ate a whole band of vertical space above the first post. One row that
+       scrolls sideways instead — the same treatment /projects already used. */
+    .filter-chips {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      width: 100%;
+      /* Trailing space so the last chip clears the screen edge when scrolled
+         to the end, and the row visibly has somewhere to go. */
+      padding-right: 24px;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+
+    /* The "22 POSTS" line duplicates the count already on every chip and in
+       the header rule, and cost a whole row on a narrow screen. */
+    .result-count { display: none; }
 
     .case-band {
       padding: 48px 24px 56px;

@@ -123,6 +123,20 @@ const isActive = (href: string) => {
       document.body.style.right = '0';
       document.body.style.width = '100%';
     }
+    /* Closing normally runs a 300ms slide. When the click is also a
+       navigation, the router starts a view transition immediately and
+       snapshots the header — drawer included — mid-slide, then holds that
+       frozen image for the length of the page transition before swapping it
+       out. That is the drawer appearing to stick on screen and then vanish.
+       Skipping the slide means it is fully gone before the snapshot is taken. */
+    function closeInstantly() {
+      if (!drawer) return close();
+      drawer.style.transition = 'none';
+      close();
+      void drawer.offsetWidth;          // flush, so the next open still animates
+      requestAnimationFrame(() => { if (drawer) drawer.style.transition = ''; });
+    }
+
     function close() {
       // Guard so a stray close() (Escape with the drawer already shut) can't
       // yank the page back to a stale offset.
@@ -145,7 +159,14 @@ const isActive = (href: string) => {
     openBtn?.addEventListener('click', open);
     closeBtn?.addEventListener('click', close);
     overlay?.addEventListener('click', close);
-    drawer?.querySelectorAll('.drawer-link').forEach(l => l.addEventListener('click', close));
+    drawer?.querySelectorAll('.drawer-link').forEach(l =>
+      l.addEventListener('click', () => {
+        const href = l.getAttribute('href') || '';
+        // Same-page anchors don't navigate, so they keep the normal slide.
+        const navigates = !href.startsWith('#');
+        navigates ? closeInstantly() : close();
+      })
+    );
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
   }
 
@@ -388,6 +409,12 @@ const isActive = (href: string) => {
   }
 
   .drawer-brand { text-decoration: none; }
+
+  /* .monogram is navy for the white header bar, and the drawer's background is
+     that same navy — so inside the drawer the "K" was navy-on-navy and simply
+     did not exist, leaving a lone orange "C". The "C" kept its accent colour,
+     which is why this read as a missing glyph rather than a missing logo. */
+  .drawer-brand .monogram { color: #ffffff; }
 
   .drawer-close {
     background: none;

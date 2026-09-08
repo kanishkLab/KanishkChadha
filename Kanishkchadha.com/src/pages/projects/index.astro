@@ -1032,7 +1032,7 @@ const linkedin = siteConfig.social.linkedin;
     }
 
     .filter-inner {
-      padding: 12px 24px;
+      padding: 12px 0 12px 24px;
       flex-direction: column;
       align-items: flex-start;
       gap: 12px;
@@ -1044,9 +1044,14 @@ const linkedin = siteConfig.social.linkedin;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       width: 100%;
+      padding-right: 24px;
     }
 
     .filter-chips::-webkit-scrollbar { display: none; }
+
+    /* Duplicates the per-chip counts and the header rule; costs a row on a
+       narrow screen. Matches /blog. */
+    .result-count { display: none; }
 
     .featured {
       grid-template-columns: 1fr;
